@@ -1,0 +1,7 @@
+seqfile:
+  class: File
+  path: /Users/kates/Desktop/kegg-cwl/Tools/Hmmscan/db/ERR2098411.fasta
+
+#database:
+#  class: File
+#  path: /Users/kates/Desktop/kegg-cwl/Tools/Hmmscan/db/KO_eg_db

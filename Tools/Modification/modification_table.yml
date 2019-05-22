@@ -1,0 +1,3 @@
+input_table:
+  class: File
+  path: ../Hmmscan/ERR2098411_hmmscan.tbl

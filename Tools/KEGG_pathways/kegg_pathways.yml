@@ -1,0 +1,3 @@
+input_table:
+  class: File
+  path: ../Parsing_hmmscan/ERR2098411_hmmscan_tab_parsed.txt
