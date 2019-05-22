@@ -158,7 +158,6 @@ def sort_out_pathways(graphs, edges):
             calculate_percentage(graph[0], graph[1], edges, name_pathway)
     print('******* REMINDER ********')
     print('Set of nodes: ' + str(edges))
-    print('END')
 
 
 if __name__ == "__main__":

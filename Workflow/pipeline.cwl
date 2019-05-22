@@ -23,6 +23,10 @@ outputs:
   parsing_hmmscan_out:
     outputSource: parsing_hmmscan/output_table
     type: File
+  kegg_pathways_out:
+    outputSource: kegg_pathways/output_pathways
+    type: File
+
 
 steps:
   hmmscan:
@@ -49,3 +53,10 @@ steps:
       - stdout
       - stderr
     run: ../Tools/Parsing_hmmscan/parsing_hmmscan.cwl
+
+  kegg_pathways:
+    in:
+      input_table: parsing_hmmscan/output_table
+    out:
+      - output_pathways
+  run: ../Tools/KEGG_pathways/kegg_pathways.cwl

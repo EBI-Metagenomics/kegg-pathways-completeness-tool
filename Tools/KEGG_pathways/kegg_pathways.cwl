@@ -6,6 +6,7 @@ requirements:
     dockerPull: kegg:latest
 
 baseCommand: ['python', '/give_pathways.py']
+arguments: ['-o', '/']
 
 inputs:
   input_table:
