@@ -21,8 +21,8 @@ def parsing(input_file, outdir):
     path_output = os.path.join(outdir, os.path.basename(input_file).split('.')[0]+'_parsed.txt')
     with open(path_output, 'w+') as file_out:
         for key in dict_contigs:
-            dict_contigs[key] = np.unique(dict_contigs[key])
-            file_out.write('\t'.join([key + ':']+list(dict_contigs[key])))
+            #dict_contigs[key] = np.unique(dict_contigs[key])
+            file_out.write('\t'.join([key + ':']+list(dict_contigs[key]))+'\n')
 
 
 if __name__ == "__main__":

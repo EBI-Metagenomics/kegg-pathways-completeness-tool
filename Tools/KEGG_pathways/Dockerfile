@@ -4,8 +4,6 @@ FROM centos:centos7
 LABEL maintainer="Ekaterina Sakharova <kates@ebi.ac.uk>"
 
 
-#RUN python -c 'from ete3 import NCBITaxa; NCBITaxa()'
-
 ##### Dependances
 RUN yum -y update; yum clean all
 RUN yum -y install curl wget fetch perl bzip2 make; yum clean all
@@ -30,6 +28,10 @@ RUN curl -s http://rest.kegg.jp/list/module | cut -f1 | cut -c 4- > pathways/lis
 # taking DEFINITION file with pathway from KEGG file
 # saving in format: <name:pathway>
 RUN parallel -k echo -n '{}:' ';' curl -s http://rest.kegg.jp/get/{} '|' grep ^DEFINITION '|' cut -c 13- :::: pathways/list_pathways.txt > pathways/all_pathways.txt
+# taking NAME
+RUN parallel -k echo -n '{}:' ';' curl -s http://rest.kegg.jp/get/{} '|' grep ^NAME '|' cut -c 13- :::: pathways/list_pathways.txt > pathways/all_pathways_names.txt
+# taking CLASS
+RUN parallel -k echo -n '{}:' ';' curl -s http://rest.kegg.jp/get/{} '|' grep ^CLASS '|' cut -c 13- :::: pathways/list_pathways.txt > pathways/all_pathways_class.txt
 
 
 ##### Create a Graph for each pathway

@@ -1,0 +1,5 @@
+input_table:
+  class: File
+  path: /Users/kates/Desktop/prot/merged_complete_0.00001_625_1.tbl # on merged_complete db
+  # /Users/kates/Desktop/prot/merged_complete_0.00001_625.tbl # on merged db
+  #/Users/kates/Desktop/prot/merged_hmmscan_625.tbl

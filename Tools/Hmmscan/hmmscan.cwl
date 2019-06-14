@@ -24,7 +24,7 @@ arguments:
     valueFrom: $(inputs.seqfile.nameroot)_hmmscan.tbl
     position: 2
 
-  - valueFrom: /db/KO_eg_db
+  - valueFrom: /db/merged
     position: 3
 
 inputs:
