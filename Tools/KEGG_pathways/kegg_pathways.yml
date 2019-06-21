@@ -1,4 +1,5 @@
 input_table:
   class: File
-  path: ../../Workflow/merged_complete_0.00001_625_parsed.txt
+  path: /Users/kates/Desktop/kegg-cwl/Tools/Union_by_contigs/diff_contigs_tab_parsed_union_ko_contigs.txt
+  #../../Workflow/merged_complete_0.00001_625_parsed.txt
   #../Parsing_hmmscan/ERR2098411_hmmscan_tab_parsed.txt

@@ -54,6 +54,8 @@ steps:
       - stderr
     run: ../Tools/Parsing_hmmscan/parsing_hmmscan.cwl
 
+# add processing: unite by contigs
+
   kegg_pathways:
     in:
       input_table: parsing_hmmscan/output_table

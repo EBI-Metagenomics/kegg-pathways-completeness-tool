@@ -43,11 +43,16 @@ def get_list_items(input_path):
     :return: list of items
     """
     items = []
+    dict_KO_by_contigs = {}
     with open(input_path, 'r') as file_in:
         for line in file_in:
             line = line.strip().split('\t')
+            name = line[0]
+            if name not in dict_KO_by_contigs:
+                dict_KO_by_contigs[name] = []
+            dict_KO_by_contigs[name] += line[1:]
             items += line[1:]
-    return list(np.unique(items))
+    return list(np.unique(items)), dict_KO_by_contigs
 
 
 def intersection(lst1, lst2):
@@ -109,7 +114,7 @@ def finding_paths(G):
     return paths_nodes, paths_labels, weights, new_weights, indexes_min
 
 
-def calculate_percentage(graph, dict_edges, edges, name_pathway):
+def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathway):
     """
     Function returns the percentage of matches of set of edges and graph.
     Example:
@@ -119,7 +124,6 @@ def calculate_percentage(graph, dict_edges, edges, name_pathway):
     :param edges: set of nodes
     :return: percentage [0:100]
     """
-    #print('**********************************************')
     # set weights
     for edge in edges:
         if edge in dict_edges:
@@ -140,8 +144,6 @@ def calculate_percentage(graph, dict_edges, edges, name_pathway):
 
     # find the best path(s)
     paths_nodes, paths_labels, weights, new_weights, indexes_min = finding_paths(graph)
-    #print('**********************************************')
-
 
     percentage = round((1 - 1. * new_weights[num] / weights[num]) * 100, 2)
     if percentage > 0:
@@ -153,15 +155,15 @@ def calculate_percentage(graph, dict_edges, edges, name_pathway):
 
             missing_labels = set(new_labels).difference(set(edges))
             missing_set = missing_set.union(missing_labels)
-            #print('Missing labels: ', list(missing_labels))
+            print(name_pathway, unnecessary_nodes)
+            missing_set_necessary = missing_set.difference(set(unnecessary_nodes))
 
             existing_labels = set(new_labels).intersection(set(edges))
             matching_set = matching_set.union(existing_labels)
-            # print('Existing labels: ', set(new_labels).intersection(set(edges)))
 
             #extra_labels = set(edges).difference(set(new_labels))
             #print('Extra labels: ', extra_labels)
-        return percentage, len(indexes_min), ', '.join(list(matching_set)), ', '.join(list(missing_set))
+        return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
 
     else:
         return [None for _ in range(4)]
@@ -170,10 +172,75 @@ def calculate_percentage(graph, dict_edges, edges, name_pathway):
         #print('Percentage = ' + str(percentage))
 
 
-
-
-
 def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
+    """
+    Function sorts out all pathways and prints info about pathway that percentage of intersection more than 0
+    :param graphs: Dict of graphs
+    :param edges: list of items to intersect with pathways
+    :return: -
+    """
+    if not os.path.exists("Contigs"): os.mkdir("Contigs")
+    if outdir != '':
+        os.mkdir(os.path.join("Contigs", outdir))
+        name_output_summary = os.path.join("Contigs", outdir, 'summary_pathways.txt')
+        name_output_matching = os.path.join("Contigs", outdir, 'matching_ko_pathways.txt')
+        name_output_missing = os.path.join("Contigs", outdir, 'missing_ko_pathways.txt')
+    else:
+        name_output_summary = 'summary_pathways.txt'
+        name_output_matching = 'matching_ko_pathways.txt'
+        name_output_missing = 'missing_ko_pathways.txt'
+
+    dict_sort_by_percentage = {}
+    for name_pathway in graphs:
+        graph = graphs[name_pathway]
+        if intersection(graph[1], edges) == []:
+            continue
+        else:
+            percentage, kol_paths, matching_labels, missing_labels = \
+                calculate_percentage(graph[0], graph[1], graph[2], edges, name_pathway)
+            if percentage != None:
+                if percentage not in dict_sort_by_percentage:
+                    dict_sort_by_percentage[percentage] = {}
+                dict_sort_by_percentage[percentage][name_pathway] = [kol_paths, matching_labels, missing_labels]
+    # output Summary
+    with open(name_output_summary, 'w') as file_out_summary:
+        file_out_summary.write('\t'.join(['Module_accession', '% completeness', 'pathway_name', 'pathway_class'])+'\n')
+        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
+            #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
+            for name_pathway in dict_sort_by_percentage[percentage]:
+                output_line = '\t'.join([name_pathway, str(percentage), pathway_names[name_pathway],
+                                        pathway_classes[name_pathway]])
+                file_out_summary.write(output_line + '\n')
+        """
+        file_out_summary.write('\n******* REMINDER ********')
+        file_out_summary.write('Number of nodes: ' + str(len(edges)) + '\n')
+        file_out_summary.write('Set of nodes: ' + str(edges) + '\n')
+        """
+
+    # output matching KOs
+    with open(name_output_matching, 'w') as file_out_matching:
+        file_out_matching.write('\t'.join(['Module_accession', '% completeness', '#matching_KO', 'list_matching_KO'])+'\n')
+        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
+            for name_pathway in dict_sort_by_percentage[percentage]:
+                matching_current = dict_sort_by_percentage[percentage][name_pathway][1]
+                output_line = '\t'.join([name_pathway, str(percentage), str(len(matching_current)),
+                                        ', '.join(matching_current)])
+                file_out_matching.write(output_line + '\n')
+
+    # output missing KOs
+    with open(name_output_missing, 'w') as file_out_missing:
+        file_out_missing.write('\t'.join(['Module_accession', '% completeness', '#missing_KO', 'list_missing_KO'])+'\n')
+        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
+            for name_pathway in dict_sort_by_percentage[percentage]:
+                missing_current = dict_sort_by_percentage[percentage][name_pathway][2]
+                if len(missing_current) == 0:
+                    continue
+                output_line = '\t'.join([name_pathway, str(percentage), str(len(missing_current)),
+                                         ', '.join(missing_current)])
+                file_out_missing.write(output_line + '\n')
+
+
+def sort_out_pathways_contig(graphs, edges, pathway_names, pathway_classes, outdir):
     """
     Function sorts out all pathways and prints info about pathway that percentage of intersection more than 0
     :param graphs: Dict of graphs
@@ -191,44 +258,11 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
             continue
         else:
             percentage, kol_paths, matching_labels, missing_labels = \
-                calculate_percentage(graph[0], graph[1], edges, name_pathway)
+                calculate_percentage(graph[0], graph[1], graph[2], edges, name_pathway)
             if percentage != None:
                 if percentage not in dict_sort_by_percentage:
                     dict_sort_by_percentage[percentage] = {}
                 dict_sort_by_percentage[percentage][name_pathway] = [kol_paths, matching_labels, missing_labels]
-    # output Summary
-    with open(name_output_summary, 'w') as file_out_summary:
-        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
-            file_out_summary.write('**********************************************\n')
-            file_out_summary.write('Percentage = ' + str(percentage) + '\n')
-            for name_pathway in dict_sort_by_percentage[percentage]:
-                file_out_summary.write(pathway_classes[name_pathway] + ': ' + pathway_names[name_pathway] +
-                                       ', ' + name_pathway + '\n')
-
-        file_out_summary.write('\n******* REMINDER ********')
-        file_out_summary.write('Number of nodes: ' + str(len(edges)) + '\n')
-        file_out_summary.write('Set of nodes: ' + str(edges) + '\n')
-
-    # output matching KOs
-    with open(name_output_matching, 'w') as file_out_matching:
-        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
-            file_out_matching.write('**********************************************\n')
-            file_out_matching.write('Percentage = ' + str(percentage) + '\n')
-            for name_pathway in dict_sort_by_percentage[percentage]:
-                file_out_matching.write('\nPathway: ' + name_pathway + '\n')
-                file_out_matching.write(dict_sort_by_percentage[percentage][name_pathway][1] + '\n')
-
-    # output missing KOs
-    with open(name_output_missing, 'w') as file_out_missing:
-        for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
-            file_out_missing.write('**********************************************\n')
-            file_out_missing.write('Percentage = ' + str(percentage) + '\n')
-            for name_pathway in dict_sort_by_percentage[percentage]:
-                file_out_missing.write('\nPathway: ' + name_pathway + '\n')
-                missing_str = dict_sort_by_percentage[percentage][name_pathway][2]
-                if missing_str == "":
-                    missing_str = 'no missing labels for this pathway'
-                file_out_missing.write(missing_str + '\n')
 
 
 if __name__ == "__main__":
@@ -243,5 +277,10 @@ if __name__ == "__main__":
     else:
         args = parser.parse_args()
         graphs, pathway_names, pathway_classes = download_pathways(args.outdir)
-        edges = get_list_items(args.input_file)
-        sort_out_pathways(graphs, edges, pathway_names, pathway_classes, args.outdir)
+        edges, dict_KO_by_contigs = get_list_items(args.input_file)
+        sort_out_pathways(graphs, edges, pathway_names, pathway_classes, '')
+
+        # by contigs
+        for contig in dict_KO_by_contigs:
+            edges = dict_KO_by_contigs[contig]
+            sort_out_pathways(graphs, edges, pathway_names, pathway_classes, contig)

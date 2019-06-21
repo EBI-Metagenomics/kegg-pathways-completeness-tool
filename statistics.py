@@ -71,8 +71,12 @@ def check_empty(common, in_gk, in_hmm):
     if in_hmm == '': in_hmm = '-hmm-'
     return [common, in_gk, in_hmm]
 
+
+# ANALYSIS
+prefix = '_koala'
+
 # filenames
-filename_koala = '/Users/kates/Desktop/prot/UP000000625_ko.txt'
+filename_koala = '/Users/kates/Desktop/prot/UP000000625_ko.txt'  # KOALA
 filename_hmm = '/Users/kates/Desktop/kegg-cwl/Workflow/merged_complete_0.00001_625_parsed.txt'
     #'/Users/kates/Desktop/kegg-cwl/Workflow/merged_complete_625_tab_parsed.txt'
 
@@ -107,7 +111,7 @@ compare_tbl = [['key', 'in_common', 'in_GK', 'in_hmm', 'new_kegg']]
 
 kol_intersections, kol_empty_non_annotated, kol_empty_non_intersected = [0 for _ in range(3)]
 annotated_both, annotated_only_gk, annotated_only_hmm, kol_empty_non_annotated = [0 for _ in range(4)]
-hmm_overperform, gk_overperform, annotated_by_new, annotated_dif, ann_dif_new = [0, 0, 0, 0, 0]
+hmm_overperform, gk_overperform, annotated_by_new, annotated_dif, ann_dif_new, ann_dif_no_new = [0, 0, 0, 0, 0, 0]
 
 labels = ['key', 'in_common', 'in_GK', 'in_hmm', 'new_kegg']
 table_non_ann_both, table_hmm_better, table_gk_better, table_ann_sim, table_ann_diff = [[labels] for _ in range(5)]
@@ -135,7 +139,8 @@ for key in all_labels:
             if list(set(koala_dict[key]).intersection(set(common_ko))) == []:  # differences only because new KEGG db
                 ann_dif_new += 1
             else:
-                print(key)
+                print(key)  # annotated differently on the ko included in HMM db and new
+                ann_dif_no_new += 1
         elif koala_dict[key] != []:
             table_ann_sim.append([key] + check_empty(common, in_gk, in_hmm))
 
@@ -164,9 +169,9 @@ print('Annonated by both and differently', annotated_dif, 'new', ann_dif_new)
 print('GK overperform on new db', annotated_by_new)
 print('annotated by HMM', annotated_only_hmm)
 
-pd.DataFrame(data=table_non_ann_both).to_csv('table_non_ann_both.csv', sep='\t', columns=None, index=False, header=False)
-pd.DataFrame(data=table_hmm_better).to_csv('table_hmm_better.csv', sep='\t', columns=None, index=False, header=False)
-pd.DataFrame(data=table_gk_better).to_csv('table_gk_better.csv', sep='\t', columns=None, index=False, header=False)
-pd.DataFrame(data=table_ann_sim).to_csv('table_ann_similar.csv', sep='\t', columns=None, index=False, header=False)
-pd.DataFrame(data=table_ann_diff).to_csv('table_ann_diff.csv', sep='\t', columns=None, index=False, header=False)
+pd.DataFrame(data=table_non_ann_both).to_csv('table_non_ann_both.csv'+prefix, sep='\t', columns=None, index=False, header=False)
+pd.DataFrame(data=table_hmm_better).to_csv('table_hmm_better.csv'+prefix, sep='\t', columns=None, index=False, header=False)
+pd.DataFrame(data=table_gk_better).to_csv('table_gk_better.csv'+prefix, sep='\t', columns=None, index=False, header=False)
+pd.DataFrame(data=table_ann_sim).to_csv('table_ann_similar.csv'+prefix, sep='\t', columns=None, index=False, header=False)
+pd.DataFrame(data=table_ann_diff).to_csv('table_ann_diff.csv'+prefix, sep='\t', columns=None, index=False, header=False)
 

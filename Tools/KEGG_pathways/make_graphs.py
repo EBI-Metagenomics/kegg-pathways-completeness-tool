@@ -120,7 +120,7 @@ def check_brackets(pathway, levels_brackets):
         return pathway
 
 
-def recursive_parsing(G, dict_edges, expression, start_node, end_node, weight):
+def recursive_parsing(G, dict_edges, unnecessary_nodes, expression, start_node, end_node, weight):
     """
     Main parser:
        - adds edges and nodes to global graph G
@@ -137,11 +137,12 @@ def recursive_parsing(G, dict_edges, expression, start_node, end_node, weight):
     if expression == '--':  # case --
         name_missing = 'K00000'
         #print('MAKE EDGE: ' + name_missing, start_node, end_node)
-        G.add_edge(start_node, end_node, label=name_missing, weight=0, weight_new=0)
+        G.add_edge(start_node, end_node, label=name_missing, weight=0, weight_new=0, name='-')
+        unnecessary_nodes.append(name_missing)
         if name_missing not in dict_edges:
             dict_edges[name_missing] = []
         dict_edges[name_missing].append([start_node, end_node])
-        return G, dict_edges
+        return G, dict_edges, unnecessary_nodes
 
     expression = check_brackets(expression, set_brackets(expression))  # delete brackets (expression)
     cur_dict_levels = set_levels(expression)  # define levels of each part of expression
@@ -151,11 +152,12 @@ def recursive_parsing(G, dict_edges, expression, start_node, end_node, weight):
     if len(separators_order) == 1:  # case: -K....
         if separators_order[0] == '0_-' and expression[0] == '-':
             #print('MAKE EDGE: ' + expression[1:], start_node, end_node)
-            G.add_edge(start_node, end_node, label=expression[1:], weight=0, weight_new=0)
+            G.add_edge(start_node, end_node, label=expression[1:], weight=0, weight_new=0, name='-')
+            unnecessary_nodes.append(expression[1:])
             if expression[1:] not in dict_edges:
                 dict_edges[expression[1:]] = []
             dict_edges[expression[1:]].append([start_node, end_node])
-            return G, dict_edges
+            return G, dict_edges, unnecessary_nodes
 
     if separators_order != []:
         # separator
@@ -180,8 +182,9 @@ def recursive_parsing(G, dict_edges, expression, start_node, end_node, weight):
 
             subexpression = expression[cur_sep:separator]
 
-            G, dict_edges = recursive_parsing(G=G,
+            G, dict_edges, unnecessary_nodes = recursive_parsing(G=G,
                                               dict_edges=dict_edges,
+                                              unnecessary_nodes=unnecessary_nodes,
                                               expression=subexpression,
                                               start_node=cur_start_node,
                                               end_node=cur_end_node,
@@ -197,20 +200,25 @@ def recursive_parsing(G, dict_edges, expression, start_node, end_node, weight):
         if symbol == '-' and num > 0:  # weight
             cur_weight = 0
 
-        G, dict_edges = recursive_parsing(G=G,
+        G, dict_edges, unnecessary_nodes = recursive_parsing(G=G,
                                           dict_edges=dict_edges,
+                                          unnecessary_nodes=unnecessary_nodes,
                                           expression=expression[cur_sep:len(expression)],
                                           start_node=cur_start_node,
                                           end_node=cur_end_node,
                                           weight=cur_weight)
-        return G, dict_edges
+        return G, dict_edges, unnecessary_nodes
     else:
         #print('MAKE EDGE: ' + expression, start_node, end_node)
-        G.add_edge(start_node, end_node, label=expression, weight=cur_weight, weight_new=cur_weight)
+        if cur_weight == 0:
+            G.add_edge(start_node, end_node, label=expression, weight=cur_weight, weight_new=cur_weight, name='-')
+            unnecessary_nodes.append(expression)
+        else:
+            G.add_edge(start_node, end_node, label=expression, weight=cur_weight, weight_new=cur_weight, name='node')
         if expression not in dict_edges:
             dict_edges[expression] = []
         dict_edges[expression].append([start_node, end_node])
-        return G, dict_edges
+        return G, dict_edges, unnecessary_nodes
 
 
 def pathways_processing(input_file, outdir):
@@ -234,12 +242,15 @@ def pathways_processing(input_file, outdir):
             Graph.add_node(0, color='green')
             Graph.add_node(1, color='red')
             # Parsing
-            Graph, dict_edges = recursive_parsing(G=Graph, dict_edges={},
+            Graph, dict_edges, unnecessary_nodes = recursive_parsing(
+                                                  G=Graph,
+                                                  dict_edges={},
+                                                  unnecessary_nodes=[],
                                                   expression=pathway,
                                                   start_node=0, end_node=1,
                                                   weight=1)
             # Saving
-            graphs[name] = tuple([Graph, dict_edges])
+            graphs[name] = tuple([Graph, dict_edges, unnecessary_nodes])
         print('done')
     path_output = os.path.join(outdir, "graphs.pkl")
     f = open(path_output, "wb")
@@ -249,8 +260,10 @@ def pathways_processing(input_file, outdir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generates Graphs for each contig")
-    parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required = True)
-    parser.add_argument("-o", "--outdir", dest="outdir", help="Relative path to directory where you want the output file to be stored (default: cwd)", default = ".")
+    parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=True)
+    parser.add_argument("-o", "--outdir", dest="outdir",
+                        help="Relative path to directory where you want the output file to be stored (default: cwd)",
+                        default = ".")
 
     if len(sys.argv) == 1:
         parser.print_help()

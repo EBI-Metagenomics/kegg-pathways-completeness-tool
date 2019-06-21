@@ -15,8 +15,8 @@ inputs:
 
 outputs:
 
-  parsing_hmmscan_out:
-    outputSource: parsing_hmmscan/output_table
+  union_by_contigs:
+    outputSource: union_by_contigs/output_table
     type: File
 
 
@@ -36,3 +36,12 @@ steps:
       - stdout
       - stderr
     run: ../Tools/Parsing_hmmscan/parsing_hmmscan.cwl
+
+  union_by_contigs:
+    in:
+      table: parsing_hmmscan/output_table
+    out:
+      - output_table
+      - stdout
+      - stderr
+    run: ../Tools/Union_by_contigs/union_by_contigs.cwl

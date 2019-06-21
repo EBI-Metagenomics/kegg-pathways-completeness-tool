@@ -15,7 +15,7 @@ inputs:
       separate: true
       prefix: -i
 
-#stdout: $(inputs.input_table.nameroot)_pathways.txt
+stdout: stdout.txt
 
 outputs:
   output_pathways_summary:
@@ -32,4 +32,10 @@ outputs:
     type: File
     outputBinding:
       glob: missing_ko_pathways.txt
-    #type: stdout
+
+  stdout: stdout
+
+  out_folder:
+    type: Directory
+    outputBinding:
+      glob: "Contigs"
