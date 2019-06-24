@@ -8,13 +8,12 @@ python: 3.6
 
 install:
   - pip install -q cwl-runner cwltest cwltool
-  - sudo apt-get install aria2
   - mkdir -p $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
 
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3f
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3m
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3i
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3p
+  - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3f $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+  - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3m $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+  - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3i $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+  - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3p $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
   - >
     docker build -t hmmscan_kegg $TRAVIS_BUILD_DIR/Tools/Hmmscan/ &
     docker build -t kegg $TRAVIS_BUILD_DIR/Tools/KEGG_pathways/ &
