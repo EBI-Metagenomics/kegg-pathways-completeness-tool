@@ -9,8 +9,9 @@ python: 3.6
 install:
   - pip install -q cwl-runner cwltest cwltool
   - mkdir $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+  - sudo apt-get install aria2
 
-  - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3f -O $TRAVIS_BUILD_DIR/Tools/Hmmscan/db//merged.h3f
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3f
   - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3m -O $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/merged.h3m
   - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3i -O $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/merged.h3i
   - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3p -O $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/merged.h3p
