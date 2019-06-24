@@ -8,7 +8,7 @@ python: 3.6
 
 install:
   - pip install -q cwl-runner cwltest cwltool
-  - mkdir -p $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+  - mkdir $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
 
   - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3f $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
   - wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.h3m $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
