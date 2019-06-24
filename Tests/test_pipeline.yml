@@ -1,7 +1,7 @@
 # cwltest --basedir cwl_test_dir --test ../WorkFlow/pipeline.cwl --tool cwltool
 
-- job: WorkFlow/pipeline.yml
-  tool: WorkFlow/pipeline.cwl
+- job: Workflow/pipeline.yml
+  tool: Workflow/pipeline.cwl
   output:
     hmmscan_out:
       class: File
