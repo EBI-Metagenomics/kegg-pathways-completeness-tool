@@ -1,0 +1,30 @@
+os: linux
+
+services:
+  - docker
+
+language: python
+python: 3.6
+
+install:
+  - pip install -q cwl-runner cwltest cwltool
+  - sudo apt-get install aria2
+  - mkdir -p $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
+
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/merged.*
+  - >
+    docker build -t hmmscan_kegg $TRAVIS_BUILD_DIR/Tools/Hmmscan/ &
+    docker build -t kegg $TRAVIS_BUILD_DIR/Tools/KEGG_pathways/ &
+    docker build -t parsing_hmmscan $TRAVIS_BUILD_DIR/Tools/Parsing_hmmscan/ &
+    docker build -t sed_docker $TRAVIS_BUILD_DIR/Tools/Sed/ &
+    docker build -t kegg_union_by_contigs $TRAVIS_BUILD_DIR/Tools/Union_by_contigs/
+    ; wait
+
+script:
+  - cwltest --test $TRAVIS_BUILD_DIR/Tests/test_pipeline.yml --timeout 7200 --tool cwltool
+
+deploy:
+  provider: script
+  script: bash $TRAVIS_BUILD_DIR/docker_push.sh
+  on:
+    branch: master
