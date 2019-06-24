@@ -179,6 +179,7 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
     :param edges: list of items to intersect with pathways
     :return: -
     """
+    flag_not_empty = False
     if not os.path.exists("Contigs"): os.mkdir("Contigs")
     if outdir != '':
         os.mkdir(os.path.join("Contigs", outdir))
@@ -208,6 +209,7 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
         for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
             #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
             for name_pathway in dict_sort_by_percentage[percentage]:
+                flag_not_empty = True
                 output_line = '\t'.join([name_pathway, str(percentage), pathway_names[name_pathway],
                                         pathway_classes[name_pathway]])
                 file_out_summary.write(output_line + '\n')
@@ -222,6 +224,7 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
         file_out_matching.write('\t'.join(['Module_accession', '% completeness', '#matching_KO', 'list_matching_KO'])+'\n')
         for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
             for name_pathway in dict_sort_by_percentage[percentage]:
+                flag_not_empty = True
                 matching_current = dict_sort_by_percentage[percentage][name_pathway][1]
                 output_line = '\t'.join([name_pathway, str(percentage), str(len(matching_current)),
                                         ', '.join(matching_current)])
@@ -235,9 +238,18 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes, outdir):
                 missing_current = dict_sort_by_percentage[percentage][name_pathway][2]
                 if len(missing_current) == 0:
                     continue
+                flag_not_empty = True
                 output_line = '\t'.join([name_pathway, str(percentage), str(len(missing_current)),
                                          ', '.join(missing_current)])
                 file_out_missing.write(output_line + '\n')
+
+    if outdir != '':  # Contigs folder
+        if not flag_not_empty:
+            full_path = os.path.join("Contigs", outdir)
+            files = os.listdir(full_path)
+            for file in files:
+                os.remove(os.path.join(full_path, file))
+            os.rmdir(full_path)
 
 
 def sort_out_pathways_contig(graphs, edges, pathway_names, pathway_classes, outdir):

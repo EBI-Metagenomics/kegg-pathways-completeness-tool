@@ -1,0 +1,2 @@
+Module_accession	% completeness	#missing_KO	list_missing_KO
+M00014	12.5	10	K00002, K16190, K01195, K03331, K00008, K00699, K12447, K00012, K14756, K13247

@@ -38,6 +38,9 @@ outputs:
   kegg_contigs:
     outputSource: kegg_pathways/out_folder
     type: Directory
+  kegg_stdout:
+    outputSource: kegg_pathways/stdout
+    type: File
 
 steps:
   hmmscan:

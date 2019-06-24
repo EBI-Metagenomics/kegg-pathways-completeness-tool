@@ -1,0 +1,4 @@
+Module_accession	% completeness	pathway_name	pathway_class
+M00038	14.29	Tryptophan metabolism, tryptophan => kynurenine => 2-aminomuconate	Pathway module; Amino acid metabolism; Aromatic amino acid metabolism
+M00346	11.11	Formaldehyde assimilation, serine pathway	Pathway module; Energy metabolism; Methane metabolism
+M00532	11.11	Photorespiration	Pathway module; Carbohydrate metabolism; Other carbohydrate metabolism

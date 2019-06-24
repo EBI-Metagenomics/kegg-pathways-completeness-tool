@@ -1,0 +1,11 @@
+Module_accession	% completeness	pathway_name	pathway_class
+M00538	33.33	Toluene degradation, toluene => benzoate	Pathway module; Xenobiotics biodegradation; Aromatics degradation
+M00046	33.33	Pyrimidine degradation, uracil => beta-alanine, thymine => 3-aminoisobutanoate	Pathway module; Nucleotide metabolism; Pyrimidine metabolism
+M00537	33.33	Xylene degradation, xylene => methylbenzoate	Pathway module; Xenobiotics biodegradation; Aromatics degradation
+M00045	25.0	Histidine degradation, histidine => N-formiminoglutamate => glutamate	Pathway module; Amino acid metabolism; Histidine metabolism
+M00546	20.0	Purine degradation, xanthine => urea	Pathway module; Nucleotide metabolism; Purine metabolism
+M00038	14.29	Tryptophan metabolism, tryptophan => kynurenine => 2-aminomuconate	Pathway module; Amino acid metabolism; Aromatic amino acid metabolism
+M00014	12.5	Glucuronate pathway (uronate pathway)	Pathway module; Carbohydrate metabolism; Other carbohydrate metabolism
+M00346	11.11	Formaldehyde assimilation, serine pathway	Pathway module; Energy metabolism; Methane metabolism
+M00532	11.11	Photorespiration	Pathway module; Carbohydrate metabolism; Other carbohydrate metabolism
+M00567	2.5	Methanogenesis, CO2 => methane	Pathway module; Energy metabolism; Methane metabolism

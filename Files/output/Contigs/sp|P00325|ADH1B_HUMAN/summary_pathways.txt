@@ -1,0 +1,4 @@
+Module_accession	% completeness	pathway_name	pathway_class
+M00538	33.33	Toluene degradation, toluene => benzoate	Pathway module; Xenobiotics biodegradation; Aromatics degradation
+M00537	33.33	Xylene degradation, xylene => methylbenzoate	Pathway module; Xenobiotics biodegradation; Aromatics degradation
+M00014	12.5	Glucuronate pathway (uronate pathway)	Pathway module; Carbohydrate metabolism; Other carbohydrate metabolism
