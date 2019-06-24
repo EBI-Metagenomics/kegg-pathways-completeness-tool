@@ -22,7 +22,7 @@ def parsing(input_file, outdir):
     with open(path_output, 'w+') as file_out:
         for key in dict_contigs:
             #dict_contigs[key] = np.unique(dict_contigs[key])
-            file_out.write('\t'.join([key + ':']+list(dict_contigs[key]))+'\n')
+            file_out.write('\t'.join([key]+list(dict_contigs[key]))+'\n')
 
 
 if __name__ == "__main__":

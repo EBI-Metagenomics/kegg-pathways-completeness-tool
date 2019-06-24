@@ -1,6 +1,6 @@
 seqfile:
   class: File
-  path: /Users/kates/Desktop/kegg-cwl/Tools/Hmmscan/db/ERR2098411.fasta
+  path: /Users/kates/Desktop/kegg-cwl/Files/example.fasta
 
 #database:
 #  class: File

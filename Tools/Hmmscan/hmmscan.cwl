@@ -14,25 +14,25 @@ baseCommand: ["hmmscan"]
 
 arguments:
 
-  #- prefix: -E
-  #  valueFrom: "0.001"
-  #  position: 2
+  - prefix: --domE
+    valueFrom: "0.00001"
+    position: 2
   - valueFrom: --noali
     position: 1
 
   - prefix: --domtblout
     valueFrom: $(inputs.seqfile.nameroot)_hmmscan.tbl
-    position: 2
-
-  - valueFrom: /db/merged
     position: 3
+
+  - valueFrom: /db/KO_example
+    position: 4
 
 inputs:
 
   seqfile:
     type: File
     inputBinding:
-      position: 4
+      position: 5
       separate: true
 
 stdout: stdout.txt
