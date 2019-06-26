@@ -14,8 +14,7 @@ baseCommand: ["hmmscan"]
 
 arguments:
 
-  - prefix: --domE
-    valueFrom: "0.00001"
+  - valueFrom: "--cut_ga"
     position: 2
   - valueFrom: --noali
     position: 1
@@ -24,8 +23,8 @@ arguments:
     valueFrom: $(inputs.seqfile.nameroot)_hmmscan.tbl
     position: 3
 
-  - valueFrom: /db/merged
-    position: 4
+#  - valueFrom: /db/db_kofam.hmm
+#    position: 4
 
 inputs:
 
@@ -34,6 +33,16 @@ inputs:
     inputBinding:
       position: 5
       separate: true
+  data:
+    type: Directory?
+    default:
+      class: Directory
+      path:  ../../Files/db/
+      listing: []
+      basename: db
+    inputBinding:
+      valueFrom: $(self.listing[0].dirname)/db_kofam.hmm
+      position: 4
 
 stdout: stdout.txt
 stderr: stderr.txt

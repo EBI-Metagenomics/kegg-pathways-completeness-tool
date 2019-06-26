@@ -1,6 +1,6 @@
 seqfile:
   class: File
-  path: /Users/kates/Desktop/kegg-cwl/Files/example.fasta
+  path: /Users/kates/Desktop/CWL/KEGG/kegg-cwl/Files/example.fasta
 
 #database:
 #  class: File
