@@ -12,7 +12,7 @@ def parsing(input_file, outdir):
         for line in file_in:
             line = line.strip().split('\t')
             contig = line[3]
-            kegg_annotation = line[1]
+            kegg_annotation = line[0]
             if contig not in dict_contigs:
                 dict_contigs[contig] = []
             dict_contigs[contig].append(kegg_annotation)

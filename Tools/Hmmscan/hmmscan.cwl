@@ -23,8 +23,6 @@ arguments:
     valueFrom: $(inputs.seqfile.nameroot)_hmmscan.tbl
     position: 3
 
-#  - valueFrom: /db/db_kofam.hmm
-#    position: 4
 
 inputs:
 
@@ -38,10 +36,11 @@ inputs:
     default:
       class: Directory
       path:  ../../Files/db/
+      location: ../../Files/db/
       listing: []
       basename: db
     inputBinding:
-      valueFrom: $(self.listing[0].dirname)/db_kofam.hmm
+      valueFrom: $(self.path)/db_kofam.hmm  # $(self.listing[0].dirname)/db_kofam.hmm
       position: 4
 
 stdout: stdout.txt
