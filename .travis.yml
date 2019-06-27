@@ -11,10 +11,10 @@ install:
   - mkdir $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
   - sudo apt-get install aria2
 
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3f
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3m
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3i
-  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3p
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.hmm.h3f
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.hmm.h3m
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.hmm.h3i
+  - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.hmm.h3p
 
   - >
     docker build -t hmmscan_kegg $TRAVIS_BUILD_DIR/Tools/Hmmscan/ &
