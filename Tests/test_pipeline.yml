@@ -1,32 +1,32 @@
 # cwltest --basedir cwl_test_dir --test ../WorkFlow/pipeline.cwl --tool cwltool
 
-- job: Workflow/pipeline.yml
-  tool: Workflow/pipeline.cwl
+- job: ../Workflow/pipeline.yml
+  tool: ../Workflow/pipeline.cwl
   output:
     hmmscan_out:
       class: File
       basename: example_hmmscan.tbl
-      size: 7929
+      size: 5289
     kegg_pathways_matching:
       class: File
       basename: matching_ko_pathways.txt
-      size: 285
+      size: 230
     kegg_pathways_missing:
       class: File
       basename: missing_ko_pathways.txt
-      size: 966
+      size: 1548
     kegg_pathways_summary:
       class: File
       basename: summary_pathways.txt
-      size: 1281
+      size: 1070
     kegg_stdout:
       class: File
       basename: stdout.txt
-      size: 2507
+      size: 1443
     modification_out:
       class: File
       basename: example_hmmscan_tab.tbl
-      size: 4924
+      size: 2935
     parsing_hmmscan_out:
       class: File
       basename: example_hmmscan_tab_parsed.txt
@@ -37,51 +37,39 @@
       class: Directory
       basename: Contigs
       listing:
-        - basename: sp|P00325|ADH1B_HUMAN
+        - basename: sp|P0AGE9|SUCD_ECOLI
           class: Directory
           listing:
             - basename: missing_ko_pathways.txt
               class: File
-              size: 246
+              size: 1098
             - basename: summary_pathways.txt
               class: File
-              size: 424
+              size: 674
             - basename: matching_ko_pathways.txt
               class: File
-              size: 127
+              size: 167
+        - basename: sp|P04805|SYE_ECOLI
+          class: Directory
+          listing:
+            - basename: missing_ko_pathways.txt
+              class: File
+              size: 289
+            - basename: summary_pathways.txt
+              class: File
+              size: 359
+            - basename: matching_ko_pathways.txt
+              class: File
+              size: 105
         - basename: tr|G0H4N7|G0H4N7_METMI
           class: Directory
           listing:
             - basename: missing_ko_pathways.txt
               class: File
-              size: 522
+              size: 281
             - basename: summary_pathways.txt
               class: File
-              size: 556
+              size: 155
             - basename: matching_ko_pathways.txt
               class: File
-              size: 146
-        - basename: sp|P77444|SUFS_ECOLI
-          class: Directory
-          listing:
-            - basename: missing_ko_pathways.txt
-              class: File
-              size: 327
-            - basename: summary_pathways.txt
-              class: File
-              size: 419
-            - basename: matching_ko_pathways.txt
-              class: File
-              size: 128
-        - basename: sp|P05852|TSAD_ECOLI
-          class: Directory
-          listing:
-            - basename: missing_ko_pathways.txt
-              class: File
-              size: 154
-            - basename: summary_pathways.txt
-              class: File
-              size: 180
-            - basename: matching_ko_pathways.txt
-              class: File
-              size: 83
+              size: 82
