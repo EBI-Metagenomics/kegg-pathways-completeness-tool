@@ -8,11 +8,8 @@ python: 3.6
 
 install:
   - pip install -q cwl-runner cwltest cwltool
-  - mkdir $TRAVIS_BUILD_DIR/Tools/Kofam/db
+  - mkdir $TRAVIS_BUILD_DIR/Tools/Hmmscan/db/
   - sudo apt-get install aria2
-
-  #- wget ftp://ftp.genome.jp/pub/db/kofam/ko_list.gz  -O $TRAVIS_BUILD_DIR/Tools/Kofam/db && tar -xvzf $TRAVIS_BUILD_DIR/Tools/Kofam/db/ko_list.gz
-  #- wget ftp://ftp.genome.jp/pub/db/kofam/profiles.tar.gz -O $TRAVIS_BUILD_DIR/Tools/Kofam/db && tar -xvzf $TRAVIS_BUILD_DIR/Tools/Kofam/db/profiles.tar.gz
 
   - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3f
   - aria2c -x 16 -s 16 --dir=$TRAVIS_BUILD_DIR/Tools/Hmmscan/db/ ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/kegg_db/db_kofam.h3m
