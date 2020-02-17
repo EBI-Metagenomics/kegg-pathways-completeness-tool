@@ -246,10 +246,11 @@ if __name__ == "__main__":
         name_output = args.outname + '.summary.kegg'
 
         # COMMON INFO
+        using_graphs = pickle.load(open(args.graphs, 'rb'))
         name_output_summary = name_output + '_pathways.tsv'
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, False)
-        sort_out_pathways(graphs, edges, pathway_names, pathway_classes, '', file_out_summary)
+        sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, '', file_out_summary)
         file_out_summary.close()
 
         # BY CONTIGS
@@ -258,6 +259,7 @@ if __name__ == "__main__":
         set_headers(file_out_summary, True)
 
         for contig in dict_KO_by_contigs:
+            using_graphs = pickle.load(open(args.graphs, 'rb'))
             edges = dict_KO_by_contigs[contig]
-            sort_out_pathways(graphs, edges, pathway_names, pathway_classes, contig, file_out_summary)
+            sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, contig, file_out_summary)
         file_out_summary.close()
