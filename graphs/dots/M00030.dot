@@ -1,0 +1,15 @@
+digraph G {
+graph [label="M00030
+K01655 K17450 K01705 K05824 K00838 K00143 K00293 K00290",fontsize=20];
+node [shape=box,style=filled];
+edge [len=3,color=grey];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 6 7 8 }
+0 -> 2 [label="K01655 [1/8]"];
+2 -> 3 [label="K17450 [1/8]"];
+3 -> 4 [label="K01705 [1/8]"];
+4 -> 5 [label="K05824 [1/8]"];
+5 -> 6 [label="K00838 [1/8]"];
+6 -> 7 [label="K00143 [1/8]"];
+7 -> 8 [label="K00293 [1/8]"];
+8 -> 1 [label="K00290 [1/8]"];
+}

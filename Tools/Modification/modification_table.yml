@@ -1,4 +1,0 @@
-input_table:
-  class: File
-  path: /Users/kates/Desktop/prot/merged_hmmscan_625.tbl
-  #../Hmmscan/ERR2098411_hmmscan.tbl

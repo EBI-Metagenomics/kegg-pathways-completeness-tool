@@ -1,3 +1,0 @@
-Module_accession	% completeness	#matching_KO	list_matching_KO
-M00846	14.29	1	K01885
-M00121	10.0	1	K01885

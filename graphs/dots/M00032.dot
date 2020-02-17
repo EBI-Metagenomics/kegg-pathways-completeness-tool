@@ -1,0 +1,23 @@
+digraph G {
+graph [label="M00032
+(K00290 K00293,K14157) K14085 K00825 (K15791+K00658+K00382) K00252 (K01825,K01782,K07514,(K01692,K07515,K07511) K00022)",fontsize=20];
+node [shape=box,style=filled];
+edge [len=3,color=grey];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 6 7 8 9 10 }
+0 -> 3 [label="K00290 [1/12]"];
+0 -> 2 [label="K14157 [1/6]"];
+2 -> 4 [label="K14085 [1/6]"];
+3 -> 2 [label="K00293 [1/12]"];
+4 -> 5 [label="K00825 [1/6]"];
+5 -> 7 [label="K15791 [1/18]"];
+6 -> 9 [label="K00252 [1/6]"];
+7 -> 8 [label="K00658 [1/18]"];
+8 -> 6 [label="K00382 [1/18]"];
+9 -> 1 [label="K01825 [1/6]"];
+9 -> 1 [label="K01782 [1/6]"];
+9 -> 1 [label="K07514 [1/6]"];
+9 -> 10 [label="K01692 [1/12]"];
+9 -> 10 [label="K07515 [1/12]"];
+9 -> 10 [label="K07511 [1/12]"];
+10 -> 1 [label="K00022 [1/12]"];
+}

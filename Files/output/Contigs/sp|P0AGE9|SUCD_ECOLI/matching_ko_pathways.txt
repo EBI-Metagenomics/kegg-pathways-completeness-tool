@@ -1,6 +1,0 @@
-Module_accession	% completeness	#matching_KO	list_matching_KO
-M00011	10.0	1	K01902
-M00620	7.14	1	K01902
-M00009	6.25	1	K01902
-M00173	4.55	1	K01902
-M00374	3.85	1	K01902

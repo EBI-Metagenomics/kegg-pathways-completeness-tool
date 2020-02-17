@@ -1,3 +1,0 @@
-Module_accession	% completeness	pathway_name	pathway_class
-M00846	14.29	Siroheme biosynthesis, glutamate => siroheme	Pathway module; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
-M00121	10.0	Heme biosynthesis, plants and bacteria, glutamate => heme	Pathway module; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism

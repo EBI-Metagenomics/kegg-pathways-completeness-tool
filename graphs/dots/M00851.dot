@@ -1,0 +1,28 @@
+digraph G {
+graph [label="M00851
+(K18768,K18970,K19316,K22346,K18794,K19318,K18971,K18793,K19319,K19320,K19321,K19322,K18972,K19211,K18976,K21277,K18782,K18781,K18780,K19099,K19216)",fontsize=20];
+node [shape=box,style=filled];
+edge [len=3,color=grey];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 }
+0 -> 1 [label="K18768 [1]"];
+0 -> 1 [label="K18970 [1]"];
+0 -> 1 [label="K19316 [1]"];
+0 -> 1 [label="K22346 [1]"];
+0 -> 1 [label="K18794 [1]"];
+0 -> 1 [label="K19318 [1]"];
+0 -> 1 [label="K18971 [1]"];
+0 -> 1 [label="K18793 [1]"];
+0 -> 1 [label="K19319 [1]"];
+0 -> 1 [label="K19320 [1]"];
+0 -> 1 [label="K19321 [1]"];
+0 -> 1 [label="K19322 [1]"];
+0 -> 1 [label="K18972 [1]"];
+0 -> 1 [label="K19211 [1]"];
+0 -> 1 [label="K18976 [1]"];
+0 -> 1 [label="K21277 [1]"];
+0 -> 1 [label="K18782 [1]"];
+0 -> 1 [label="K18781 [1]"];
+0 -> 1 [label="K18780 [1]"];
+0 -> 1 [label="K19099 [1]"];
+0 -> 1 [label="K19216 [1]"];
+}

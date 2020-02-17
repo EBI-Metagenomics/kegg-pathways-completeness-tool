@@ -1,2 +1,0 @@
-Module_accession	% completeness	pathway_name	pathway_class
-M00567	2.5	Methanogenesis, CO2 => methane	Pathway module; Energy metabolism; Methane metabolism

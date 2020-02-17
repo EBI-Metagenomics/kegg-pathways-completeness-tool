@@ -1,7 +1,0 @@
-input_table:
-  class: File
-  path: /Users/kates/Desktop/CWL/KEGG/kegg-cwl/Tools/Hmmscan/example_hmmscan.tbl
-  # /Users/kates/Desktop/prot/diff_contigs.tbl  # complete db with many contigs
-  # /Users/kates/Desktop/prot/merged_complete_0.00001_625_1.tbl # on merged_complete db
-  # /Users/kates/Desktop/prot/merged_complete_0.00001_625.tbl # on merged db
-  #/Users/kates/Desktop/prot/merged_hmmscan_625.tbl

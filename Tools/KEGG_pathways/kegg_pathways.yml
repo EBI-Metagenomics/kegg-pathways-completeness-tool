@@ -1,5 +1,0 @@
-input_table:
-  class: File
-  path: /Users/kates/Desktop/CWL/KEGG/kegg-cwl/Workflow/union_ko_contigs.txt
-  #../../Workflow/merged_complete_0.00001_625_parsed.txt
-  #../Parsing_hmmscan/ERR2098411_hmmscan_tab_parsed.txt

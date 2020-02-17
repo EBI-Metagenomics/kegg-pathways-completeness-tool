@@ -1,7 +1,0 @@
-seqfile:
-  class: File
-  path: /Users/kates/Desktop/CWL/KEGG/kegg-cwl/Files/example.fasta
-
-#database:
-#  class: File
-#  path: /Users/kates/Desktop/kegg-cwl/Tools/Hmmscan/db/KO_eg_db

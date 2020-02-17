@@ -1,9 +1,0 @@
-Module_accession	% completeness	pathway_name	pathway_class
-M00846	14.29	Siroheme biosynthesis, glutamate => siroheme	Pathway module; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
-M00011	10.0	Citrate cycle, second carbon oxidation, 2-oxoglutarate => oxaloacetate	Pathway module; Carbohydrate metabolism; Central carbohydrate metabolism
-M00121	10.0	Heme biosynthesis, plants and bacteria, glutamate => heme	Pathway module; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
-M00620	7.14	Incomplete reductive citrate cycle, acetyl-CoA => oxoglutarate	Pathway module; Energy metabolism; Carbon fixation
-M00009	6.25	Citrate cycle (TCA cycle, Krebs cycle)	Pathway module; Carbohydrate metabolism; Central carbohydrate metabolism
-M00173	4.55	Reductive citrate cycle (Arnon-Buchanan cycle)	Pathway module; Energy metabolism; Carbon fixation
-M00374	3.85	Dicarboxylate-hydroxybutyrate cycle	Pathway module; Energy metabolism; Carbon fixation
-M00567	2.5	Methanogenesis, CO2 => methane	Pathway module; Energy metabolism; Methane metabolism
