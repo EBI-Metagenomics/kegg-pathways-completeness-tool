@@ -102,15 +102,13 @@ def finding_paths(G):
                 for cur_path in dict_nodes_paths[pred]:
                     new_path = cur_path+[node]
                     dict_nodes_paths[node].append(new_path)
-
     paths_nodes, paths_labels = [dict_nodes_paths[1], dict_of_paths_labels[1]]
     weights, new_weights = [dict_of_weights[1], dict_of_new_weights[1]]
     metrics = []
     for num in range(len(weights)):
         metrics.append(1. * new_weights[num]/weights[num])
-        #print(metrics[len(metrics)-1], paths_nodes[num], paths_labels[num])
     indexes_min = [index for index in range(len(metrics)) if metrics[index] == min(metrics)]
-    return paths_nodes, paths_labels, weights, new_weights, indexes_min
+    return paths_nodes, paths_labels, metrics, indexes_min
 
 
 def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathway):
@@ -123,7 +121,7 @@ def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathw
     :param edges: set of nodes
     :return: percentage [0:100]
     """
-    # set weights
+    # set weights_new as 0 for edges that are presented
     for edge in edges:
         if edge in dict_edges:
             nodes = dict_edges[edge]
@@ -137,38 +135,36 @@ def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathw
                             break
                 else:
                     index = 0
-                #if graph[start][finish][index]['weight'] == 0:  # UNnecessary node
-                #    graph[start][finish][index]['weight'] = 1
+                # if graph[start][finish][index]['weight'] == 0:  # UNnecessary node
+                #     graph[start][finish][index]['weight'] = 1
                 graph[start][finish][index]['weight_new'] = 0
 
     # find the best path(s)
-    paths_nodes, paths_labels, weights, new_weights, indexes_min = finding_paths(graph)
+    paths_nodes, paths_labels, metrics, indexes_min = finding_paths(graph)
+    """
+    metrics [N]: list of all sum_weight_new/sum_weight for all possible paths in graph
+    paths_nodes [N]: list of nodes that construct each path
+    paths_labels [N]: list of labels that construct each path
+    indexes_min [M<=N]: list of indexes that correspond to minimum value in metrict
+    """
 
-    percentage = round((1 - 1. * new_weights[num] / weights[num]) * 100, 2)
+    # take random path from minimal, for example first
+    # because all paths in indexes_min have the same percentage. That means there is no difference which one to output
+    num = indexes_min[0]
+    percentage = round((1 - 1. * metrics[num]) * 100, 2)
     if percentage > 0:
         matching_set = set()
         missing_set = set()
-        for num in indexes_min:
-            #print('==> Path' + str(paths_labels[num]))
-            new_labels = paths_labels[num]
 
-            missing_labels = set(new_labels).difference(set(edges))
-            missing_set = missing_set.union(missing_labels)
-            #print(name_pathway, unnecessary_nodes)
-            missing_set_necessary = missing_set.difference(set(unnecessary_nodes))
+        new_labels = paths_labels[num]
+        missing_labels = set(new_labels).difference(set(edges))
+        missing_set = missing_set.union(missing_labels)
+        missing_set_necessary = missing_set.difference(set(unnecessary_nodes))
 
-            existing_labels = set(new_labels).intersection(set(edges))
-            matching_set = matching_set.union(existing_labels)
+        existing_labels = set(new_labels).intersection(set(edges))
+        matching_set = matching_set.union(existing_labels)
 
-            #extra_labels = set(edges).difference(set(new_labels))
-            #print('Extra labels: ', extra_labels)
         return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
-
-    else:
-        return [None for _ in range(4)]
-        #print('PATHWAY: ' + name_pathway)
-        #print('Found ' + str(len(indexes_min)) + ' paths in PATHWAY ' + name_pathway)
-        #print('Percentage = ' + str(percentage))
 
 
 def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
@@ -180,8 +176,6 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
     :param contig_name == name of contig, or '' for full summary
     :return: -
     """
-    flag_not_empty = False
-
     dict_sort_by_percentage = {}
     for name_pathway in graphs:
         graph = graphs[name_pathway]
@@ -199,7 +193,6 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
     for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
         #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
         for name_pathway in dict_sort_by_percentage[percentage]:
-            #flag_not_empty = True
             matching_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][1])
             missing_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][2])
             if contig_name != '':
@@ -224,7 +217,6 @@ def set_headers(file_summary, contig):
     if contig:
         summary_header = 'contig\t' + summary_header
     file_summary.write(summary_header + '\n')
-
 
 if __name__ == "__main__":
 
