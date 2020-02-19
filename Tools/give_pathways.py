@@ -4,6 +4,7 @@ import argparse
 import sys
 import pickle
 import networkx as nx
+import copy
 
 
 def download_pathways(path_to_graphs, path_to_graphs_names, path_to_graphs_classes):
@@ -152,10 +153,8 @@ def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathw
     # because all paths in indexes_min have the same percentage. That means there is no difference which one to output
     num = indexes_min[0]
     percentage = round((1 - 1. * metrics[num]) * 100, 2)
+    matching_set, missing_set_necessary, missing_set = [set() for _ in range(3)]
     if percentage > 0:
-        matching_set = set()
-        missing_set = set()
-
         new_labels = paths_labels[num]
         missing_labels = set(new_labels).difference(set(edges))
         missing_set = missing_set.union(missing_labels)
@@ -163,8 +162,9 @@ def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathw
 
         existing_labels = set(new_labels).intersection(set(edges))
         matching_set = matching_set.union(existing_labels)
-
-        return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
+    else:
+        percentage = None
+    return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
 
 
 def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
@@ -212,11 +212,10 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
 def set_headers(file_summary, contig):
     summary_header = '\t'.join(['module_accession', 'completeness', 'pathway_name',
                                           'pathway_class', 'matching_ko', 'missing_ko'])
-    #matching_header = '\t'.join(['module_accession', 'completeness', 'number_matching_KO', 'list_matching_ko'])
-    #missing_header = '\t'.join(['module_accession', 'completeness', 'number_missing_KO', 'list_missing_ko'])
     if contig:
         summary_header = 'contig\t' + summary_header
     file_summary.write(summary_header + '\n')
+
 
 if __name__ == "__main__":
 
@@ -238,7 +237,7 @@ if __name__ == "__main__":
         name_output = args.outname + '.summary.kegg'
 
         # COMMON INFO
-        using_graphs = pickle.load(open(args.graphs, 'rb'))
+        using_graphs = copy.deepcopy(graphs)
         name_output_summary = name_output + '_pathways.tsv'
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, False)
@@ -249,9 +248,8 @@ if __name__ == "__main__":
         name_output_summary = name_output + '_contigs.tsv'
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, True)
-
         for contig in dict_KO_by_contigs:
-            using_graphs = pickle.load(open(args.graphs, 'rb'))
+            using_graphs = copy.deepcopy(graphs)
             edges = dict_KO_by_contigs[contig]
             sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, contig, file_out_summary)
         file_out_summary.close()
