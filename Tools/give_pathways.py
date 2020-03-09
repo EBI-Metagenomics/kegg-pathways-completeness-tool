@@ -168,7 +168,7 @@ def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathw
 
 
 def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
-                      contig_name, file_out_summary):
+                      contig_name, file_out_summary, weights_of_KOs, include_weights):
     """
     Function sorts out all pathways and prints info about pathway that percentage of intersection more than 0
     :param graphs: Dict of graphs
@@ -193,8 +193,23 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
     for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
         #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
         for name_pathway in dict_sort_by_percentage[percentage]:
-            matching_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][1])
-            missing_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][2])
+
+            if include_weights:
+                # matching
+                out_str = []
+                for KO in dict_sort_by_percentage[percentage][name_pathway][1]:
+                    record = KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')'
+                    out_str.append(record)
+                matching_current = ','.join(out_str)
+                # missing
+                out_str = []
+                for KO in dict_sort_by_percentage[percentage][name_pathway][2]:
+                    out_str.append(KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')')
+                missing_current = ','.join(out_str)
+            else:
+                matching_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][1])
+                missing_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][2])
+
             if contig_name != '':
                 out_name_pathway = '\t'.join([contig_name, name_pathway])
             else:
@@ -217,6 +232,22 @@ def set_headers(file_summary, contig):
     file_summary.write(summary_header + '\n')
 
 
+def get_weights_for_KOs(graphs):
+    dict_graphKO = {}
+    for name_pathway in graphs:
+        graph = graphs[name_pathway]
+        dict_graphKO[name_pathway] = {}
+
+        for start in graph[0]._adj:
+            for finish in graph[0]._adj[start]:
+                for num in graph[0]._adj[start][finish]:
+                    KO = graph[0]._adj[start][finish][num]['label']
+                    weight = round(graph[0]._adj[start][finish][num]['weight'], 2)
+                    dict_graphKO[name_pathway][KO] = weight
+    print('weights done')
+    return dict_graphKO
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Generates Graphs for each contig")
@@ -227,6 +258,8 @@ if __name__ == "__main__":
     parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=True)
 
     parser.add_argument("-o", "--outname", dest="outname", help="first part of ouput name", default="summary.kegg")
+    parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output", default=False)
+
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -241,7 +274,8 @@ if __name__ == "__main__":
         name_output_summary = name_output + '_pathways.tsv'
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, False)
-        sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, '', file_out_summary)
+        weights_of_KOs = get_weights_for_KOs(using_graphs)
+        sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, '', file_out_summary, weights_of_KOs, args.include_weights)
         file_out_summary.close()
 
         # BY CONTIGS
@@ -251,5 +285,5 @@ if __name__ == "__main__":
         for contig in dict_KO_by_contigs:
             using_graphs = copy.deepcopy(graphs)
             edges = dict_KO_by_contigs[contig]
-            sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, contig, file_out_summary)
+            sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, contig, file_out_summary, weights_of_KOs, args.include_weights)
         file_out_summary.close()
