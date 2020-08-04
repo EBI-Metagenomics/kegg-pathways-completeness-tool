@@ -4,10 +4,21 @@ import subprocess
 import argparse
 import sys
 
+
 list_class = "all_pathways_class.txt"
 list_name = "all_pathways_name.txt"
 list_paths = "all_pathways.txt"
 dop_file = "file.txt"
+
+
+def check_brackets(line):
+    positions1 = [1 for m in line if m == '(']
+    positions2 = [1 for m in line if m == ')']
+    if len(positions1) != len(positions2):
+        return False
+    else:
+        return True
+
 
 if __name__ == "__main__":
 
@@ -26,12 +37,13 @@ if __name__ == "__main__":
             with open(list_pathways, 'r') as file_in:
                 for line in file_in:
                     line = line.strip()
+                    print(line)
                     bashCommand = "echo {mo} >> {f}".format(mo=line, f=dop_file)
-                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True).wait()
 
                     bashCommand = "curl -s http://rest.kegg.jp/get/{mo} | " \
                               "grep '^NAME' | cut -c 13- >> {f}".format(mo=line, f=dop_file)
-                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True).wait()
             file_in.close()
             #  create final file
             with open(dop_file, 'r') as file_in, open(list_name, 'w') as file_name, open(list_pathways, 'r') as file_list:
@@ -46,12 +58,13 @@ if __name__ == "__main__":
             with open(list_pathways, 'r') as file_in:
                 for line in file_in:
                     line = line.strip()
+                    print(line)
                     bashCommand = "echo {mo} >> {f}".format(mo=line, f=dop_file)
-                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True).wait()
 
                     bashCommand = "curl -s http://rest.kegg.jp/get/{mo} | " \
                                   "grep '^CLASS' | cut -c 13- >> {f}".format(mo=line, f=dop_file)
-                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+                    subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True).wait()
             file_in.close()
             # create final file
             with open(dop_file, 'r') as file_in, open(list_name, 'w') as file_class, open(list_pathways, 'r') as file_list:
