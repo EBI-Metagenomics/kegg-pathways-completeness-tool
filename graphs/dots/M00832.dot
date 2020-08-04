@@ -1,8 +1,12 @@
 digraph G {
 graph [label="M00832
-K21183",fontsize=20];
+(K21183) (K21227 K21228 K16431 K21185)",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
-{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 }
-0 -> 1 [label="K21183 [1]"];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 }
+0 -> 2 [label="K21183 [1/2]"];
+2 -> 3 [label="K21227 [1/8]"];
+3 -> 4 [label="K21228 [1/8]"];
+4 -> 5 [label="K16431 [1/8]"];
+5 -> 1 [label="K21185 [1/8]"];
 }

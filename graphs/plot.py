@@ -13,7 +13,7 @@ def plot_graph(name):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generates Graphs for each contig")
-    parser.add_argument("-l", "--pathways", dest="list_pathways", help="all_pathways.txt", required=True)
+    parser.add_argument("-l", "--pathways", dest="list_pathways", help="list_pathways.txt", required=True)
 
     if len(sys.argv) == 1:
         parser.print_help()

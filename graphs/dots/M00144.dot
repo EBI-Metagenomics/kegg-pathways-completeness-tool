@@ -1,6 +1,6 @@
 digraph G {
 graph [label="M00144
-K00330+(K00331+K00332+K00333,K00331+K13378,K13380)+K00334+K00335+K00336+K00337+K00338+K00339+K00340+(K00341+K00342,K15863)+K00343",fontsize=20];
+K00330+(K00331+K00332+K00333,K00331+K13378,K13380)+K00334+K00335+K00336+K00337+K00338+K00339+K00340+(K00341+K00342)+K00343",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
 {node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 }
@@ -19,7 +19,6 @@ edge [len=3,color=grey];
 11 -> 12 [label="K00339 [1/11]"];
 12 -> 13 [label="K00340 [1/11]"];
 13 -> 15 [label="K00341 [1/22]"];
-13 -> 14 [label="K15863 [1/11]"];
 14 -> 1 [label="K00343 [1/11]"];
 15 -> 14 [label="K00342 [1/22]"];
 }
