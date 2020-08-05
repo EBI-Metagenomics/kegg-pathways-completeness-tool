@@ -104,21 +104,18 @@ if __name__ == "__main__":
                         collection = []
                     elif 'DEFINITION' in line:
                         cur_def = line.split('DEFINITION')[1].lstrip().rstrip()
-                        collection.append(cur_def)
+                        collection.append('(' + cur_def + ')')
                     elif 'ORTHOLOGY' in line:
                         if len(collection) > 1:
                             weird_mo.append(cur_mo)
                             print(cur_mo, len(collection))
-                            cur_line = ''
-                            for item in collection:
-                                cur_line += '(' + item + ') '
-                            cur_line = cur_line.rstrip()
+                            cur_line = ','.join(collection).rstrip()
                             print(cur_line)
                             list_MOs[cur_mo] = cur_line
                         else:
                             list_MOs[cur_mo] = collection[0]
                     else:
-                        cur_def = line.lstrip().rstrip()
+                        cur_def = '(' + line.lstrip().rstrip() + ')'
                         collection.append(cur_def)
             print(len(weird_mo))
 
