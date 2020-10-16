@@ -40,7 +40,7 @@ def get_list_items(input_path):
     """
     Function creates a list of items that were found by HMMScan
     :param input_path: file with contigs and their KEGG annotations
-    :return: list of items
+    :return: list of unique KOs, { contig_name1: [KO1, KO2,...], contig_name2: [...], ...}
     """
     items = []
     dict_KO_by_contigs = {}
@@ -56,6 +56,12 @@ def get_list_items(input_path):
 
 
 def intersection(lst1, lst2):
+    """
+    Intersection of two sets
+    :param lst1: first input list
+    :param lst2: second input list
+    :return: intersection in list format
+    """
     return list(set(lst1) & set(lst2))
 
 
@@ -112,15 +118,16 @@ def finding_paths(G):
     return paths_nodes, paths_labels, metrics, indexes_min
 
 
-def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges, name_pathway):
+def calculate_percentage(graph, dict_edges, unnecessary_nodes, edges):
     """
     Function returns the percentage of matches of set of edges and graph.
     Example:
             Pathway: A B C. Edges: A -> percentage = 33
     :param graph: input graph of pathway
     :param dict_edges: dict of edges in graph by labels
+    :param unnecessary_nodes: list of all nodes
     :param edges: set of nodes
-    :return: percentage [0:100]
+    :return: percentage [0:100], number of paths, matching_list, missing_list of KOs
     """
     # set weights_new as 0 for edges that are presented
     for edge in edges:
@@ -182,12 +189,12 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
         if intersection(graph[1], edges) == []:
             continue
         else:
-            percentage, kol_paths, matching_labels, missing_labels = \
-                calculate_percentage(graph[0], graph[1], graph[2], edges, name_pathway)
+            percentage, number_paths, matching_labels, missing_labels = \
+                calculate_percentage(graph=graph[0], dict_edges=graph[1], unnecessary_nodes=graph[2], edges=edges)
             if percentage != None:
                 if percentage not in dict_sort_by_percentage:
                     dict_sort_by_percentage[percentage] = {}
-                dict_sort_by_percentage[percentage][name_pathway] = [kol_paths, matching_labels, missing_labels]
+                dict_sort_by_percentage[percentage][name_pathway] = [number_paths, matching_labels, missing_labels]
 
     # output Summary
     for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
@@ -225,6 +232,12 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
 
 
 def set_headers(file_summary, contig):
+    """
+    Function adds header to output result tables.
+    :param file_summary: output file
+    :param contig: flag true (running for every contig) or false (running in general mode)
+    :return: -
+    """
     summary_header = '\t'.join(['module_accession', 'completeness', 'pathway_name',
                                           'pathway_class', 'matching_ko', 'missing_ko'])
     if contig:
@@ -233,6 +246,12 @@ def set_headers(file_summary, contig):
 
 
 def get_weights_for_KOs(graphs):
+    """
+    For each graph functions returns dict of weights by KOs,
+    ex. dict_graphKO: { pathway1: {KO1: weight1, KO2: weight2}, pathway2: {...} }
+    :param graphs: dict of graphs
+    :return: dict of pathways with weights for each KO
+    """
     dict_graphKO = {}
     for name_pathway in graphs:
         graph = graphs[name_pathway]
@@ -250,7 +269,7 @@ def get_weights_for_KOs(graphs):
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description="Generates Graphs for each contig")
+    parser = argparse.ArgumentParser(description="Script generates Graphs for each contig")
     parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=True)
 
     parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=True)
