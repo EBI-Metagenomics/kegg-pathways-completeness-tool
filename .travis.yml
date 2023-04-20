@@ -25,7 +25,7 @@ install:
     ; wait
 
 script:
-  - cwltest --test $TRAVIS_BUILD_DIR/Tests/test_pipeline.yml --timeout 7200 --tool cwltool
+  - cwltest --test $TRAVIS_BUILD_DIR/tests/test_pipeline.yml --timeout 7200 --tool cwltool
 
 deploy:
   provider: script

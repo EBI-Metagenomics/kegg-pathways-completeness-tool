@@ -11,10 +11,7 @@ pip3 install networkx
 
 # Downloading KEGG help files to generate pathways
 RUN mkdir help_files
-RUN wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/graphs.pkl.gz -P help_files && gzip -d help_files/graphs.pkl.gz
-RUN wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_names.txt.gz -P help_files && gzip -d help_files/all_pathways_names.txt.gz
-RUN wget ftp://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/all_pathways_class.txt.gz -P help_files && gzip -d help_files/all_pathways_class.txt.gz
-
+COPY pathways_data/* help_files/
 # Add .py scripts
 RUN mkdir /tools
 ADD Tools/give_pathways.py /tools/give_pathways.py

@@ -5,7 +5,7 @@ import subprocess
 dop_file = 'check_list.txt'
 count = 1
 list_all_modules = []
-with open('list_pathways.txt', 'r') as list_modules:
+with open('../../pathways/list_pathways.txt', 'r') as list_modules:
     for mo in list_modules:
         number = int(mo.strip().split('M')[1])
         if count != number:
