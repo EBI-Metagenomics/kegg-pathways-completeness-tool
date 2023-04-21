@@ -39,7 +39,32 @@ docker \
 ## Update existing pathways data
 If you need to update existing pathways data and graphs follow this [instruction]().
 
+## Theory: 
+### Pathways to graphs 
+KEGG provides a representation of each pathway as specific expression of KOs.
+ex: **A ((B,C) D,E) (A+F)** \
+where A, B, C, D, E, F are KOs \
+**space** means AND \
+**comma** means OR \
+**plus** means essential component \
+**minus** means optional component
+Each expression was recursively [converted](bin/make_graphs/make_graphs.py) into directed graph using NetworkX. First node has number 0 and the last number 1. Each edge corresponds to KO. 
+
+![ex1.png](src%2Fimg%2Fex1.png)
+
+### Completeness
+In order to count pathways completeness each graph was made weighted. Default weight of each edge is 0. \
+Let's imagine there is a set of KOs predicted by annotation. If KO is presented in pathway - corresponding edge receives weight = 1 (or 0 if edge is optional or another value if edge is connected by +). \
+After that [script](bin/give_pathways.py) searches the most weighted path from node 0 to node 1 (`graph_weight`). 
+`max_graph_weight` calculated in assumption all KOs are presented. \
+``
+completeness = graph_weight/max_graph_weight * 100%
+``
+
+![ex2.png](src%2Fimg%2Fex2.png)
+
+
 ## Create plots of pathways
-There are [plots](graphs/png) for every pathway.
+There are [plots](graphs/png) for every pathway as graph representation.
 If you need to re-generate them follow [instruction](graphs/README.md).
 
