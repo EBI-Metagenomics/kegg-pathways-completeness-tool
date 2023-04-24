@@ -13,5 +13,5 @@ mkdir -p ${OUTDIR}
 export OUTPUT=${OUTDIR}/result
 
 echo "pathways" && \
-python3 /tools/give_pathways.py -i ${INPUT} -g /help_files/graphs.pkl -c /help_files/all_pathways_class.txt -n /help_files/all_pathways_names.txt -o ${OUTPUT} && \
+python3 /tools/give_pathways.py -i ${INPUT} -g /pathways_data/graphs.pkl -c /pathways_data/all_pathways_class.txt -n /pathways_data/all_pathways_names.txt -o ${OUTPUT} && \
 echo "finish"

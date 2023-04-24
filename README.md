@@ -8,18 +8,27 @@ These files are available on EBI MGnify FTP and can be downloaded using [downloa
 This script requires hmmsearch table run on KEGG profiles with annotated sequences.
 If you don't have this table follow [instructions](src/README.md) how to generate it.
 
-#### Run using env 
+#### Run using conda 
 ```commandline
-export INPUT="path to hmm-result table"
-export OUTPUT=result
+conda create --name kegg-env
+conda activate kegg-env
+
 pip3 install requirements.txt
-python3 Tools/give_pathways.py \
+
+export INPUT='tests/test_data/test-input/test'  # path to hmm-result table
+export OUTPUT='test-out'  # prefix for output
+
+python3 bin/give_pathways.py \
   -i ${INPUT} \
-  -g help_files/graphs.pkl \
-  -c help_files/all_pathways_class.txt \
-  -n help_files/all_pathways_names.txt \
+  -g graphs/graphs.pkl \
+  -c pathways_data/all_pathways_class.txt \
+  -n pathways_data/all_pathways_names.txt \
   -o ${OUTPUT}
 ```
+Check example of output [here](tests/test_data/test-output).
+kegg_pathways.tsv has pathways completeness calculated by all KOs in given input file \
+kegg_contigs.tsv has pathways completeness calculated per each contig (first column contains name of contig).
+
 
 #### Run using docker
 Results can be fould be in folder "results". Final annotated pathways would be in folder "results/pathways
@@ -31,7 +40,7 @@ docker \
     --workdir=/results \
     --volume=`pwd`/results:/results:rw \
     --volume=${INPUT}:/files/input_table.tsv:ro \
-    kegg_pathways:latest \
+    quay.io/microbiome-informatics/kegg-completeness:v1 \
     /tools/run_pathways.sh \
     -i /files/input_table.tsv
 ```
