@@ -1,11 +1,14 @@
 # kegg-pathways-completeness tool
 
-The tool counts completeness of each KEGG pathway for protein sequence. 
+The tool counts completeness of each KEGG pathway for protein sequence. \
+
+Please read **Theory** section with detailed explanation in the bottom of README. \
+
 Current version of pathways saved into **[pathways_data](pathways_data)** and graphs were [pre-built](graphs/README.md) and [saved](graphs/graphs.pkl) into pkl format. 
 These files are available on EBI MGnify FTP and can be downloaded using [download.sh](download.sh)
 
 ## Calculate pathways completeness
-This script requires hmmsearch table run on KEGG profiles with annotated sequences.
+This script requires [hmmsearch table](tests/test_data/test-input/test) run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/test_data/test-input/test_list.txt) of KOs.
 If you don't have this table follow [instructions](src/README.md) how to generate it.
 
 #### Run using conda 
@@ -18,11 +21,14 @@ pip3 install requirements.txt
 export INPUT='tests/test_data/test-input/test'  # path to hmm-result table
 export OUTPUT='test-out'  # prefix for output
 
+# hmmtable as input
 python3 bin/give_pathways.py \
   -i ${INPUT} \
-  -g graphs/graphs.pkl \
-  -c pathways_data/all_pathways_class.txt \
-  -n pathways_data/all_pathways_names.txt \
+  -o ${OUTPUT}
+
+# KOs list as input
+python3 bin/give_pathways.py \
+  -l 'tests/test_data/test-input/test_list.txt' \
   -o ${OUTPUT}
 ```
 Check example of output [here](tests/test_data/test-output).
@@ -44,6 +50,19 @@ docker \
     /tools/run_pathways.sh \
     -i /files/input_table.tsv
 ```
+
+## Plot pathways completeness
+**NOTE**: please install graphviz \
+If you want to see what edges were chosen to complete the graph of completeness you can plot them adding **_--plot-pathways_** argument. \
+You can also run plotting script separately: \
+
+```commandline
+python3 bin/plot_completeness_graphs.py -i output_with_pathways_completeness
+```
+
+Example,
+![M00050.png](tests%2Ftest_data%2Ftest-output%2Fplots%2FM00050.png)
+more examples for test data [here](tests/test_data/test-output/plots)
 
 ## Update existing pathways data
 If you need to update existing pathways data and graphs follow this [instruction]().
@@ -73,7 +92,7 @@ completeness = graph_weight/max_graph_weight * 100%
 ![ex2.png](src%2Fimg%2Fex2.png)
 
 
-## Create plots of pathways
+## Create plots for all pathways
 There are [plots](graphs/png) for every pathway as graph representation.
 If you need to re-generate them follow [instruction](graphs/README.md).
 

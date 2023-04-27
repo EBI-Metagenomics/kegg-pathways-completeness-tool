@@ -4,10 +4,15 @@ import argparse
 import sys
 import pickle
 import networkx as nx
+import logging
 import copy
+import os
 
+from plot_completeness_graphs import plot_graphs, parse_input
 
-def download_pathways(path_to_graphs, path_to_graphs_names, path_to_graphs_classes):
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+
+def load_pathways_data(path_to_graphs, path_to_graphs_names, path_to_graphs_classes):
     """
     Function loads dict of graph that was saved by docker container to graphs.pickle
     :param outdir: path to file with graphs
@@ -15,43 +20,76 @@ def download_pathways(path_to_graphs, path_to_graphs_names, path_to_graphs_class
              dict of names of pathways
              dict of classes of pathways
     """
-    #path_to_graphs = os.path.join(outdir, "graphs.pkl")
-    graph_file = open(path_to_graphs, 'rb')
-    graphs = pickle.load(graph_file)
+    if os.path.exists(path_to_graphs):
+        graph_file = open(path_to_graphs, 'rb')
+        graphs = pickle.load(graph_file)
+    else:
+        logging.error(f'No graphs file found in {path_to_graphs}')
+        sys.exit(1)
 
     pathway_names = {}
-    #path_to_graphs_names = os.path.join(outdir, "pathways/all_pathways_names.txt")
-    with open(path_to_graphs_names, 'r') as file_names:
-        for line in file_names:
-            line = line.strip().split(':')
-            pathway_names[line[0]] = line[1]
+    if os.path.exists(path_to_graphs_names):
+        with open(path_to_graphs_names, 'r') as file_names:
+            for line in file_names:
+                line = line.strip().split(':')
+                pathway_names[line[0]] = line[1]
+    else:
+        logging.error(f'No pathways_names file found in {path_to_graphs_names}')
+        sys.exit(1)
 
     pathway_classes = {}
-    #path_to_graphs_classes = os.path.join(outdir, "pathways/all_pathways_class.txt")
-    with open(path_to_graphs_classes, 'r') as file_classes:
-        for line in file_classes:
-            line = line.strip().split(':')
-            pathway_classes[line[0]] = line[1]
-
+    if os.path.exists(path_to_graphs_classes):
+        with open(path_to_graphs_classes, 'r') as file_classes:
+            for line in file_classes:
+                line = line.strip().split(':')
+                pathway_classes[line[0]] = line[1]
+    else:
+        logging.error(f'No pathways_names file found in {path_to_graphs_classes}')
+        sys.exit(1)
+    logging.info('Graphs data loaded')
     return graphs, pathway_names, pathway_classes
 
 
-def get_list_items(input_path):
+def get_list_items(input_path, input_list):
     """
     Function creates a list of items that were found by HMMScan
     :param input_path: file with contigs and their KEGG annotations
     :return: list of unique KOs, { contig_name1: [KO1, KO2,...], contig_name2: [...], ...}
     """
+    if not input_path and not input_list:
+        logging.error("No necessary input table provided")
+        sys.exit(1)
     items = []
     dict_KO_by_contigs = {}
-    with open(input_path, 'r') as file_in:
-        for line in file_in:
-            line = line.strip().split('\t')
-            name = line[0]
-            if name not in dict_KO_by_contigs:
-                dict_KO_by_contigs[name] = []
-            dict_KO_by_contigs[name] += line[1:]
-            items += line[1:]
+    if input_path:
+        if os.path.exists(input_path):
+            with open(input_path, 'r') as file_in:
+                for line in file_in:
+                    line = line.strip().split('\t')
+                    name = line[0]
+                    if name not in dict_KO_by_contigs:
+                        dict_KO_by_contigs[name] = []
+                    dict_KO_by_contigs[name] += line[1:]
+                    items += line[1:]
+        else:
+            logging.error(f"No file {input_path}")
+            sys.exit(1)
+    elif input_list:
+        if os.path.exists(input_list):
+            name = os.path.basename(input_list)
+            with open(input_list, 'r') as f:
+                list_kos = f.read().strip().split(',')
+                if len(list_kos) == 0:
+                    ligging.error(f"No KOs found in {input_list}")
+                else:
+                    dict_KO_by_contigs[name] = list_kos
+                    items = list_kos
+        else:
+            logging.error(f"No file {input_list}")
+            sys.exit(1)
+    else:
+        logging.error("No KOs provided")
+    logging.info('KOs loaded')
     return list(set(items)), dict_KO_by_contigs
 
 
@@ -200,7 +238,6 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
     for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
         #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
         for name_pathway in dict_sort_by_percentage[percentage]:
-
             if include_weights:
                 # matching
                 out_str = []
@@ -263,32 +300,40 @@ def get_weights_for_KOs(graphs):
                     KO = graph[0]._adj[start][finish][num]['label']
                     weight = round(graph[0]._adj[start][finish][num]['weight'], 2)
                     dict_graphKO[name_pathway][KO] = weight
-    print('weights done')
+    logging.info('weights done')
     return dict_graphKO
 
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Script generates Graphs for each contig")
-    parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=True)
+    parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=False)
+    parser.add_argument("-l", "--input-list", dest="input_list", help="File with KOs comma separated", required=False)
 
-    parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=True)
-    parser.add_argument("-n", "--names", dest="names", help="Pathway names", required=True)
-    parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=True)
+    parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False,
+                        default="graphs/graphs.pkl")
+    parser.add_argument("-a", "--pathways", dest="pathways", help="Pathways list", required=False,
+                        default="pathways_data/all_pathways.txt")
+    parser.add_argument("-n", "--names", dest="names", help="Pathway names", required=False,
+                        default="pathways_data/all_pathways_names.txt")
+    parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=False,
+                        default="pathways_data/all_pathways_class.txt")
 
     parser.add_argument("-o", "--outname", dest="outname", help="first part of ouput name", default="summary.kegg")
-    parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output", default=False)
-
+    parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output", action='store_true')
+    parser.add_argument("-p", "--plot-pathways", dest="plot_pathways", help="Create images with pathways completeness",
+                        action='store_true')
 
     if len(sys.argv) == 1:
         parser.print_help()
     else:
         args = parser.parse_args()
-        graphs, pathway_names, pathway_classes = download_pathways(args.graphs, args.names, args.classes)
-        edges, dict_KO_by_contigs = get_list_items(args.input_file)
+        graphs, pathway_names, pathway_classes = load_pathways_data(args.graphs, args.names, args.classes)
+        edges, dict_KO_by_contigs = get_list_items(args.input_file, args.input_list)
         name_output = args.outname + '.summary.kegg'
 
         # COMMON INFO
+        logging.info('Generating completeness for whole list of KOs...')
         using_graphs = copy.deepcopy(graphs)
         name_output_summary = name_output + '_pathways.tsv'
         file_out_summary = open(name_output_summary, "wt")
@@ -296,8 +341,25 @@ if __name__ == "__main__":
         weights_of_KOs = get_weights_for_KOs(using_graphs)
         sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, '', file_out_summary, weights_of_KOs, args.include_weights)
         file_out_summary.close()
+        logging.info('...Done')
+
+        if args.plot_pathways:
+            logging.info('Plot pathways images')
+            pathways_schema = {}
+            if os.path.exists(args.pathways):
+                with open(args.pathways, 'r') as pathways_file:
+                    for line in pathways_file:
+                        fields = line.strip().split(':')
+                        pathways_schema[fields[0]] = fields[1]
+            else:
+                logging.error('No pathways file found')
+            pathways = parse_input(input_file=name_output_summary)
+            print(pathways)
+            plot_graphs(pathways, graphs, pathways_schema)
+            logging.info('...Done. Results are in pathways_plots folder')
 
         # BY CONTIGS
+        logging.info('Generating completeness for contigs...')
         name_output_summary = name_output + '_contigs.tsv'
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, True)
@@ -306,3 +368,5 @@ if __name__ == "__main__":
             edges = dict_KO_by_contigs[contig]
             sort_out_pathways(using_graphs, edges, pathway_names, pathway_classes, contig, file_out_summary, weights_of_KOs, args.include_weights)
         file_out_summary.close()
+        logging.info('...Done')
+        logging.info('Bye!')
