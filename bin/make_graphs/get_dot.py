@@ -6,6 +6,8 @@ import networkx as nx
 
 
 def create_dot(graph, name, pathway):
+    if not os.path.exists('dots'):
+        os.mkdir('dots')
     with open(os.path.join('dots', name + '.dot'), 'w') as dot_file:
         dot_file.write("digraph G {\n"
                        "graph [label=\"" + name + "\n" + pathway + "\",fontsize=20];\n"

@@ -25,3 +25,5 @@ rm list_modules.txt list_pathways.txt all_pathways_kos.txt all_pathways_class_ko
 ```
 
 NOTE: make sure that each pathway has only KO-s but not other MO-s
+
+Re-generate `graphs.pkl` using [instructions](../graphs/README.md)

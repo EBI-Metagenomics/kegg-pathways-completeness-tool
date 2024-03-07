@@ -1,6 +1,6 @@
 digraph G {
 graph [label="M00345
-(((K08093,K13812) K08094),K13831) (K00850,K16370) K01624",fontsize=20];
+(((K08093,K13812) K08094),K13831) (K00850,K16370,K21071) K01624",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
 {node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 }
@@ -9,6 +9,7 @@ edge [len=3,color=grey];
 0 -> 2 [label="K13831 [1/3]"];
 2 -> 4 [label="K00850 [1/3]"];
 2 -> 4 [label="K16370 [1/3]"];
+2 -> 4 [label="K21071 [1/3]"];
 3 -> 2 [label="K08094 [1/6]"];
 4 -> 1 [label="K01624 [1/3]"];
 }
