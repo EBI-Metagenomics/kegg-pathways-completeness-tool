@@ -56,7 +56,7 @@ docker \
     --workdir=/results \
     --volume=`pwd`/results:/results:rw \
     --volume=${INPUT}:/files/input_table.tsv:ro \
-    quay.io/microbiome-informatics/kegg-completeness:v1 \
+    quay.io/microbiome-informatics/kegg-completeness:v1.1 \
     /tools/run_pathways.sh \
     -i /files/input_table.tsv
 ```
