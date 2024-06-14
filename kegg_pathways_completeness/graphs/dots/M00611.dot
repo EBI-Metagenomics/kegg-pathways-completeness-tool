@@ -1,0 +1,10 @@
+digraph G {
+graph [label="M00611
+(M00161,M00163) M00165",fontsize=20];
+node [shape=box,style=filled];
+edge [len=3,color=grey];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 }
+0 -> 2 [label="M00161 [1/2]"];
+0 -> 2 [label="M00163 [1/2]"];
+2 -> 1 [label="M00165 [1/2]"];
+}

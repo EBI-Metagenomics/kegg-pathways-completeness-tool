@@ -1,0 +1,11 @@
+digraph G {
+graph [label="M00674
+K12673 K12674 K12675 K12676",fontsize=20];
+node [shape=box,style=filled];
+edge [len=3,color=grey];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 }
+0 -> 2 [label="K12673 [1/4]"];
+2 -> 3 [label="K12674 [1/4]"];
+3 -> 4 [label="K12675 [1/4]"];
+4 -> 1 [label="K12676 [1/4]"];
+}
