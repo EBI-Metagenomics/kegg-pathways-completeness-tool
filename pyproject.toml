@@ -46,10 +46,7 @@ dev = [
     "black==24.4.2",
 ]
 test = [
-    "pytest==7.4.0",
+    "pytest==8.2.2",
+    "pytest-workflow==2.1.0",
     "pytest-md==0.2.0",
-    "pytest-workflow==2.0.1",
-    "biopython==1.83",
-    "networkx==3.3",
-    "graphviz==0.20.3"
 ]
