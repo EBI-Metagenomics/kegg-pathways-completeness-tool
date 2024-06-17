@@ -8,7 +8,7 @@ import logging
 import copy
 import os
 
-from kegg_pathways_completeness.bin.plot_completeness_graphs import plot_graphs, parse_input
+from plot_completeness_graphs import plot_graphs, parse_input
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
@@ -238,21 +238,23 @@ def sort_out_pathways(graphs, edges, pathway_names, pathway_classes,
     for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
         #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
         for name_pathway in dict_sort_by_percentage[percentage]:
+            matching_list = sorted(dict_sort_by_percentage[percentage][name_pathway][1])
+            missing_list = sorted(dict_sort_by_percentage[percentage][name_pathway][2])
             if include_weights:
                 # matching
                 out_str = []
-                for KO in dict_sort_by_percentage[percentage][name_pathway][1]:
+                for KO in matching_list:
                     record = KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')'
                     out_str.append(record)
                 matching_current = ','.join(out_str)
                 # missing
                 out_str = []
-                for KO in dict_sort_by_percentage[percentage][name_pathway][2]:
+                for KO in missing_list:
                     out_str.append(KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')')
                 missing_current = ','.join(out_str)
             else:
-                matching_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][1])
-                missing_current = ','.join(dict_sort_by_percentage[percentage][name_pathway][2])
+                matching_current = ','.join(matching_list)
+                missing_current = ','.join(missing_list)
 
             if contig_name != '':
                 out_name_pathway = '\t'.join([contig_name, name_pathway])

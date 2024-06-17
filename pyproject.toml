@@ -1,10 +1,10 @@
 [project]
 name = "kegg-pathways-completeness"
-version = "0.0.1"
+version = "1.0.1"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [
-  { name = "MGnify team", email = "metagenomics-help@ebi.ac.uk" },
+  { name = "Ekaterina Sakharova", email = "kates@ebi.ac.uk" },
 ]
 keywords = ["bioinformatics", "pipelines", "metagenomics", "kegg"]
 description = "The tool counts completeness of each KEGG pathway for protein sequences."

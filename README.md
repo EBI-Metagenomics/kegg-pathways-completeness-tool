@@ -15,10 +15,8 @@ Previous updates:
 
 If you need to update existing pathways data and graphs follow this [instruction](pathways_data/README.md).
 
-These files are also available on EBI MGnify FTP and can be downloaded using [download.sh](download.sh)
-
 ## Calculate pathways completeness
-This script requires [hmmsearch table](tests/test_data/test-input/test) run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/test_data/test-input/test_list.txt) of KOs.
+This script requires [hmmsearch table](tests/fixtures/give_pathways/test) run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/fixtures/give_pathways/test_list.txt) of KOs.
 If you don't have this table follow [instructions](src/README.md) how to generate it first.
 
 #### Run using conda 

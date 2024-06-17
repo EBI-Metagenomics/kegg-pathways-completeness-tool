@@ -1,0 +1,9 @@
+- name: give_pathways using pathways list
+  tags:
+    - give_pathways
+  command: python3 kegg_pathways_completeness/bin/give_pathways.py --outname test_pathway --input tests/fixtures/give_pathways/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  files:
+    - path: "test_pathway.summary.kegg_contigs.tsv"
+      md5sum: c03c602508e2c51bc74e7d47e952e7b3
+    - path: "test_pathway.summary.kegg_pathways.tsv"
+      md5sum: e6538c3dd00b1ffb015780a90003f81d
