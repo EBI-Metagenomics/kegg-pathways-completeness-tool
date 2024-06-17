@@ -41,7 +41,12 @@ generate_hmmtable = "kegg_pathways_completeness.bin.generate_hmmtable.hmmscan_ta
 parsing_hmmscan = "kegg_pathways_completeness.bin.generate_hmmtable.parsing_hmmscan:main"
 
 [project.optional-dependencies]
-tests = [
+dev = [
+    "pre-commit==3.6.0",
+    "black==24.4.2",
+]
+
+test = [
     "pytest==7.4.0",
     "pytest-md==0.2.0",
     "pytest-workflow==2.0.1",
