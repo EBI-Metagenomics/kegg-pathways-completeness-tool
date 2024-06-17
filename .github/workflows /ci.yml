@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master, dev, pypi]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Miniconda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: kegg_completeness
+
+    - name: Install reqs
+      shell: bash -el {0}
+      run: pip install -r requirements.txt
+
+    - name: Run pytest
+      shell: bash -el {0}
+      run: pytest
