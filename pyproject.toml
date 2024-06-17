@@ -1,6 +1,5 @@
 [project]
-name = "kegg-pathways-completeness"
-version = "1.0.1"
+name = "kegg_pathways_completeness"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [
@@ -21,18 +20,23 @@ dependencies = [
     "graphviz==0.20.3"
 ]
 
+[tool.setuptools.dynamic]
+version = {attr = "kegg_pathways_completeness.__version__"}
+
 [build-system]
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["kegg_pathways_completeness.bin", 
-            "kegg_pathways_completeness.bin.generate_hmmtable",
-            "kegg_pathways_completeness.bin.make_graphs",
-            "kegg_pathways_completeness.bin.update_pathways_data",
-            "kegg_pathways_completeness.graphs",
-            "kegg_pathways_completeness.pathways_data"
-            ]
+packages = [
+    "kegg_pathways_completeness",
+    "kegg_pathways_completeness.bin", 
+    "kegg_pathways_completeness.bin.generate_hmmtable",
+    "kegg_pathways_completeness.bin.make_graphs",
+    "kegg_pathways_completeness.bin.update_pathways_data",
+    "kegg_pathways_completeness.graphs",
+    "kegg_pathways_completeness.pathways_data"
+]
 
 [project.scripts]
 give_pathways = "kegg_pathways_completeness.bin.give_pathways:main"
