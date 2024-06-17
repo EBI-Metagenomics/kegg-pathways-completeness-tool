@@ -1,5 +1,6 @@
 [project]
-name = "kegg_pathways_completeness"
+name = "kegg-pathways-completeness"
+version = "1.0.1"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [
@@ -19,9 +20,6 @@ dependencies = [
     "networkx==3.3",
     "graphviz==0.20.3"
 ]
-
-[tool.setuptools.dynamic]
-version = {attr = "kegg_pathways_completeness.__version__"}
 
 [build-system]
 requires = ["setuptools>=61.0"]
