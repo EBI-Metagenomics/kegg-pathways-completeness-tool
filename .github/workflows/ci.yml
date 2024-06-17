@@ -24,7 +24,7 @@ jobs:
 
     - name: Install dependencies
       shell: bash -el {0}
-      run: pip install .[test]
+      run: pip install --upgrade pip && pip install .[test]
 
     - name: Run pytest
       shell: bash -el {0}
