@@ -26,6 +26,10 @@ jobs:
       shell: bash -el {0}
       run: pip install -r requirements.txt
 
+    - name: Install additional packages
+      shell: bash -el {0}
+      run: pip install .[test]
+
     - name: Run pytest
       shell: bash -el {0}
       run: pytest
