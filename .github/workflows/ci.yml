@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [master]
+    branches: [master, pypi]
   pull_request:
-    branches: [master, dev, pypi]
+    branches: [master, dev]
 
 jobs:
   test:
@@ -22,11 +22,7 @@ jobs:
       with:
         activate-environment: kegg_completeness
 
-    - name: Install reqs
-      shell: bash -el {0}
-      run: pip install -r requirements.txt
-
-    - name: Install additional packages
+    - name: Install dependencies packages
       shell: bash -el {0}
       run: pip install .[test]
 
