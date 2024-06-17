@@ -9,23 +9,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ["3.9", "3.10", "3.11"]
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Miniconda
-      uses: conda-incubator/setup-miniconda@v3
+    - uses: actions/setup-python@v5
       with:
-        activate-environment: kegg_completeness
+        python-version: |
+            3.9
+            3.10
+            3.11
 
     - name: Install dependencies
-      shell: bash -el {0}
-      run: pip install --upgrade pip && pip install .[test]
+      run: pip install .[test]
 
     - name: Run pytest
-      shell: bash -el {0}
       run: pytest
