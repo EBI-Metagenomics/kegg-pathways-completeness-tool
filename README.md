@@ -1,33 +1,43 @@
 # kegg-pathways-completeness tool
 
-The tool counts completeness of each KEGG pathway for protein sequence. 
+The tool counts completeness of each KEGG modules pathway for protein sequence. 
 
 Please read **Theory** section with detailed explanation in the bottom of README. 
 
-Current version of pathways saved into **[pathways_data](pathways_data)** and graphs were [pre-built](graphs/README.md) and [saved](graphs/updates/pipeline-v5/graphs.pkl) into pkl format. 
+**Required files:**
+- list of KEGG modules in KOs notation (example, [all_pathways.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways.txt))
+- list of classes of KEGG modules (example, [all_pathways_class.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_class.txt))
+- list of names of KEGG modules (example, [all_pathways_names.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_names.txt))
+- graphs constructed from each module (example, [graphs.pkl](kegg_pathways_completeness%2Fgraphs%2Fgraphs.pkl))
 
-`*Pipeline-v5 data has 394 modules.*`
+This repository has a set of required files pre-generated. Current version of data was saved into **[pathways_data](kegg_pathways_completeness/pathways_data)** and graphs were [saved](kegg_pathways_completeness/graphs/updates/pipeline-v5/graphs.pkl) into pkl format. 
 
-`Updated (from 07/03/2024) data in this repo has 481 modules.`
+_**About graphs:**_
+In order to generate graphs all pathways were parsed with networkx library. Every graph is presented in .png format in [png](kegg_pathways_completeness/graphs/png) and .dot format in [dots](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be checked easily with .png image.
+Instructions how to build graphs.pkl are [provided](kegg_pathways_completeness/graphs/README.md). 
 
-Previous updates:
+**Latest update:**
+- 07/03/2024  has 481 KEGG modules.
+
+**Previous [updates](kegg_pathways_completeness/graphs/updates):**
 - 27/04/2023 has 475 modules.
+- MGnify [pipeline-v5](https://github.com/EBI-Metagenomics/pipeline-v5) uses 394 modules.
 
-If you need to update existing pathways data and graphs follow this [instruction](pathways_data/README.md).
+If you need to update existing pathways data and graphs follow this [instruction](kegg_pathways_completeness/pathways_data/README.md).
 
 ## Calculate pathways completeness
-This script requires [hmmsearch table](tests/fixtures/give_pathways/test) run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/fixtures/give_pathways/test_list.txt) of KOs.
-If you don't have this table follow [instructions](src/README.md) how to generate it first.
+This script requires [hmmsearch table](tests/fixtures/give_pathways/test_pathway.txt) that was run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/fixtures/give_pathways/test_kos.txt) of KOs.
+If you don't have this table follow [instructions](src/README.md) how to generate it.
 
 #### Run using conda 
 ```commandline
 conda create --name kegg-env
 conda activate kegg-env
 
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 
-export INPUT='tests/test_data/test-input/test'  # path to hmm-result table
-export OUTPUT='test-out'  # prefix for output
+export INPUT="tests/fixtures/give_pathways/test_pathway.txt"  # path to hmm-result table
+export OUTPUT="test-out"  # prefix for output
 
 # hmmtable as input
 python3 bin/give_pathways.py \
@@ -36,12 +46,12 @@ python3 bin/give_pathways.py \
 
 # KOs list as input
 python3 bin/give_pathways.py \
-  -l 'tests/test_data/test-input/test_list.txt' \
+  -l 'tests/test_data/test-input/test_kos.txt' \
   -o ${OUTPUT}
 ```
-Check example of output [here](tests/test_data/test-output). \
-`kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
-`kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
+Check example of output [here](tests/fixtures/give_pathways/output). \
+`*kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
+`*kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
 
 
 #### Run using docker
@@ -72,9 +82,9 @@ python3 bin/plot_completeness_graphs.py -i output_with_pathways_completeness
 
 Example,
 
-![M00050.png](tests%2Ftest_data%2Ftest-output%2Fplots%2FM00050.png)
+![M00050.png](tests/fixtures/give_pathways/output/pathways_plots/M00050.png)
 
-more examples for test data [here](tests/test_data/test-output/plots)
+more examples for test data [here](tests/fixtures/give_pathways/output/pathways_plots)
 
 
 ## Theory: 
@@ -86,23 +96,18 @@ where A, B, C, D, E, F are KOs \
 **comma** means OR \
 **plus** means essential component \
 **minus** means optional component
-Each expression was recursively [converted](bin/make_graphs/make_graphs.py) into directed graph using NetworkX. First node has number 0 and the last number 1. Each edge corresponds to KO. 
+Each expression was recursively [converted](kegg_pathways_completeness/bin/make_graphs/make_graphs.py) into directed graph using NetworkX. First node has number 0 and the last number 1. Each edge corresponds to KO. 
 
 ![ex1.png](src%2Fimg%2Fex1.png)
 
 ### Completeness
 In order to count pathways completeness each graph was made weighted. Default weight of each edge is 0. \
 Let's imagine there is a set of KOs predicted by annotation. If KO is presented in pathway - corresponding edge receives weight = 1 (or 0 if edge is optional or another value if edge is connected by +). \
-After that [script](bin/give_pathways.py) searches the most weighted path from node 0 to node 1 (`graph_weight`). 
+After that [script](kegg_pathways_completeness/bin/give_pathways.py) searches the most weighted path from node 0 to node 1 (`graph_weight`). 
 `max_graph_weight` calculated in assumption all KOs are presented. \
 ``
 completeness = graph_weight/max_graph_weight * 100%
 ``
 
 ![ex2.png](src%2Fimg%2Fex2.png)
-
-
-## Create plots for all pathways
-There are [plots](graphs/png) for every pathway as graph representation.
-If you need to re-generate them follow [instruction](graphs/README.md).
 
