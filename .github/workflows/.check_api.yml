@@ -1,0 +1,59 @@
+name: Check KEGG API for new records
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'  # Runs at midnight on the 1st of every month
+
+jobs:
+  check-api:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+
+    - name: Check API for new records
+      run: python kegg_pathways_completeness/bin/update_pathways_data/get_modules_list.py
+
+    - name: Check if new_modules.txt exists
+      id: check-file
+      run: |
+        if [[ -f "new_modules.txt" ]]; then
+          echo "file_exists=true" >> $GITHUB_ENV
+        else
+          echo "file_exists=false" >> $GITHUB_ENV
+        fi
+
+    - name: Get current date
+      id: date
+      run: echo "BRANCH_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+    - name: Commit and push changes
+      if: env.file_exists == 'true'
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config pull.rebase false
+        git pull origin master --allow-unrelated-histories
+        git checkout -b changes-${{ env.BRANCH_DATE }}
+        git add new_modules.txt
+        git commit -m "Add new_modules.txt with updates"
+        git push origin HEAD:changes-${{ env.BRANCH_DATE }}
+
+    - name: Create Pull Request
+      if: env.file_exists == 'true'
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        branch: changes
+        title: "Automated update of new_modules.txt"
+        body: "This PR was created automatically by the GitHub Action."
