@@ -1,2 +1,0 @@
-networkx==3.1
-graphviz==0.20.1
