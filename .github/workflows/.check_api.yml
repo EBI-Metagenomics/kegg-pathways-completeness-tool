@@ -48,7 +48,7 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config pull.rebase false
-        git pull origin master --allow-unrelated-histories
+        git pull origin pypi --allow-unrelated-histories
         git checkout -b changes-${{ env.BRANCH_DATE }}
         git add new_modules.txt
         git commit -m "Add new_modules.txt with updates"
