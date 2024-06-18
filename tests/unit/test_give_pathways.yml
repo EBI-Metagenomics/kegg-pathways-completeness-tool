@@ -11,12 +11,12 @@
 - name: give_pathways using KOs list
   tags:
     - give_pathways
-  command: python3 kegg_pathways_completeness/bin/give_pathways.py --outname test_kos --input tests/fixtures/give_pathways/test_kos.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  command: python3 kegg_pathways_completeness/bin/give_pathways.py --outname test_kos --input-list tests/fixtures/give_pathways/test_kos.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
     - path: "test_kos.summary.kegg_contigs.tsv"
-      md5sum: 8cfa36f55c1f4be7249c52ea77b0de07
+      md5sum: d18735f58cc8593bd7abc0270e1af891
     - path: "test_kos.summary.kegg_pathways.tsv"
-      md5sum: 9d9859bfbbfac5b1708b6472f7eb74bb
+      md5sum: e6538c3dd00b1ffb015780a90003f81d
 
 - name: give_pathways using pathway with weights in output
   tags:
