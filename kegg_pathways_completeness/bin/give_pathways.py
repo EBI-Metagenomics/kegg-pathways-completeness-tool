@@ -311,13 +311,13 @@ def main():
     parser.add_argument("-l", "--input-list", dest="input_list", help="File with KOs comma separated", required=False)
 
     parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False,
-                        default="graphs/graphs.pkl")
+                        default="kegg_pathways_completeness/graphs/graphs.pkl")
     parser.add_argument("-a", "--pathways", dest="pathways", help="Pathways list", required=False,
-                        default="pathways_data/all_pathways.txt")
+                        default="kegg_pathways_completeness/pathways_data/all_pathways.txt")
     parser.add_argument("-n", "--names", dest="names", help="Pathway names", required=False,
-                        default="pathways_data/all_pathways_names.txt")
+                        default="kegg_pathways_completeness/pathways_data/all_pathways_names.txt")
     parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=False,
-                        default="pathways_data/all_pathways_class.txt")
+                        default="kegg_pathways_completeness/pathways_data/all_pathways_class.txt")
 
     parser.add_argument("-o", "--outname", dest="outname", help="first part of ouput name", default="summary.kegg")
     parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output", action='store_true')

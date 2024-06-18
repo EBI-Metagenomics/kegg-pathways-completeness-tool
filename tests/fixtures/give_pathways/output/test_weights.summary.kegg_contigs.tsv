@@ -1,0 +1,4 @@
+contig	module_accession	completeness	pathway_name	pathway_class	matching_ko	missing_ko
+P1	M00050	50.0	Guanine ribonucleotide biosynthesis, IMP => GDP,GTP	Pathway modules; Nucleotide metabolism; Purine metabolism	K00942(0.25),K01951(0.25)	K00088(0.25),K00940(0.25)
+P1	M00002	20.0	Glycolysis, core module involving three-carbon compounds	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00873(0.2)	K00134(0.1),K00927(0.1),K01689(0.2),K01803(0.2),K01834(0.2)
+P1	M00001	11.11	Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00873(0.11)	K00134(0.06),K00844(0.11),K00850(0.11),K00927(0.06),K01623(0.11),K01689(0.11),K01803(0.11),K01810(0.11),K01834(0.11)
