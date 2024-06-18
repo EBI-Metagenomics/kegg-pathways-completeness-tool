@@ -55,3 +55,16 @@ jobs:
         branch: changes
         title: "Automated update of new_modules.txt"
         body: "This PR was created automatically by the GitHub Action."
+
+    - name: Send Email Notification
+      if: env.file_exists == 'true'
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.example.com
+        server_port: 587
+        username: ${{ secrets.SMTP_USERNAME }}
+        password: ${{ secrets.SMTP_PASSWORD }}
+        subject: "New Pull Request Created"
+        body: "A new pull request has been created by the GitHub Actions workflow."
+        to: "kates@ebi.ac.uk"
+        from: "GitHub Notifications <no-reply@github.com>"
