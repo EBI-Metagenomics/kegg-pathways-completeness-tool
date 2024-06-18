@@ -56,15 +56,11 @@ jobs:
         title: "Automated update of new_modules.txt"
         body: "This PR was created automatically by the GitHub Action."
 
-    - name: Send Email Notification
+    - name: Assign Reviewer
       if: env.file_exists == 'true'
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.example.com
-        server_port: 587
-        username: ${{ secrets.SMTP_USERNAME }}
-        password: ${{ secrets.SMTP_PASSWORD }}
-        subject: "New Pull Request Created"
-        body: "A new pull request has been created by the GitHub Actions workflow."
-        to: "kates@ebi.ac.uk"
-        from: "GitHub Notifications <no-reply@github.com>"
+      run: |
+        PR_NUMBER=$(jq .pull_request.number <<< ${{ steps.create-pr.outputs.pull-request-data }})
+        curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+             -H "Accept: application/vnd.github.v3+json" \
+             https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers \
+             -d '{"reviewers":["KateSakharova"]}'
