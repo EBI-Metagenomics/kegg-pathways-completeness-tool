@@ -66,7 +66,7 @@ jobs:
     - name: Assign Reviewer
       if: env.file_exists == 'true'
       run: |
-        PR_NUMBER=$(jq .pull_request.number <<< ${{ steps.create-pr.outputs.pull-request-data }})
+        PR_NUMBER=$(echo '${{ steps.create-pr.outputs.pull-request-data }}' | jq -r '.pull_request.number')
         curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
              -H "Accept: application/vnd.github.v3+json" \
              https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUMBER/requested_reviewers \
