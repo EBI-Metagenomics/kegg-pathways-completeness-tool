@@ -45,7 +45,7 @@ jobs:
     steps:
       - name: Check if package version exists on TestPyPI
         run: |
-          PACKAGE_NAME=<your-package-name>
+          PACKAGE_NAME=kegg-pathways-completeness
           VERSION=$(python setup.py --version)
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://test.pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/json)
           if [ $RESPONSE -eq 200 ]; then
