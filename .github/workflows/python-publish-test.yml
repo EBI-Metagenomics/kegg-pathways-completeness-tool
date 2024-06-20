@@ -46,7 +46,7 @@ jobs:
       - name: Check if package version exists on TestPyPI
         run: |
           PACKAGE_NAME=kegg-pathways-completeness
-          VERSION=$(grep 'version' pyproject.toml | cut -d"\"" -f2)
+          VERSION="1.0.1"
           RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" https://test.pypi.org/pypi/${PACKAGE_NAME}/${VERSION}/#history)
           if [ $RESPONSE -eq 200 ]; then
             echo "Package version already exists on TestPyPI."
