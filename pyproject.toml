@@ -8,7 +8,7 @@ authors = [
 ]
 keywords = ["bioinformatics", "pipelines", "metagenomics", "kegg"]
 description = "The tool counts completeness of each KEGG pathway for protein sequences."
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
