@@ -8,7 +8,7 @@ import logging
 import copy
 import os
 
-from plot_completeness_graphs import plot_graphs, parse_input
+from kegg_pathways_completeness.bin.plot_completeness_graphs import plot_graphs, parse_input
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
