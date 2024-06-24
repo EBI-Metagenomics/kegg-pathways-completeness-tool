@@ -1,3 +1,9 @@
+# Updates:
+
+**Previous [updates](kegg_pathways_completeness/graphs/updates):**
+- 27/04/2023 has 475 modules.
+- MGnify [pipeline-v5](https://github.com/EBI-Metagenomics/pipeline-v5) uses 394 modules.
+
 # How to generate graphs 
 
 ```commandline

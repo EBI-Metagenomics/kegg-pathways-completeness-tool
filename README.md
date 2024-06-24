@@ -4,57 +4,82 @@ The tool counts completeness of each KEGG modules pathway for protein sequence.
 
 Please read **Theory** section with detailed explanation in the bottom of README. 
 
-**Required files:**
-- list of KEGG modules in KOs notation (example, [all_pathways.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways.txt))
-- list of classes of KEGG modules (example, [all_pathways_class.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_class.txt))
-- list of names of KEGG modules (example, [all_pathways_names.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_names.txt))
-- graphs constructed from each module (example, [graphs.pkl](kegg_pathways_completeness%2Fgraphs%2Fgraphs.pkl))
 
-This repository has a set of required files pre-generated. Current version of data was saved into **[pathways_data](kegg_pathways_completeness/pathways_data)** and graphs were [saved](kegg_pathways_completeness/graphs/updates/pipeline-v5/graphs.pkl) into pkl format. 
 
-_**About graphs:**_
+## Calculate pathways completeness
+
+Current version of tool has 481 KEGG modules updated 07/03/2024. 
+If you need to manually update existing pathways and graphs or generate data for not existing pathway - follow this [instruction](kegg_pathways_completeness/pathways_data/README.md).
+
+### Input arguments description
+
+**Required arguments:** 
+
+_interchangeable arguments:_
+- input table (`-i`/`--input`): hmmsearch table ([example](tests/fixtures/give_pathways/test_pathway.txt)) that was run on KEGG profiles with annotated sequences (preferable). If you don't have this table follow [instructions](src/README.md) how to generate it.
+- file with KOs list (`-l`/`--input-list`): comma separated file with list of KOs ([example](tests/fixtures/give_pathways/test_kos.txt)).
+
+_pathways arguments (all required):_
+
+This repository has a set of required files pre-generated. Current version of data was saved into **[pathways_data](kegg_pathways_completeness/pathways_data)**. 
+
+- list of KEGG modules in KOs notation (`-a`/`--pathways`) (latest [all_pathways.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways.txt))
+- list of classes of KEGG modules (`-c`/`--classes`) (latest [all_pathways_class.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_class.txt))
+- list of names of KEGG modules (`-n`/`--names`) (latest [all_pathways_names.txt](kegg_pathways_completeness%2Fpathways_data%2Fall_pathways_names.txt))
+
+_graphs:_
+
 In order to generate graphs all pathways were parsed with networkx library. Every graph is presented in .png format in [png](kegg_pathways_completeness/graphs/png) and .dot format in [dots](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be checked easily with .png image.
 Instructions how to build graphs.pkl are [provided](kegg_pathways_completeness/graphs/README.md). 
 
-**Latest update:**
-- 07/03/2024  has 481 KEGG modules.
+- graphs constructed from each module (`-g`/`--graphs`) (latest [graphs.pkl](kegg_pathways_completeness%2Fgraphs%2Fgraphs.pkl))
 
-**Previous [updates](kegg_pathways_completeness/graphs/updates):**
-- 27/04/2023 has 475 modules.
-- MGnify [pipeline-v5](https://github.com/EBI-Metagenomics/pipeline-v5) uses 394 modules.
+**Optional arguments:**
 
-If you need to update existing pathways data and graphs follow this [instruction](kegg_pathways_completeness/pathways_data/README.md).
+- output prefix (`-o`/`--outname`): prefix for output tables (`-o test_kos` in [example](tests/fixtures/give_pathways/output/test_kos.summary.kegg_contigs.tsv))
+- add weights information to output files (`-w`/`--include-weights`). Output table will have a weight of each KO edge in pathway graph, example K00942(0.25) means that KO has a 0.25 importance in given pathway. Example of [output](tests/fixtures/give_pathways/output/test_weights.summary.kegg_pathways.tsv)
+- plot presented pathways (`p`/`--plot-pathways`): PNG contains a schematic representation of pathway. Presented KOs marked with Red edges. Example [M00001](tests/fixtures/give_pathways/output/pathways_plots/M00001.png)
 
-## Calculate pathways completeness
-This script requires [hmmsearch table](tests/fixtures/give_pathways/test_pathway.txt) that was run on KEGG profiles with annotated sequences (preferable) **OR** [file with list](tests/fixtures/give_pathways/test_kos.txt) of KOs.
-If you don't have this table follow [instructions](src/README.md) how to generate it.
+### Example of output
 
-#### Run using conda 
+Check example of output [here](tests/fixtures/give_pathways/output). 
+- `*kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
+- `*kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
+- `pathways_plots` example of plots and graphs generated with `--plot-pathways` argument. 
+- `*weights*.tsv` example of output generated with `--include-weights` argument
+
+## Installation
+That tool was published in Pypi and Bioconda:
+#### using Pip
+```commandline
+pip install kegg-pathways-completeness
+```
+
+## Run
+```
+give_pathways -l {INPUT_LIST}
+```
+
+#### Install from source using venv/conda env
 ```commandline
 conda create --name kegg-env
 conda activate kegg-env
 
 pip3 install -r requirements.txt
 
-export INPUT="tests/fixtures/give_pathways/test_pathway.txt"  # path to hmm-result table
-export OUTPUT="test-out"  # prefix for output
-
+# Run
 # hmmtable as input
-python3 bin/give_pathways.py \
-  -i ${INPUT} \
-  -o ${OUTPUT}
+python3 kegg_pathways_completeness/bin/give_pathways.py \
+  -i 'tests/fixtures/give_pathways/test_pathway.txt' \
+  -o test_pathway
 
 # KOs list as input
-python3 bin/give_pathways.py \
-  -l 'tests/test_data/test-input/test_kos.txt' \
-  -o ${OUTPUT}
+python3 kegg_pathways_completeness/bin/give_pathways.py \
+  -l 'tests/fixtures/give_pathways/test_kos.txt' \
+  -o test_list_kos
 ```
-Check example of output [here](tests/fixtures/give_pathways/output). \
-`*kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
-`*kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
 
-
-#### Run using docker
+#### Run using docker 
 Results can be found in folder `results`. Final annotated pathways would be in folder `results/pathways`
 ```commandline
 export INPUT="path to hmm-result table"
@@ -70,14 +95,10 @@ docker \
 ```
 
 ## Plot pathways completeness
-**NOTE**: please install graphviz \
-If you want to see what edges were chosen to complete the graph of completeness you can plot them adding **_--plot-pathways_** argument. \
-```commandline
-python3 bin/give_pathways.py -i ${INPUT} -o ${OUTPUT} --plot-pathways
-```
+**NOTE**: please make sure you have [**graphviz**](https://graphviz.org/) installed \
 You can also run plotting script separately:
 ```commandline
-python3 bin/plot_completeness_graphs.py -i output_with_pathways_completeness
+python3 kegg_pathways_completeness/bin/plot_completeness_graphs.py -i output_with_pathways_completeness
 ```
 
 Example,
