@@ -11,6 +11,14 @@ Please read **Theory** section with detailed explanation in the bottom of README
 Current version of tool has 481 KEGG modules updated 07/03/2024. 
 If you need to manually update existing pathways and graphs or generate data for not existing pathway - follow this [instruction](kegg_pathways_completeness/pathways_data/README.md).
 
+### Example of output
+
+Check example of output [here](tests/fixtures/give_pathways/output). 
+- `*kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
+- `*kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
+- `pathways_plots` example of plots and graphs generated with `--plot-pathways` argument. 
+- `*weights*.tsv` example of output generated with `--include-weights` argument
+
 ### Input arguments description
 
 **Required arguments:** 
@@ -39,14 +47,6 @@ Instructions how to build graphs.pkl are [provided](kegg_pathways_completeness/g
 - output prefix (`-o`/`--outname`): prefix for output tables (`-o test_kos` in [example](tests/fixtures/give_pathways/output/test_kos.summary.kegg_contigs.tsv))
 - add weights information to output files (`-w`/`--include-weights`). Output table will have a weight of each KO edge in pathway graph, example K00942(0.25) means that KO has a 0.25 importance in given pathway. Example of [output](tests/fixtures/give_pathways/output/test_weights.summary.kegg_pathways.tsv)
 - plot presented pathways (`p`/`--plot-pathways`): PNG contains a schematic representation of pathway. Presented KOs marked with Red edges. Example [M00001](tests/fixtures/give_pathways/output/pathways_plots/M00001.png)
-
-### Example of output
-
-Check example of output [here](tests/fixtures/give_pathways/output). 
-- `*kegg_pathways.tsv` has pathways completeness calculated by all KOs in given input file \
-- `*kegg_contigs.tsv` has pathways completeness calculated per each contig (first column contains name of contig).
-- `pathways_plots` example of plots and graphs generated with `--plot-pathways` argument. 
-- `*weights*.tsv` example of output generated with `--include-weights` argument
 
 ## Installation
 That tool was published in Pypi and Bioconda:
