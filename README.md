@@ -78,7 +78,7 @@ This repository contains a set of required, pre-generated files. These can be fo
 
 _graphs:_
 
-In order to generate graphs all pathways were parsed with the NetworkX library. Every graph is presented in .png format in [png](kegg_pathways_completeness/graphs/png) and .dot format in [dots](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be checked easily with the .png image.
+In order to generate graphs all pathways were parsed with the NetworkX library. The graph for every module is shown in .png format in [png](kegg_pathways_completeness/graphs/png) and .dot format in [dots](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be easily checked with the .png image.
 Instructions on how to build graphs.pkl are [provided](kegg_pathways_completeness/graphs/README.md). 
 
 - graphs constructed from each module (`-g`/`--graphs`) (latest [graphs.pkl](kegg_pathways_completeness%2Fgraphs%2Fgraphs.pkl))
