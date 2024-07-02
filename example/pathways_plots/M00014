@@ -1,0 +1,55 @@
+// K00012 ((K12447 K16190),(K00699 (K01195,K14756))) K00002 K13247 -- K03331 (K05351,K00008) K00854
+digraph M00014 {
+	0
+	2
+	0 -> 2 [label="K00012 
+ [1/8]" color=black]
+	2
+	4
+	2 -> 4 [label="K12447 
+ [1/16]" color=black]
+	2
+	5
+	2 -> 5 [label="K00699 
+ [1/16]" color=black]
+	3
+	6
+	3 -> 6 [label="K00002 
+ [1/8]" color=red]
+	4
+	3
+	4 -> 3 [label="K16190 
+ [1/16]" color=black]
+	5
+	3
+	5 -> 3 [label="K01195 
+ [1/16]" color=black]
+	5
+	3
+	5 -> 3 [label="K14756 
+ [1/16]" color=black]
+	6
+	7
+	6 -> 7 [label="K13247 
+ [1/8]" color=black]
+	7
+	8
+	7 -> 8 [label="K00000 
+ [0]" color=black]
+	8
+	9
+	8 -> 9 [label="K03331 
+ [1/8]" color=black]
+	9
+	10
+	9 -> 10 [label="K05351 
+ [1/8]" color=black]
+	9
+	10
+	9 -> 10 [label="K00008 
+ [1/8]" color=black]
+	10
+	1
+	10 -> 1 [label="K00854 
+ [1/8]" color=black]
+}

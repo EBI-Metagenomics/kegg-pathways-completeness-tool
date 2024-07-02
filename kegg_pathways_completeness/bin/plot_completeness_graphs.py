@@ -51,8 +51,9 @@ def create_dot(name, presented, graph, pathways_schema):
 
         label = edges._adjdict[from_node][to_node][number]['label']
         weight = edges._adjdict[from_node][to_node][number]['weight']
-        if 1/weight > max_weight:
-            max_weight = int(1/weight)
+        if weight > 0:
+            if 1/weight > max_weight:
+                max_weight = int(1/weight)
         if weight == 1 or weight == 0:
             weight_str = str(weight)
         else:

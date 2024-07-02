@@ -7,6 +7,7 @@ import networkx as nx
 import logging
 import copy
 import os
+from importlib.resources import files
 
 from kegg_pathways_completeness.bin.plot_completeness_graphs import plot_graphs, parse_input
 
@@ -80,7 +81,7 @@ def get_list_items(input_path, input_list):
             with open(input_list, 'r') as f:
                 list_kos = f.read().strip().split(',')
                 if len(list_kos) == 0:
-                    ligging.error(f"No KOs found in {input_list}")
+                    logging.error(f"No KOs found in {input_list}")
                 else:
                     dict_KO_by_contigs[name] = list_kos
                     items = list_kos
@@ -306,18 +307,24 @@ def get_weights_for_KOs(graphs):
     return dict_graphKO
 
 def main():
-    parser = argparse.ArgumentParser(description="Script generates Graphs for each contig")
-    parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=False)
-    parser.add_argument("-l", "--input-list", dest="input_list", help="File with KOs comma separated", required=False)
+    default_graphs_path = files('kegg_pathways_completeness.graphs').joinpath('graphs.pkl')
+    default_pathways_path = files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways.txt')
+    default_pathways_names_path = files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_names.txt')
+    default_pathways_class_path = files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_class.txt')
+
+    parser = argparse.ArgumentParser(description="Script generates modules pathways completeness by given set of KOs")
+    input_args = parser.add_mutually_exclusive_group(required=True)
+    input_args.add_argument("-i", "--input", dest="input_file", help="Each line = pathway")
+    input_args.add_argument("-l", "--input-list", dest="input_list", help="File with KOs comma separated")
 
     parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False,
-                        default="kegg_pathways_completeness/graphs/graphs.pkl")
+                        default=default_graphs_path)
     parser.add_argument("-a", "--pathways", dest="pathways", help="Pathways list", required=False,
-                        default="kegg_pathways_completeness/pathways_data/all_pathways.txt")
+                        default=default_pathways_path)
     parser.add_argument("-n", "--names", dest="names", help="Pathway names", required=False,
-                        default="kegg_pathways_completeness/pathways_data/all_pathways_names.txt")
+                        default=default_pathways_names_path)
     parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=False,
-                        default="kegg_pathways_completeness/pathways_data/all_pathways_class.txt")
+                        default=default_pathways_class_path)
 
     parser.add_argument("-o", "--outname", dest="outname", help="first part of ouput name", default="summary.kegg")
     parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output", action='store_true')
