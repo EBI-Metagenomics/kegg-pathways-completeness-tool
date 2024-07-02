@@ -47,4 +47,5 @@ if __name__ == "__main__":
             for line in list_pathways:
                 line = line.strip()
                 name, pathway = line.split(':')
+                print(name)
                 create_dot(graphs[name], name, pathway)
