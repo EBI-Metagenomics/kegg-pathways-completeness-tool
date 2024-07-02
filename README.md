@@ -12,7 +12,7 @@ or
 #### Output example
 
 - `*.summary.kegg_pathways.tsv` ([example](example/example_hmmscan.summary.kegg_pathways.tsv)) contains module pathways completeness calculated for all KOs in the given input file.
-- `*.summary.kegg_contigs.tsv` ([example](example/example_hmmscan.summary.kegg_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig).
+- `*.summary.kegg_contigs.tsv` ([example](example/example_hmmscan.summary.kegg_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig) if contig annotation were provided with `-i`.
 
 Optional:
 - `pathways_plots/` ([example](example/pathways_plots)) folder containing PNG representation and graphs generated with `--plot-pathways` argument. 
