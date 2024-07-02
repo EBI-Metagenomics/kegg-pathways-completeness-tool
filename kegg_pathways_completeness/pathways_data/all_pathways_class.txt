@@ -479,3 +479,4 @@ M00974:Pathway modules; Amino acid metabolism; Serine and threonine metabolism
 M00975:Pathway modules; Amino acid metabolism; Serine and threonine metabolism
 M00976:Pathway modules; Lipid metabolism; Sterol biosynthesis
 M00977:Pathway modules; Lipid metabolism; Sterol biosynthesis
+M00978:Pathway modules; Amino acid metabolism; Arginine and proline metabolism

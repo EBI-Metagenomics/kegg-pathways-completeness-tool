@@ -479,3 +479,4 @@ M00974:Betaine metabolism, animals, betaine => glycine
 M00975:Betaine degradation, bacteria, betaine => pyruvate
 M00976:C19-Steroid hormone biosynthesis, pregnenolone => testosterone => dihydrotestosterone
 M00977:C19-Steroid hormone biosynthesis (androgen backdoor pathway), pregnenolone => androsterone => dihydrotestosterone
+M00977:Ornithine-ammonia cycle
