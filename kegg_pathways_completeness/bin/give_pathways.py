@@ -307,6 +307,7 @@ def get_weights_for_KOs(graphs):
     return dict_graphKO
 
 def main():
+
     default_graphs_path = files('kegg_pathways_completeness.graphs').joinpath('graphs.pkl')
     default_pathways_path = files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways.txt')
     default_pathways_names_path = files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_names.txt')
