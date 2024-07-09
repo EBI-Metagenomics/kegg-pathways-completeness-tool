@@ -21,7 +21,8 @@ Optional:
 Check more examples of different output files [here](tests/fixtures/give_pathways/output).
 
 ## Installation
-This tool was published in Pypi and Bioconda:
+This tool was published in Pypi and Bioconda. \
+Docker container is available on DockerHub and Quay.
 
 #### Install with pip
 ```commandline
@@ -31,6 +32,10 @@ pip install kegg-pathways-completeness
 #### Install with bioconda
 Follow [bioconda instructions](https://bioconda.github.io/recipes/kegg-pathways-completeness/README.html#package-package%20&#x27;kegg-pathways-completeness&#x27;)
 
+#### Docker 
+```
+docker pull quay.io/biocontainers/kegg-pathways-completeness
+```
 
 #### Install from source using venv/conda env (not the best option)
 ```commandline
@@ -47,39 +52,14 @@ pip3 install -r requirements.txt
 ```
 # for list of KOs
 give_pathways -l {INPUT_LIST}
+# test example:
+# give_pathways -l 'tests/fixtures/give_pathways/test_kos.txt' -o test_list_kos
 
 # per contig annotation with KOs
 give_pathways -i {INPUT_FILE}
+# test example:
+# give_pathways.py -i 'tests/fixtures/give_pathways/test_pathway.txt' -o test_pathway
 ```
-
-#### Run with test examples
-```comandline
-# hmmtable as input
-python3 kegg_pathways_completeness/bin/give_pathways.py \
-  -i 'tests/fixtures/give_pathways/test_pathway.txt' \
-  -o test_pathway
-
-# KOs list as input
-python3 kegg_pathways_completeness/bin/give_pathways.py \
-  -l 'tests/fixtures/give_pathways/test_kos.txt' \
-  -o test_list_kos
-```
-
-#### Run using docker 
-Results can be found in folder `results`. Final annotated pathways are generated in `results/pathways`
-```commandline
-export INPUT="path to hmm-result table"
-docker \
-    run \
-    -i \
-    --workdir=/results \
-    --volume=`pwd`/results:/results:rw \
-    --volume=${INPUT}:/files/input_table.tsv:ro \
-    quay.io/microbiome-informatics/kegg-completeness:v1.1 \
-    /tools/run_pathways.sh \
-    -i /files/input_table.tsv
-```
-
 
 ## Input arguments description
 
