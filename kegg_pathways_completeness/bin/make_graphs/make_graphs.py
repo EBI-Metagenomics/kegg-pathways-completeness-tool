@@ -1,10 +1,21 @@
 import os
 import numpy as np
 import argparse
+import logging
 import sys
 import pdb
 import pickle
 import networkx as nx
+import time
+
+
+def setup_logging(verbose):
+    # Configure logging
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format='%(asctime)s %(levelname)s - %(message)s'
+    )
+
 
 def set_order_separators(dict_levels):
     """
@@ -229,13 +240,15 @@ def pathways_processing(input_file, outdir):
     :param input_file: input file with pathways
     :return:
     """
+    logger = logging.getLogger(__name__)
+    logger.info("Start graphs generation")
     graphs = {}  # dict of all graphs and their dict of edges (in tuple format)
     with open(input_file, 'r') as file_in:
         for line in file_in:
             line = line.strip().split(':')
             pathway = line[1]
             name = line[0]
-            print(name)
+            logger.debug(f"processing {name}")
             # Graph creation:
             Graph = nx.MultiDiGraph()
             Graph.add_node(0, color='green')
@@ -250,7 +263,8 @@ def pathways_processing(input_file, outdir):
                                                   weight=1)
             # Saving
             graphs[name] = tuple([Graph, dict_edges, unnecessary_nodes])
-        print('done')
+            time.sleep(1)
+        logger.info('Done.Exit')
     path_output = os.path.join(outdir, "graphs.pkl")
     f = open(path_output, "wb")
     pickle.dump(graphs, f)
@@ -258,14 +272,16 @@ def pathways_processing(input_file, outdir):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Generates Graphs for each contig")
+    parser = argparse.ArgumentParser(description="Generates Graphs for each module")
     parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=True)
     parser.add_argument("-o", "--outdir", dest="outdir",
                         help="Relative path to directory where you want the output file to be stored (default: cwd)",
                         default=".")
+    parser.add_argument("-v", "--verbose", dest="verbose", help="Print more logging", required=False, action='store_true')
 
     if len(sys.argv) == 1:
         parser.print_help()
     else:
         args = parser.parse_args()
+        setup_logging(args.verbose)
         pathways_processing(args.input_file, args.outdir)

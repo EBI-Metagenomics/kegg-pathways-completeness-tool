@@ -395,6 +395,10 @@ M00881:Pathway modules; Metabolism of cofactors and vitamins; Cofactor and vitam
 M00882:Pathway modules; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
 M00883:Pathway modules; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
 M00884:Pathway modules; Metabolism of cofactors and vitamins; Cofactor and vitamin metabolism
+M00885:Pathway modules; Lipid metabolism; Fatty acid metabolism
+M00886:Pathway modules; Lipid metabolism; Fatty acid metabolism
+M00887:Pathway modules; Lipid metabolism; Fatty acid metabolism
+M00888:Pathway modules; Glycan metabolism; Other polysaccharide metabolism
 M00889:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other antibiotics
 M00890:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other antibiotics
 M00891:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other fungal compounds
@@ -480,3 +484,12 @@ M00975:Pathway modules; Amino acid metabolism; Serine and threonine metabolism
 M00976:Pathway modules; Lipid metabolism; Sterol biosynthesis
 M00977:Pathway modules; Lipid metabolism; Sterol biosynthesis
 M00978:Pathway modules; Amino acid metabolism; Arginine and proline metabolism
+M00979:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of phytochemical compounds
+M00980:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of phytochemical compounds
+M00981:Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of phytochemical compounds
+M00982:Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00983:Pathway modules; Glycan metabolism; Glycan biosynthesis
+M00984:Pathway modules; Energy metabolism; Sulfur metabolism
+M00985:Pathway modules; Energy metabolism; Sulfur metabolism
+M00986:Pathway modules; Energy metabolism; Sulfur metabolism
+M00987:Pathway modules; Energy metabolism; Sulfur metabolism

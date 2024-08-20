@@ -12,13 +12,6 @@ apk add --no-cache --update bash && \
 pip3 install --upgrade pip && \
 pip3 install -r /requirements.txt
 
-# ADD KEGG files to generate pathways
-RUN mkdir pathways_data
-COPY pathways_data/all_pathways_class.txt graphs/graphs.pkl pathways_data/
+RUN pip install https://github.com/EBI-Metagenomics/kegg-pathways-completeness-tool/archive/refs/tags/1.0.5.zip
 
-# Add .py scripts
-RUN mkdir /tools
-COPY bin/give_pathways.py docker/run_pathways.sh /tools/
-
-RUN chmod -R a+rwx /tools
-ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/tools
+ENV PATH /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:

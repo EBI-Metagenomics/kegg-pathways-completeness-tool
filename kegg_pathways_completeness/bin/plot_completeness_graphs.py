@@ -29,13 +29,17 @@ def parse_input(input_file):
     return pathways
 
 
-def plot_graphs(pathways, graphs, pathways_schema):
+def plot_graphs(pathways, graphs, pathways_schema, outdir=None):
     for name in pathways:
         graph = graphs[name]
         logging.info(f'Plotting {name}')
         presented_ko = pathways[name].split(',')
         dot = create_dot(name, presented=presented_ko, graph=graph, pathways_schema=pathways_schema[name])
-        dot.render(directory='pathways_plots', filename=name, format='png')
+        if outdir:
+            plot_dir = os.path.join(outdir, 'pathways_plots')
+        else:
+            plot_dir = 'pathways_plots'
+        dot.render(directory=plot_dir, filename=name, format='png')
         #Image(f'kegg/{name}.png')
 
 def create_dot(name, presented, graph, pathways_schema):

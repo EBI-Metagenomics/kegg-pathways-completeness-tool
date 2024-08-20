@@ -1,18 +1,22 @@
 # kegg-pathways-completeness tool
 
-This tool computes the completeness of each [KEGG pathway module](https://www.genome.jp/kegg/module.html) for given set of [KEGG orthologues (KOs)](https://www.genome.jp/kegg/ko.html) based on their presence/absence. The current version of this tool has 482 KEGG modules (updated 02/07/2024). 
+This tool computes the completeness of each [KEGG pathway module](https://www.genome.jp/kegg/module.html) for given set of [KEGG orthologues (KOs)](https://www.genome.jp/kegg/ko.html) based on their presence/absence. The current version of this tool has **495** KEGG modules (updated 06/12/2024). 
 
 Please read the **Theory** section at the bottom of this README for a detailed explanation. 
 
-#### Input example
-- [per contig annotation](example/example_hmmscan_annotation.txt) with KOs (ideally given from hmmscan annotation (see [instructions](src/README.md)));  \
-or 
+#### Input example:
+- [per contig annotation](example/example_hmmscan_annotation.txt) with KOs (ideally given from hmmscan annotation (see [instructions](src/README.md)));  
+
+**OR** 
+
 - [list](example/example_list_kos.txt) of KOs.
 
-#### Output example
+#### Output example:
 
 - `*.summary.kegg_pathways.tsv` ([example](example/example_hmmscan.summary.kegg_pathways.tsv)) contains module pathways completeness calculated for all KOs in the given input file.
-- `*.summary.kegg_contigs.tsv` ([example](example/example_hmmscan.summary.kegg_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig) if contig annotation were provided with `-i`.
+
+In addition, for **per contig annotation** option `-i`:
+- `*.summary.kegg_contigs.tsv` ([example](example/example_hmmscan.summary.kegg_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig).
 
 Optional:
 - `pathways_plots/` ([example](example/pathways_plots)) folder containing PNG representation and graphs generated with `--plot-pathways` argument. 
@@ -53,12 +57,12 @@ pip3 install -r requirements.txt
 # for list of KOs
 give_pathways -l {INPUT_LIST}
 # test example:
-# give_pathways -l 'tests/fixtures/give_pathways/test_kos.txt' -o test_list_kos
+# give_pathways -l 'tests/fixtures/give_pathways/test_kos.txt' -r test_list_kos
 
 # per contig annotation with KOs
 give_pathways -i {INPUT_FILE}
 # test example:
-# give_pathways.py -i 'tests/fixtures/give_pathways/test_pathway.txt' -o test_pathway
+# give_pathways.py -i 'tests/fixtures/give_pathways/test_pathway.txt' -r test_pathway
 ```
 
 ## Input arguments description
@@ -69,11 +73,13 @@ _input file:_
 
 An input file is required under either of the following commands:
 - input table (`-i`/`--input`): hmmsearch table ([example](tests/fixtures/give_pathways/test_pathway.txt)) that was run on KEGG profiles DB with annotated sequences (preferable). If you don't have this table, follow these [instructions](src/README.md) to generate it.
-- file with KOs list (`-l`/`--input-list`): comma separated file with list of KOs ([example](tests/fixtures/give_pathways/test_kos.txt)).
+- file with KOs list (`-l`/`--input-list`): file with list of KOs ([example](tests/fixtures/give_pathways/test_kos.txt)).
 
 **Optional arguments:**
 
-- output prefix (`-o`/`--outname`): prefix for output tables (`-o test_kos` in [example](tests/fixtures/give_pathways/output/test_kos.summary.kegg_contigs.tsv))
+- KOs separator **for list option** (`-s`/`--list-separator`): default is `,` (comma)
+- output directory (`-o`/`--outdir`): default is currently working directory
+- output prefix (`-r`/`--outprefix`): prefix for output tables (`-o test_kos` in [example](tests/fixtures/give_pathways/output/test_kos.summary.kegg_contigs.tsv))
 - add weight information to output files (`-w`/`--include-weights`). The output table will contain the weight of each KO edge in the pathway graph, for example K00942(0.25) means that the KO has 0.25 importance in the given pathway. Example of [output](tests/fixtures/give_pathways/output/test_weights.summary.kegg_pathways.tsv)
 - plot present KOs in pathways (`p`/`--plot-pathways`): generates a PNG containing a schematic representation of the pathway. Presented KOs are marked with red edges. Example: [M00002](tests/fixtures/give_pathways/output/pathways_plots/M00002.png)
 
@@ -115,9 +121,9 @@ More examples for test data [here](tests/fixtures/give_pathways/output/pathways_
 
 ## Theory: 
 #### Pathways to graphs 
-KEGG provides a representation of each pathway as a specific expression of KOs.
-example **A ((B,C) D,E) (A+F)** where:
-- A, B, C, D, E, F are KOs
+KEGG provides a representation of each pathway as a specific expression of KOs. \
+Example **A ((B,C) D,E) -- (A+F-G)** where:
+- A, B, C, D, E, F, G are KOs
 - **space** == AND
 - **comma** == OR
 - **plus** == essential component
@@ -126,7 +132,7 @@ example **A ((B,C) D,E) (A+F)** where:
 
 Each expression was [converted](kegg_pathways_completeness/bin/make_graphs/make_graphs.py) into a directed graph using NetworkX. The first node is node 0 and the last one is node 1. Each edge corresponds to a KO. 
 
-![ex1.png](src%2Fimg%2Fex1.png)
+![ex1.png](src/img/ex1.png)
 
 #### Completeness
 In order to compute pathways completeness, each node in the graph is weighted. The default weight of each edge is 0.
@@ -137,4 +143,4 @@ Given a set of predicted KOs, if the KO is present in the pathway, the correspon
 completeness = graph_weight/max_graph_weight * 100%
 ``
 
-![ex2.png](src%2Fimg%2Fex2.png)
+![ex2.png](src/img/ex2.png)

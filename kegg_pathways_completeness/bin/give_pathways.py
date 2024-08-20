@@ -27,6 +27,8 @@ def parse_args():
     input_args = parser.add_mutually_exclusive_group(required=True)
     input_args.add_argument("-i", "--input", dest="input_file", help="Each line = pathway")
     input_args.add_argument("-l", "--input-list", dest="input_list", help="File with KOs comma separated")
+    input_args.add_argument("-s", "--list-separator", dest="list_separator",
+                            help="Separator for list option (default: comma)", default=',')
 
     parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False,
                         default=default_graphs_path)
@@ -37,7 +39,8 @@ def parse_args():
     parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=False,
                         default=default_pathways_class_path)
 
-    parser.add_argument("-o", "--outname", dest="outname", help="first part of ouput name", default="summary.kegg")
+    parser.add_argument("-o", "--outdir", dest="outdir", help="output directory", default=".")
+    parser.add_argument("-r", "--outprefix", dest="outprefix", help="prefix for output filename", default="summary.kegg")
     parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output",
                         action='store_true')
     parser.add_argument("-p", "--plot-pathways", dest="plot_pathways", help="Create images with pathways completeness",
@@ -83,7 +86,7 @@ def load_pathways_data(path_to_graphs, path_to_graphs_names, path_to_graphs_clas
     return graphs, pathway_names, pathway_classes
 
 
-def get_list_items(input_path, input_list):
+def get_list_items(input_path, input_list, list_separator):
     """
     Function creates a list of items that were found by HMMScan
     :param input_path: file with contigs and their KEGG annotations
@@ -111,7 +114,7 @@ def get_list_items(input_path, input_list):
         if os.path.exists(input_list):
             name = os.path.basename(input_list)
             with open(input_list, 'r') as f:
-                list_kos = f.read().strip().split(',')
+                list_kos = f.read().strip().split(list_separator)
                 if len(list_kos) == 0:
                     logging.error(f"No KOs found in {input_list}")
                 else:
@@ -345,13 +348,17 @@ def main():
     else:
         args = parser.parse_args()
         graphs, pathway_names, pathway_classes = load_pathways_data(args.graphs, args.names, args.classes)
-        edges, dict_KO_by_contigs = get_list_items(args.input_file, args.input_list)
-        name_output = args.outname + '.summary.kegg'
+        edges, dict_KO_by_contigs = get_list_items(args.input_file, args.input_list, args.list_separator)
+
+        if not os.path.exists(args.outdir):
+            os.path.makedirs(args.outdir)
+
+        name_output = os.path.join(args.outdir, args.outprefix + '.summary.kegg')
 
         # COMMON INFO
         logging.info('Generating completeness for whole list of KOs...')
         using_graphs = copy.deepcopy(graphs)
-        name_output_summary = name_output + '_pathways.tsv'
+        name_output_summary = os.path.join(args.outdir, name_output + '_pathways.tsv')
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, False)
         weights_of_KOs = get_weights_for_KOs(using_graphs)
@@ -371,12 +378,12 @@ def main():
                 logging.error('No pathways file found')
             pathways = parse_input(input_file=name_output_summary)
             print(pathways)
-            plot_graphs(pathways, graphs, pathways_schema)
+            plot_graphs(pathways, graphs, pathways_schema, args.outdir)
             logging.info('...Done. Results are in pathways_plots folder')
 
         # BY CONTIGS
         logging.info('Generating completeness for contigs...')
-        name_output_summary = name_output + '_contigs.tsv'
+        name_output_summary = os.path.join(args.outdir, name_output + '_contigs.tsv')
         file_out_summary = open(name_output_summary, "wt")
         set_headers(file_out_summary, True)
         for contig in dict_KO_by_contigs:

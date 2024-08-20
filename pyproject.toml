@@ -16,9 +16,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "biopython==1.83",
-    "networkx==3.3",
-    "graphviz==0.20.3"
+    "biopython>=1.83",
+    "networkx>=3.3",
+    "graphviz>=0.20.3"
 ]
 
 [build-system]
