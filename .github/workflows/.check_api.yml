@@ -28,7 +28,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Check API for new records
-      run: python kegg_pathways_completeness/bin/update_pathways_data/get_modules_list.py
+      run: python kegg_pathways_completeness/bin/update_pathways_data/get_modules_data.py
 
     - name: Check if new_modules.txt exists
       id: check-file
@@ -61,7 +61,7 @@ jobs:
     #- name: Generate plots for updates modules
     #  if: env.file_exists == 'true'
     #  run: |
-    #    python3 kegg_pathways_completeness/bin/make_graphs/get_dot.py -g kegg_pathways_completeness/graphs/graphs.pkl -l kegg_pathways_completeness/pathways_data/all_pathways.txt
+    #    python3 kegg_pathways_completeness/bin/make_graphs/generate_schematic_plots.py -g kegg_pathways_completeness/graphs/graphs.pkl -l kegg_pathways_completeness/pathways_data/all_pathways.txt
     #    python3 kegg_pathways_completeness/bin/make_graphs/plot.py -l kegg_pathways_completeness/pathways_data/all_pathways.txt
     #    mv png dots kegg_pathways_completeness/graphs/
 

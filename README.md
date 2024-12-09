@@ -130,6 +130,14 @@ Example **A ((B,C) D,E) -- (A+F-G)** where:
 - **plus** == essential component
 - **minus** == optional component
 - **minus minus** == missing optional component (replaced into K0000 with 0 weight ([example](kegg_pathways_completeness/graphs/png/M00014.png)))
+- **new line** == mediator (example, https://www.genome.jp/module/M00031)
+
+#### ------ Mediator addition note ------
+There are some modules that have DEFINITION with line separated KOs. Those KOs are interpreted as mediators. Each line is connected with `AND` operator. It is considered that each line plays a crucial role into module that is why it influences weights assignment quite much.  
+All list of those modules presented in [definition_separated.txt](kegg_pathways_completeness%2Fpathways_data%2Fdefinition_separated.txt).
+
+*The question is how to use mediators is very difficult for current realisation and is under debate.*
+#### ------------------------------------------------
 
 Each expression was [converted](kegg_pathways_completeness/bin/make_graphs/make_graphs.py) into a directed graph using NetworkX. The first node is node 0 and the last one is node 1. Each edge corresponds to a KO. 
 
