@@ -119,16 +119,19 @@ def intersection(lst1, lst2):
 def check_brackets(pathway, levels_brackets):
     """
     Function checks is this expression in brackets. Returns without if true
-    Example: input (A B C)
+    Example: input (A B C) or ((A B C))
             return: A B C
     :param pathway: input string expression
     :return: output string expression
     """
+    expression_without_brackets = pathway
     L = len(pathway)
-    if pathway[0] == '(' and pathway[L-1] == ')' and levels_brackets[0] == levels_brackets[L-1]:  # check brackets
-        return pathway[1:L-1]
-    else:
-        return pathway
+    for i in range(L):
+        if pathway[i] == '(' and pathway[L-i-1] == ')' and levels_brackets[i] == levels_brackets[L-i-1]:  # check brackets
+            expression_without_brackets = pathway[i+1:L-i-1]
+        else:
+            continue
+    return expression_without_brackets
 
 
 def recursive_parsing(G, dict_edges, unnecessary_nodes, expression, start_node, end_node, weight):

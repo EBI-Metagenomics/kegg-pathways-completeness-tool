@@ -1,10 +1,13 @@
 digraph G {
 graph [label="M00935
-K09733 K19793 K07144",fontsize=20];
+(K09733 K19793 K07144) (K18933 K06914) K07072",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
-{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 }
-0 -> 2 [label="K09733 [1/3]"];
-2 -> 3 [label="K19793 [1/3]"];
-3 -> 1 [label="K07144 [1/3]"];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 6 }
+0 -> 3 [label="K09733 [1/9]"];
+2 -> 6 [label="K18933 [1/6]"];
+3 -> 4 [label="K19793 [1/9]"];
+4 -> 2 [label="K07144 [1/9]"];
+5 -> 1 [label="K07072 [1/3]"];
+6 -> 5 [label="K06914 [1/6]"];
 }

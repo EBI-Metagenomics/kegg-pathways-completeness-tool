@@ -1,12 +1,12 @@
 digraph G {
 graph [label="M00894
-K20503 K20508 -- K20502 K20501",fontsize=20];
+K20503 K20508 K27602 K20502 K20501",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
 {node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 3 4 5 }
 0 -> 2 [label="K20503 [1/5]"];
 2 -> 3 [label="K20508 [1/5]"];
-3 -> 4 [label="K00000 [0]"];
+3 -> 4 [label="K27602 [1/5]"];
 4 -> 5 [label="K20502 [1/5]"];
 5 -> 1 [label="K20501 [1/5]"];
 }

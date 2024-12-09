@@ -1,8 +1,10 @@
 digraph G {
 graph [label="M00896
-K22699",fontsize=20];
+K22699 (K03147 (K00941 (K00788,K21220),K21219) K00946)",fontsize=20];
 node [shape=box,style=filled];
 edge [len=3,color=grey];
-{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 }
-0 -> 1 [label="K22699 [1]"];
+{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 2 }
+0 -> 2 [label="K22699 [1/2]"];
+2 -> 1 [label="K00788 [1/2]"];
+2 -> 1 [label="K21220 [1/2]"];
 }

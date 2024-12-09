@@ -89,8 +89,9 @@ _pathways data: modules information and graphs_
 This repository contains a set of pre-generated files. Modules information files can be found in **[pathways_data](kegg_pathways_completeness/pathways_data)**. 
 The repository also contains pre-parsed module pathways into graphs format. In order to generate graphs all pathways were parsed with the NetworkX library. The graph for every module is shown in .png format in [png folder](kegg_pathways_completeness/graphs/png) and .dot format in [dots folder](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be easily checked with the .png image.
 
-**In order to run a tool there is no need to re-generate those files again.**
-All [graphs re-generation instructions](kegg_pathways_completeness/graphs/README.md) and [module pathways info re-generation commands](kegg_pathways_completeness/pathways_data/README.md) are provided for updates and understanding a process.
+**In order to run a tool there is no need to re-generate those files again.** 
+
+All [module pathways info re-generation commands](kegg_pathways_completeness/pathways_data/README.md) and [graphs re-generation instructions](kegg_pathways_completeness/graphs/README.md) are also provided for updates and understanding a process.
 
 _modules information:_
 

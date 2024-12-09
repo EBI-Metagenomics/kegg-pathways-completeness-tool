@@ -23,13 +23,14 @@ import re
 LIST_CLASSES = "all_pathways_class.txt"
 LIST_NAMES = "all_pathways_names.txt"
 LIST_PATHS = "all_pathways.txt"
+LIST_SEPARATED_IN_DEFINITION = "definition_separated.txt"
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description="Script fetches KEGG API for list of modules with NAME, DEFINITION and CLASS.")
     parser.add_argument("--check-new-modules", dest="check_new_modules", help="Check only what new modules appeared",
-                        action='store_true')
-    parser.add_argument("-o", "--output-dir", dest="output", help="Output directory", default="pathways")
+                        action='store_true', required=False)
+    parser.add_argument("-o", "--output-dir", dest="output", help="Output directory", default="pathways", required=False)
     return parser
 
 
@@ -77,6 +78,7 @@ def compare_with_existing(new_modules):
 
 def fetch_module_info(module, output_dir):
     try:
+        line_separator_in_kegg_names = ' '  # space=AND, comma=OR
         print(f'Fetching modules from http://rest.kegg.jp/get/{module}')
         # Fetch the data from the KEGG API using wget
         wget_command = f'wget -qO- http://rest.kegg.jp/get/{module}'
@@ -103,13 +105,16 @@ def fetch_module_info(module, output_dir):
                 if len(definition_lines[i]) > 6:
                     # not a single KOXXXX
                     definition_lines[i] = f"({definition_lines[i]})"
-        def_module = ' '.join(definition_lines)
+        def_module = line_separator_in_kegg_names.join(definition_lines)
         with open(os.path.join(output_dir, LIST_PATHS), 'a') as file_out:
             file_out.write(f'{module}:{def_module}' + '\n')
         with open(os.path.join(output_dir, LIST_CLASSES), 'a') as file_out:
             file_out.write(f'{module}:{class_module}' + '\n')
         with open(os.path.join(output_dir, LIST_NAMES), 'a') as file_out:
             file_out.write(f'{module}:{name}' + '\n')
+        if len(definition_lines) > 1:
+            with open(os.path.join(output_dir, LIST_SEPARATED_IN_DEFINITION), 'a') as file_out:
+                file_out.write(f'{module}:{def_module}' + '\n')
 
     except subprocess.CalledProcessError as e:
         print(f'An error occurred: {e}')
@@ -118,20 +123,17 @@ def fetch_module_info(module, output_dir):
 
 if __name__ == '__main__':
     parser = parse_args()
-    if len(sys.argv) == 1:
-        parser.print_help()
+    args = parser.parse_args()
+    # get a list of all modules available in KEGG API
+    modules_all = fetch_and_save_kegg_modules_list(args.output)
+    if args.check_new_modules:
+        # find missing modules
+        new_modules = compare_with_existing(modules_all)
     else:
-        args = parser.parse_args()
-        # get a list of all modules available in KEGG API
-        modules_all = fetch_and_save_kegg_modules_list(args.output)
-        if args.check_new_modules:
-            # find missing modules
-            new_modules = compare_with_existing(modules_all)
-        else:
-            # regenerate for all modules
-            new_modules = modules_all
-        if new_modules:
-            # new modules found
-            for module in new_modules:
-                fetch_module_info(module, args.output)
+        # regenerate for all modules
+        new_modules = modules_all
+    if new_modules:
+        # new modules found
+        for module in new_modules:
+            fetch_module_info(module, args.output)
 
