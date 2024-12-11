@@ -23,14 +23,7 @@ import pdb
 import pickle
 import networkx as nx
 import time
-
-
-def setup_logging(verbose):
-    # Configure logging
-    logging.basicConfig(
-        level=logging.DEBUG if verbose else logging.INFO,
-        format='%(asctime)s %(levelname)s - %(message)s'
-    )
+from ..utils import intersection, setup_logging
 
 
 def parse_args(argv):
@@ -38,14 +31,10 @@ def parse_args(argv):
     parser.add_argument("-i", "--input", dest="input_file", help="Each line = pathway", required=True)
     parser.add_argument("-o", "--outdir", dest="outdir",
                         help="Relative path to directory where you want the output file to be stored (default: cwd)",
-                        default=os.getcwd())
+                        default="outdir")
     parser.add_argument("-v", "--verbose", dest="verbose", help="Print more logging", required=False,
                         action='store_true')
     return parser.parse_args(argv)
-
-
-def intersection(lst1, lst2):
-    return list(set(lst1) & set(lst2))
 
 
 class GraphsGenerator:
@@ -62,6 +51,8 @@ class GraphsGenerator:
         """
         self.input_file = input_file
         self.output_dir = output_dir
+        if not os.path.exists(self.output_dir):
+            os.mkdir(self.output_dir)
 
     def set_order_separators(self, dict_levels):
         """
@@ -302,9 +293,8 @@ class GraphsGenerator:
                 time.sleep(1)
             logger.info('Done.Exit')
         path_output = os.path.join(self.output_dir, "graphs.pkl")
-        f = open(path_output, "wb")
-        pickle.dump(graphs, f)
-        f.close()
+        with open(path_output, "wb") as f:
+            pickle.dump(graphs, f)
 
 
 def main():

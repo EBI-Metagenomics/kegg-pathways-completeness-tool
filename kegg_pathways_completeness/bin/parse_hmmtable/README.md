@@ -17,7 +17,7 @@ wget https://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_ko
 hmmscan --noali --cut_ga --domtblout <OUTPUT FILE NAME> ${REFDB}/db_kofam/db_kofam.hmm <PROTEIN_SEQS>
  
 # parse table
-python3 hmmscan_tab.py -i <OUTPUT FILE NAME> -o <output_name for tab-separated file>
+python3 make_hmmscan_table_tab_separated.py -i <OUTPUT FILE NAME> -o <output_name for tab-separated file>
 
-python3 parsing_hmmscan.py -i <output_name for tab-separated file> -f <PROTEIN_SEQS>
+python3 parse_hmmscan_tab_separated_table.py -i <output_name for tab-separated file> -f <PROTEIN_SEQS>
 ```

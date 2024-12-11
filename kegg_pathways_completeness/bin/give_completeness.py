@@ -1,4 +1,18 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# Copyright 2024 EMBL - European Bioinformatics Institute
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import argparse
 import sys
@@ -10,15 +24,9 @@ import os
 from importlib.resources import files
 
 from .plot_completeness_graphs import PlotModuleCompletenessGraph
+from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection
 
 __version__ = "1.1.0"
-
-def setup_logging(verbose):
-    # Configure logging
-    logging.basicConfig(
-        level=logging.DEBUG if verbose else logging.INFO,
-        format='%(asctime)s %(levelname)s - %(message)s'
-    )
 
 
 def parse_args(argv):
@@ -32,154 +40,80 @@ def parse_args(argv):
                             help="Separator for list option (default: comma)", default=',')
 
     parser.add_argument("-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False)
-    parser.add_argument("-a", "--pathways", dest="pathways", help="Pathways list", required=False)
-    parser.add_argument("-n", "--names", dest="names", help="Pathway names", required=False)
-    parser.add_argument("-c", "--classes", dest="classes", help="Pathway classes", required=False)
+    parser.add_argument("-a", "--definitions", dest="definitions", help="All modules definitions", required=False)
+    parser.add_argument("-n", "--names", dest="names", help="Modules names", required=False)
+    parser.add_argument("-c", "--classes", dest="classes", help="Modules classes", required=False)
 
     parser.add_argument("-o", "--outdir", dest="outdir", help="output directory", default=".")
     parser.add_argument("-r", "--outprefix", dest="outprefix", help="prefix for output filename", default="summary.kegg")
+
     parser.add_argument("-w", "--include-weights", dest="include_weights", help="add weights for each KO in output",
                         action='store_true')
     parser.add_argument("-p", "--plot-pathways", dest="plot_pathways", help="Create images with pathways completeness",
+                        action='store_true')
+    parser.add_argument("-m", "--add-per-contig", dest="per_contig",
+                        help="Creates per-contig summary table "
+                             "(makes sense to use if input table has information about contigs). "
+                             "Does not work with --input-list option",
                         action='store_true')
     parser.add_argument("-v", "--verbose", dest="verbose", help="Print more logging", required=False,
                         action='store_true')
     return parser.parse_args(argv)
 
 
-def intersection(lst1, lst2):
-    """
-    Intersection of two sets
-    :param lst1: first input list
-    :param lst2: second input list
-    :return: intersection in list format
-    """
-    return list(set(lst1) & set(lst2))
-
-
 class CompletenessCalculator():
     def __init__(
             self,
-            input_table: str,
-            input_list: str,
-            list_separator: str,
+            input_KOs: dict,
             outdir: str,
             outprefix: str,
             include_weights: bool,
             plot_pathways: bool,
-            graphs: str = None,
+            per_contig: bool,
+            graphs: nx.MultiDiGraph,
             modules_definitions: str = None,
-            module_classes: str = None,
-            module_names: str = None,
+            modules_classes: str = None,
+            modules_names: str = None,
     ):
-        self.input_table = input_table
-        self.input_list = input_list
-        self.list_separator = list_separator
+        # input KOs
+        self.dict_KO_by_contigs = input_KOs
 
+        # modules graphs
+        self.graphs = graphs
+
+        # modules info
+        self.modules_definitions = modules_definitions
+        self.modules_classes = modules_classes
+        self.modules_names = modules_names
+
+        # outputs
         self.outdir = outdir
         if not os.path.exists(self.outdir):
             os.path.makedirs(self.outdir)
         self.outprefix = outprefix
         self.name_output = os.path.join(self.outdir, self.outprefix)
-        self.name_common_output_summary = os.path.join(self.name_output + '_pathways.tsv')
-        self.name_contigs_output_summary = os.path.join(self.name_output + '_contigs.tsv')
+        self.name_output_pathways_plots = os.path.join(self.outdir, 'pathways_plots')
 
+        # flags
         self.include_weights = include_weights
+        if self.include_weights:
+            self.name_common_output_summary = os.path.join(self.name_output + '_pathways.with_weights.tsv')
+            self.name_contigs_output_summary = os.path.join(self.name_output + '_contigs.with_weights.tsv')
+        else:
+            self.name_common_output_summary = os.path.join(self.name_output + '_pathways.tsv')
+            self.name_contigs_output_summary = os.path.join(self.name_output + '_contigs.tsv')
         self.plot_pathways = plot_pathways
+        self.per_contig = per_contig
 
-        # load graphs
-        self.graphs_name = graphs if graphs else files('kegg_pathways_completeness.graphs').joinpath('graphs.pkl')
-        if os.path.exists(self.graphs_name):
-            with open(self.graphs_name, 'rb') as graph_file:
-                self.graphs = pickle.load(graph_file)
-        else:
-            logging.error(f'No graphs file found in {self.graphs_name}')
-            sys.exit(1)
-
-        # load pathways definitions
-        self.modules_definitions_name = modules_definitions if modules_definitions \
-            else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways.txt')
-        self.modules_definitions = {}
-        if os.path.exists(self.modules_definitions_name):
-            with open(self.modules_definitions_name, 'r') as pathways_file:
-                for line in pathways_file:
-                    fields = line.strip().split(':')
-                    self.modules_definitions[fields[0]] = fields[1]
-        else:
-            logging.error(f'No {self.modules_definitions_name} found')
-            sys.exit(1)
-
-        # parse classes
-        module_classes_name = module_classes if module_classes \
-            else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_class.txt')
-        self.module_classes = {}
-        if os.path.exists(module_classes_name):
-            with open(module_classes_name, 'r') as file_names:
-                for line in file_names:
-                    line = line.strip().split(':')
-                    self.module_classes[line[0]] = line[1]
-        else:
-            logging.error(f'No {module_classes_name} found')
-            sys.exit(1)
-
-        # parse names
-        module_names_name = module_names if module_names \
-            else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_names.txt')
-        self.module_names = {}
-        if os.path.exists(module_names_name):
-            with open(module_classes_name, 'r') as file_classes:
-                for line in file_classes:
-                    line = line.strip().split(':')
-                    self.module_names[line[0]] = line[1]
-        else:
-            logging.error(f'No {module_names_name} found')
-            sys.exit(1)
-
-        self.edges, self.dict_KO_by_contigs = self.get_list_items()
+        self.edges = self.get_edges_list()
         # !!!! careful - it was used a deepcopy
         self.weights_of_KOs = self.get_weights_for_KOs(self.graphs)
 
-    def get_list_items(self):
-        """
-        Function creates a list of items that were found by HMMScan
-        :param input_path: file with contigs and their KEGG annotations
-        :return: list of unique KOs, { contig_name1: [KO1, KO2,...], contig_name2: [...], ...}
-        """
-        if not self.input_table and not self.input_list:
-            logging.error("No necessary input table provided")
-            sys.exit(1)
+    def get_edges_list(self):
         items = []
-        dict_KO_by_contigs = {}
-        if self.input_table:
-            if os.path.exists(self.input_table):
-                with open(self.input_table, 'r') as file_in:
-                    for line in file_in:
-                        line = line.strip().split('\t')
-                        name = line[0]
-                        if name not in dict_KO_by_contigs:
-                            dict_KO_by_contigs[name] = []
-                        dict_KO_by_contigs[name] += line[1:]
-                        items += line[1:]
-            else:
-                logging.error(f"No file {self.input_table}")
-                sys.exit(1)
-        elif self.input_list:
-            if os.path.exists(self.input_list):
-                name = os.path.basename(self.input_list)
-                with open(self.input_list, 'r') as f:
-                    list_kos = f.read().strip().split(self.list_separator)
-                    if len(list_kos) == 0:
-                        logging.error(f"No KOs found in {input_list}")
-                    else:
-                        dict_KO_by_contigs[name] = list_kos
-                        items = list_kos
-            else:
-                logging.error(f"No file {self.input_list}")
-                sys.exit(1)
-        else:
-            logging.error("No KOs provided")
-        logging.info('KOs loaded')
-        return list(set(items)), dict_KO_by_contigs
+        for contig in self.dict_KO_by_contigs:
+            items += self.dict_KO_by_contigs[contig]
+        return list(set(items))
 
     def finding_paths(self, G):
         """
@@ -232,7 +166,6 @@ class CompletenessCalculator():
             metrics.append(1. * new_weights[num]/weights[num])
         indexes_min = [index for index in range(len(metrics)) if metrics[index] == min(metrics)]
         return paths_nodes, paths_labels, metrics, indexes_min
-
 
     def calculate_percentage(self, graph, dict_edges, unnecessary_nodes, edges):
         """
@@ -288,7 +221,6 @@ class CompletenessCalculator():
             percentage = None
         return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
 
-
     def sort_out_pathways(self, contig_name, file_out_summary, edges):
         """
         Function sorts out all pathways and prints info about pathway that percentage of intersection more than 0
@@ -297,7 +229,7 @@ class CompletenessCalculator():
         file_out_summary: output file
         :return: -
         """
-        dict_sort_by_percentage = {}
+        dict_sort_by_percentage, module_matching_kos = {}, {}
         for name_pathway in self.graphs:
             graph = self.graphs[name_pathway]
             if intersection(graph[1], edges) == []:
@@ -321,13 +253,13 @@ class CompletenessCalculator():
                     # matching
                     out_str = []
                     for KO in matching_list:
-                        record = KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')'
+                        record = KO + '(' + str(self.weights_of_KOs[name_pathway][KO]) + ')'
                         out_str.append(record)
                     matching_current = ','.join(out_str)
                     # missing
                     out_str = []
                     for KO in missing_list:
-                        out_str.append(KO + '(' + str(weights_of_KOs[name_pathway][KO]) + ')')
+                        out_str.append(KO + '(' + str(self.weights_of_KOs[name_pathway][KO]) + ')')
                     missing_current = ','.join(out_str)
                 else:
                     matching_current = ','.join(matching_list)
@@ -337,9 +269,11 @@ class CompletenessCalculator():
                     out_name_pathway = '\t'.join([contig_name, name_pathway])
                 else:
                     out_name_pathway = name_pathway
-                output_line = '\t'.join([out_name_pathway, str(percentage), self.module_names[name_pathway],
-                                        self.module_classes[name_pathway], matching_current, missing_current])
+                module_matching_kos[name_pathway] = matching_current
+                output_line = '\t'.join([out_name_pathway, str(percentage), self.modules_names[name_pathway],
+                                        self.modules_classes[name_pathway], matching_current, missing_current])
                 file_out_summary.write(output_line + '\n')
+        return module_matching_kos
         """
         file_out_summary.write('\n******* REMINDER ********')
         file_out_summary.write('Number of nodes: ' + str(len(edges)) + '\n')
@@ -387,8 +321,9 @@ class CompletenessCalculator():
         #using_graphs = copy.deepcopy(graphs)
         with open(self.name_common_output_summary, "wt") as file_out_summary:
             self.set_headers(file_out_summary, contig=False)
-            self.sort_out_pathways(contig_name='', file_out_summary=file_out_summary, edges=self.edges)
+            module_matching_kos = self.sort_out_pathways(contig_name='', file_out_summary=file_out_summary, edges=self.edges)
         logger.info('...Done')
+        return module_matching_kos
 
     def generate_per_contig_summary(self):
         logger = logging.getLogger(__name__)
@@ -404,39 +339,95 @@ class CompletenessCalculator():
     def process(self):
         logger = logging.getLogger(__name__)
         # summary for all contigs
-        self.generate_common_summary()
+        module_matching_kos = self.generate_common_summary()
         # plot
         if self.plot_pathways:
             logger.info('Plot pathways images')
             plot_completeness_generator = PlotModuleCompletenessGraph(
-                completeness_file=self.name_common_output_summary,
-                graphs_pkl=self.graphs_name,
-                modules_list=self.modules_definitions_name
+                modules_completeness=module_matching_kos,
+                graphs=self.graphs,
+                modules_definitions=self.modules_definitions,
+                outdir=self.name_output_pathways_plots
             )
             plot_completeness_generator.generate_plot_for_completeness()
             logger.info('...Done. Results are in pathways_plots folder')
 
         # generate summary per-contig
-        self.generate_per_contig_summary()
+        if self.per_contig:
+            self.generate_per_contig_summary()
         logger.info('Bye!')
+
+
+def get_kos_dict(input_table, input_list, list_separator):
+    """
+    Function creates a list of items that were found by HMMScan
+    :param input_path: file with contigs and their KEGG annotations
+    :return: list of unique KOs, { contig_name1: [KO1, KO2,...], contig_name2: [...], ...}
+    """
+    if not input_table and not input_list:
+        logging.error("No necessary input table provided")
+        sys.exit(1)
+    dict_KO_by_contigs = {}
+    if input_table:
+        if os.path.exists(input_table):
+            with open(input_table, 'r') as file_in:
+                for line in file_in:
+                    line = line.strip().split('\t')
+                    name = line[0]
+                    if name not in dict_KO_by_contigs:
+                        dict_KO_by_contigs[name] = []
+                    dict_KO_by_contigs[name] += line[1:]
+        else:
+            logging.error(f"No file {input_table}")
+            sys.exit(1)
+    elif input_list:
+        if os.path.exists(input_list):
+            name = os.path.basename(input_list)
+            with open(input_list, 'r') as f:
+                list_kos = f.read().strip().split(list_separator)
+                if len(list_kos) == 0:
+                    logging.error(f"No KOs found in {input_list}")
+                else:
+                    dict_KO_by_contigs[name] = list_kos
+        else:
+            logging.error(f"No file {input_list}")
+            sys.exit(1)
+    else:
+        logging.error("No KOs provided")
+    logging.info('KOs loaded')
+    return dict_KO_by_contigs
 
 
 def main():
     args = parse_args(sys.argv[1:])
     setup_logging(args.verbose)
 
-    completeness_calculator = CompletenessCalculator(
+    # parse input with KOs
+    dict_KO_by_contigs = get_kos_dict(
         input_table=args.input_file,
         input_list=args.input_list,
-        list_separator=args.list_separator,
+        list_separator=args.list_separator
+    )
+
+    graphs_filename = args.graphs if args.graphs else files('kegg_pathways_completeness.graphs').joinpath('graphs.pkl')
+    modules_definitions_filename = args.definitions if args.definitions \
+        else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways.txt')
+    modules_classes_filename = args.classes if args.classes \
+        else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_class.txt')
+    modules_names_filename = args.names if args.names \
+        else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways_names.txt')
+
+    completeness_calculator = CompletenessCalculator(
+        input_KOs=dict_KO_by_contigs,
         outdir=args.outdir,
         outprefix=args.outprefix,
+        graphs=parse_graphs_input(graphs_filename),
+        modules_names=parse_modules_list_input(modules_names_filename),
+        modules_classes=parse_modules_list_input(modules_classes_filename),
+        modules_definitions=parse_modules_list_input(modules_definitions_filename),
         include_weights=args.include_weights,
         plot_pathways=args.plot_pathways,
-        graphs=args.graphs,
-        module_names=args.names,
-        module_classes=args.classes,
-        modules_definitions=args.pathways
+        per_contig=args.per_contig
     )
 
     completeness_calculator.process()

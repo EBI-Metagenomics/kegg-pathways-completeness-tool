@@ -1,6 +1,6 @@
 [project]
 name = "kegg-pathways-completeness"
-version = "1.0.5"
+version = "1.1.0"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [
@@ -29,7 +29,7 @@ build-backend = "setuptools.build_meta"
 packages = [
     "kegg_pathways_completeness",
     "kegg_pathways_completeness.bin", 
-    "kegg_pathways_completeness.bin.generate_hmmtable",
+    "kegg_pathways_completeness.bin.parse_hmmtable",
     "kegg_pathways_completeness.bin.make_graphs",
     "kegg_pathways_completeness.bin.update_pathways_data",
     "kegg_pathways_completeness.graphs",
@@ -40,10 +40,14 @@ packages = [
 "*" = ["graphs.pkl", "*.txt"]
 
 [project.scripts]
-give_pathways = "kegg_pathways_completeness.bin.give_pathways:main"
+give_completeness = "kegg_pathways_completeness.bin.give_completeness:main"
 plot_completeness_graphs = "kegg_pathways_completeness.bin.plot_completeness_graphs:main"
-generate_hmmtable = "kegg_pathways_completeness.bin.generate_hmmtable.hmmscan_tab:main"
-parsing_hmmscan = "kegg_pathways_completeness.bin.generate_hmmtable.parsing_hmmscan:main"
+make_graphs = "kegg_pathways_completeness.bin.make_graphs.make_graphs:main"
+generate_schematic_plots = "kegg_pathways_completeness.bin.make_graphs.generate_schematic_plots:main"
+get_modules_data = "kegg_pathways_completeness.bin.update_pathways_data.get_modules_data:main"
+make_hmmscan_table_tab_separated = "kegg_pathways_completeness.bin.parse_hmmtable.make_hmmscan_table_tab_separated:main"
+parse_hmmscan_tab_separated_table = "kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmscan_tab_separated_table:main"
+
 
 [project.optional-dependencies]
 dev = [
