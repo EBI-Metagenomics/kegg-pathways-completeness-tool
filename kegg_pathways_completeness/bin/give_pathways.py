@@ -9,7 +9,7 @@ import copy
 import os
 from importlib.resources import files
 
-from plot_completeness_graphs import PlotModuleCompletenessGraph
+from .plot_completeness_graphs import PlotModuleCompletenessGraph
 
 __version__ = "1.1.0"
 
