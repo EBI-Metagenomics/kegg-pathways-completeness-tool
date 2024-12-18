@@ -1,9 +1,0 @@
-digraph G {
-graph [label="M00779
-K05556 (K14626,K14627) (K14628,K14629) (K14630+K14631,K14632)",fontsize=20];
-node [shape=box,style=filled];
-edge [len=3,color=grey];
-{node [width=.3,height=.3,shape=octagon,style=filled,color=skyblue] 0 1 }
-0 -> 1 [label="K14628 [1]"];
-0 -> 1 [label="K14629 [1]"];
-}

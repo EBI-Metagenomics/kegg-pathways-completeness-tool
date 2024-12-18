@@ -30,9 +30,6 @@ packages = [
     "kegg_pathways_completeness",
     "kegg_pathways_completeness.bin", 
     "kegg_pathways_completeness.bin.parse_hmmtable",
-    "kegg_pathways_completeness.bin.make_graphs",
-    "kegg_pathways_completeness.bin.update_pathways_data",
-    "kegg_pathways_completeness.graphs",
     "kegg_pathways_completeness.pathways_data"
 ]
 
@@ -41,10 +38,9 @@ packages = [
 
 [project.scripts]
 give_completeness = "kegg_pathways_completeness.bin.give_completeness:main"
-plot_completeness_graphs = "kegg_pathways_completeness.bin.plot_completeness_graphs:main"
-make_graphs = "kegg_pathways_completeness.bin.make_graphs.make_graphs:main"
-generate_schematic_plots = "kegg_pathways_completeness.bin.make_graphs.generate_schematic_plots:main"
-get_modules_data = "kegg_pathways_completeness.bin.update_pathways_data.get_modules_data:main"
+plot_modules_graphs = "kegg_pathways_completeness.bin.plot_modules_graphs:main"
+make_graphs = "kegg_pathways_completeness.bin.make_graphs:main"
+fetch_modules_data = "kegg_pathways_completeness.bin.fetch_modules_data:main"
 make_hmmscan_table_tab_separated = "kegg_pathways_completeness.bin.parse_hmmtable.make_hmmscan_table_tab_separated:main"
 parse_hmmscan_tab_separated_table = "kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmscan_tab_separated_table:main"
 
@@ -59,3 +55,8 @@ test = [
     "pytest-workflow==2.1.0",
     "pytest-md==0.2.0",
 ]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+required_plugins = "pytest-workflow"
+addopts= "--git-aware"

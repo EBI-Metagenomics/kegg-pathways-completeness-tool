@@ -1,0 +1,27 @@
+// K05826 (K05827 K05828 K05829 K05830 K05831)
+digraph M00031 {
+	0
+	2
+	0 -> 2 [label="K05826 
+ [1/2]" color=black]
+	2
+	3
+	2 -> 3 [label="K05827 
+ [1/10]" color=black]
+	3
+	4
+	3 -> 4 [label="K05828 
+ [1/10]" color=black]
+	4
+	5
+	4 -> 5 [label="K05829 
+ [1/10]" color=black]
+	5
+	6
+	5 -> 6 [label="K05830 
+ [1/10]" color=black]
+	6
+	1
+	6 -> 1 [label="K05831 
+ [1/10]" color=black]
+}

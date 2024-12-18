@@ -1,0 +1,23 @@
+- name: plot_graphs using modules list
+  tags:
+    - plot_modules_graphs
+  command: python -m kegg_pathways_completeness.bin.plot_modules_graphs --modules-file tests/fixtures/plot_modules_graphs/modules_list.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt
+  files:
+    - path: "pathways_plots/M00014"
+    - path: "pathways_plots/M00014.png"
+    - path: "pathways_plots/M00031"
+    - path: "pathways_plots/M00031.png"
+    - path: "pathways_plots/M00050"
+    - path: "pathways_plots/M00050.png"
+
+- name: plot_graphs using completeness output
+  tags:
+    - plot_modules_graphs
+  command: python -m kegg_pathways_completeness.bin.plot_modules_graphs --input-completeness tests/outputs/give_completeness/test_kos_pathways.tsv --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt -o completeness_graphs
+  files:
+    - path: "completeness_graphs/M00001"
+    - path: "completeness_graphs/M00001.png"
+    - path: "completeness_graphs/M00002"
+    - path: "completeness_graphs/M00002.png"
+    - path: "completeness_graphs/M00050"
+    - path: "completeness_graphs/M00050.png"

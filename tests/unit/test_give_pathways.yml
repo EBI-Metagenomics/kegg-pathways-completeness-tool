@@ -1,7 +1,7 @@
 - name: give_completeness using pathways list
   tags:
     - give_completeness
-  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_pathway --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt --add-per-contig
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_pathway --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt --add-per-contig
   files:
     - path: "test_pathway_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
@@ -11,7 +11,7 @@
 - name: give_completeness using KOs list
   tags:
     - give_completeness
-  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_kos --input-list tests/fixtures/give_completeness/test_kos.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_kos --input-list tests/fixtures/give_completeness/test_kos.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
     - path: "test_kos_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
@@ -19,7 +19,7 @@
 - name: give_completeness using pathway with weights in output
   tags:
     - give_completeness
-  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_weights --add-per-contig --include-weights --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_weights --add-per-contig --include-weights --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
     - path: "test_weights_contigs.with_weights.tsv"
       md5sum: d3fac25d9f679746229c0d64841921d1
@@ -29,7 +29,7 @@
 - name: give_completeness using pathway with graphs and images in output
   tags:
     - give_completeness
-  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_plots --plot-pathways --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_plots --plot-pathways --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
     - path: "test_plots_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d

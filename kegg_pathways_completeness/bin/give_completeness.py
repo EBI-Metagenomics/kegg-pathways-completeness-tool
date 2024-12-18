@@ -23,7 +23,7 @@ import copy
 import os
 from importlib.resources import files
 
-from .plot_completeness_graphs import PlotModuleCompletenessGraph
+from .plot_modules_graphs import PlotModuleCompletenessGraph
 from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection
 
 __version__ = "1.1.0"
@@ -409,7 +409,7 @@ def main():
         list_separator=args.list_separator
     )
 
-    graphs_filename = args.graphs if args.graphs else files('kegg_pathways_completeness.graphs').joinpath('graphs.pkl')
+    graphs_filename = args.graphs if args.graphs else files('kegg_pathways_completeness.pathways_data').joinpath('graphs.pkl')
     modules_definitions_filename = args.definitions if args.definitions \
         else files('kegg_pathways_completeness.pathways_data').joinpath('all_pathways.txt')
     modules_classes_filename = args.classes if args.classes \

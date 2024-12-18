@@ -5,22 +5,22 @@ This tool computes the completeness of each [KEGG pathway module](https://www.ge
 Please, read the **Theory** section at the bottom of this README for a detailed explanation. 
 
 #### Input example:
-- [per contig annotation](example/example_hmmscan_annotation.txt) with KOs (ideally given from hmmscan annotation (see [instructions](kegg_pathways_completeness/bin/parse_hmmtable/README.md)));  
+- [per contig annotation](tests/fixtures/give_completeness/test_pathway.txt) with KOs (ideally given from hmmscan annotation (see [instructions](kegg_pathways_completeness/bin/parse_hmmtable/README.md)));  
 
 **OR** 
 
-- [list](example/example_list_kos.txt) of KOs.
+- [list](tests/fixtures/give_completeness/test_kos.txt) of KOs.
 
 #### Output example:
 
-- `*_pathways.tsv` ([example](example/example_summary_pathways.tsv)) contains module pathways completeness calculated for all KOs in the given input file.
+- `*_pathways.tsv` ([example](tests/outputs/give_completeness/test_kos_pathways.tsv)) contains module pathways completeness calculated for all KOs in the given input file.
 
 Optional:
-- `*_contigs.tsv` ([example](example/example_summary_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig).
-- `pathways_plots/` ([example](example/pathways_plots)) folder containing PNG representation and graphs generated with `--plot-pathways` argument. 
-- `*.with_weights.tsv` [example](example/example_summary_contigs.with_weights.tsv) of output generated with `--include-weights` argument. Each KO has a weight in brackets.
+- `*_contigs.tsv` ([example](tests/outputs/give_completeness/test_pathway_contigs.tsv)) contains module pathways completeness calculated per each contig (first column contains name of contig).
+- `pathways_plots/` ([example](tests/outputs/give_completeness/pathways_plots)) folder containing PNG representation and graphs generated with `--plot-pathways` argument. 
+- `*.with_weights.tsv` [example](tests/outputs/give_completeness/test_weights_pathways.with_weights.tsv) of output generated with `--include-weights` argument. Each KO has a weight in brackets.
 
-Check more examples of different output files [here](tests/fixtures/give_completeness/output).
+Check more examples of different output files [here](tests/outputs).
 
 ## Installation
 This tool was published in Pypi and Bioconda. \
@@ -39,12 +39,11 @@ Follow [bioconda instructions](https://bioconda.github.io/recipes/kegg-pathways-
 docker pull quay.io/biocontainers/kegg-pathways-completeness
 ```
 
-#### Install from source using venv/conda env (not the best option)
+#### Install from source or for development
 ```commandline
-conda create --name kegg-env
-conda activate kegg-env
-
-pip3 install -r requirements.txt
+git clone https://github.com/EBI-Metagenomics/kegg-pathways-completeness-tool.git
+cd kegg-pathways-completeness-tool
+pip install .
 ```
 
 
@@ -95,11 +94,7 @@ An input file is required under either of the following commands:
 ### _pathways_data: modules information and graphs_ 
 
 This repository contains a set of pre-generated files. Modules information files can be found in **[pathways_data](kegg_pathways_completeness/pathways_data)**. 
-The repository also contains pre-parsed module pathways into graphs format. In order to generate graphs all pathways were parsed with the NetworkX library. The graph for every module is shown in `.png` format in [png folder](kegg_pathways_completeness/graphs/png) and `.dot` format in [dots folder](kegg_pathways_completeness/graphs/dots). Pathway and weights of each KO can be easily checked with the .png image.
-
-**In order to run a tool there is no need to re-generate those files again.** 
-
-All [module pathways info re-generation commands](kegg_pathways_completeness/pathways_data/README.md) and [graphs re-generation instructions](kegg_pathways_completeness/graphs/README.md) are also provided for updates and understanding a process.
+The repository also contains pre-parsed module pathways into graphs format. In order to generate graphs all pathways were parsed with the NetworkX library. 
 
 _modules information:_
 
@@ -109,16 +104,28 @@ _modules information:_
 
 _graphs:_
 
-- graphs constructed from each module (`-g`/`--graphs`) (latest [graphs.pkl](kegg_pathways_completeness%2Fgraphs%2Fgraphs.pkl))
+- graphs constructed from each module (`-g`/`--graphs`) (latest [graphs.pkl](kegg_pathways_completeness%2Fpathways_data%2Fgraphs.pkl)))
 
+Latest release has a **plots** archive  with images and .dot-files for all modules. The graph for every module is shown in `.png` format in **png** folder and contains corresponding `.dot` file in **dots** folder. Pathway and weights of each KO can be easily checked with the .png image.
 
-### Plot pathway completeness
+**In order to run a tool there is no need to re-generate those files.** 
+
+All module data generation commands and graphs creation instructions are also [available](kegg_pathways_completeness/pathways_data/README.md) for updates and understanding a process.
+
+### Pathways visualization 
 
 **NOTE**: please make sure you have [**graphviz**](https://graphviz.org/) installed
 
-You can also run the plotting script separately:
+You can also run the [plotting script](kegg_pathways_completeness/bin/plot_modules_graphs.py) separately:
+
+#### Plot modules of interest
 ```commandline
-plot_completeness_graphs.py -i output_with_pathways_completeness
+plot_modules_graphs.py -l tests/fixtures/plot_modules_graphs/modules_list.txt
+```
+
+#### Plot graphs knowing completeness 
+```commandline
+plot_modules_graphs.py -i tests/outputs/give_completeness/test_kos_pathways.tsv
 ```
 
 #### Example
@@ -137,8 +144,8 @@ Example **A ((B,C) D,E) -- (A+F-G)** where:
 - **comma** == OR
 - **plus** == essential component
 - **minus** == optional component
-- **minus minus** == missing optional component (replaced into K0000 with 0 weight ([example](kegg_pathways_completeness/graphs/png/M00014.png)))
-- **new line** == mediator (example, https://www.genome.jp/module/M00031)
+- **minus minus** == missing optional component (replaced into K00000 with 0 weight (example: [KEGG](https://www.genome.jp/module/M00014), corresponding [graph](tests/outputs/plot_modules_graphs/pathways_plots/M00014.png)))
+- **new line** == mediator (example: [KEGG](https://www.genome.jp/module/M00031), corresponding [graph](tests/outputs/plot_modules_graphs/pathways_plots/M00031.png))
 
 #### ------ Mediator addition note ------
 There are some modules that have DEFINITION with line separated KOs. Those KOs are interpreted as mediators. Each line is connected with `AND` operator. It is considered that each line plays a crucial role into module that is why it influences weights assignment quite much.  
@@ -147,9 +154,9 @@ All list of those modules presented in [definition_separated.txt](kegg_pathways_
 *The question is how to use mediators is very difficult for current realisation and is under debate.*
 #### ------------------------------------------------
 
-Each expression was [converted](kegg_pathways_completeness/bin/make_graphs/make_graphs.py) into a directed graph using NetworkX. The first node is node 0 and the last one is node 1. Each edge corresponds to a KO. 
+Each expression was [converted](kegg_pathways_completeness/bin/make_graphs.py) into a directed graph using NetworkX. The first node is node 0 and the last one is node 1. Each edge corresponds to a KO. 
 
-![ex1.png](src/img/ex1.png)
+![ex1.png](img/ex1.png)
 
 #### Completeness
 In order to compute pathways completeness, each node in the graph is weighted. The default weight of each edge is 0.
@@ -160,4 +167,4 @@ Given a set of predicted KOs, if the KO is present in the pathway, the correspon
 completeness = graph_weight/max_graph_weight * 100%
 ``
 
-![ex2.png](src/img/ex2.png)
+![ex2.png](img/ex2.png)

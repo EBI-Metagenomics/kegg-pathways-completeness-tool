@@ -49,6 +49,8 @@ class HMMScanTableParser:
         self.input_table = input_table
         self.input_fasta = input_fasta
         self.output_dir = output_dir
+        if not os.path.exists(self.output_dir):
+            os.mkdir(self.output_dir)
 
     def get_dir_contigs(self):
         dict_contigs = {}
