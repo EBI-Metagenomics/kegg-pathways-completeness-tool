@@ -50,11 +50,11 @@ python3 kegg_pathways_completeness/bin/make_graphs.py \
 
 2. Generate plots. 
 
-Script will generate each module/graph in `.dot` format and save into **dots** folder. Then it will generate `.png` for each `.dot` file and save into **png** folder.
+Script will generate each module-graph in `digraph` format and `.png` file and save into **pathways_plots** folder.
 ```commandline
-python3 kegg_pathways_completeness/bin/make_graphs/generate_schematic_plots.py \
-   -l kegg_pathways_completeness/pathways_data/all_pathways.txt \
-   -g kegg_pathways_completeness/pathways_data/graphs.pkl \
-   -o kegg_pathways_completeness/pathways_data/plots
+python3 kegg_pathways_completeness/bin/plot_modules_graphs.py \
+  --modules-file modules_list.txt \
+  --graphs kegg_pathways_completeness/pathways_data/graphs.pkl \
+  --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt
 ```
 

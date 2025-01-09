@@ -106,7 +106,7 @@ _graphs:_
 
 - graphs constructed from each module (`-g`/`--graphs`) (latest [graphs.pkl](kegg_pathways_completeness%2Fpathways_data%2Fgraphs.pkl)))
 
-Latest release has a **plots** archive  with images and .dot-files for all modules. The graph for every module is shown in `.png` format in **png** folder and contains corresponding `.dot` file in **dots** folder. Pathway and weights of each KO can be easily checked with the .png image.
+Latest release has a **plots** archive with images and graphviz-files for all modules. The graph for every module is shown in `.png` format in **png** folder and contains corresponding `graphviz` file in **graphs** folder. Pathway and weights of each KO can be easily checked with the .png image.
 
 **In order to run a tool there is no need to re-generate those files.** 
 
