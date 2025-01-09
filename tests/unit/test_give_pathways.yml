@@ -1,41 +1,37 @@
-- name: give_pathways using pathways list
+- name: give_completeness using pathways list
   tags:
-    - give_pathways
-  command: python -m kegg_pathways_completeness.bin.give_pathways --outname test_pathway --input tests/fixtures/give_pathways/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+    - give_completeness
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_pathway --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt --add-per-contig
   files:
-    - path: "test_pathway.summary.kegg_contigs.tsv"
+    - path: "test_pathway_pathways.tsv"
+      md5sum: e6538c3dd00b1ffb015780a90003f81d
+    - path: "test_pathway_contigs.tsv"
       md5sum: c03c602508e2c51bc74e7d47e952e7b3
-    - path: "test_pathway.summary.kegg_pathways.tsv"
+
+- name: give_completeness using KOs list
+  tags:
+    - give_completeness
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_kos --input-list tests/fixtures/give_completeness/test_kos.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  files:
+    - path: "test_kos_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
 
-- name: give_pathways using KOs list
+- name: give_completeness using pathway with weights in output
   tags:
-    - give_pathways
-  command: python -m kegg_pathways_completeness.bin.give_pathways --outname test_kos --input-list tests/fixtures/give_pathways/test_kos.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+    - give_completeness
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_weights --add-per-contig --include-weights --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
-    - path: "test_kos.summary.kegg_contigs.tsv"
-      md5sum: d18735f58cc8593bd7abc0270e1af891
-    - path: "test_kos.summary.kegg_pathways.tsv"
-      md5sum: e6538c3dd00b1ffb015780a90003f81d
-
-- name: give_pathways using pathway with weights in output
-  tags:
-    - give_pathways
-  command: python -m kegg_pathways_completeness.bin.give_pathways --outname test_weights --include-weights --input tests/fixtures/give_pathways/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
-  files:
-    - path: "test_weights.summary.kegg_contigs.tsv"
+    - path: "test_weights_contigs.with_weights.tsv"
       md5sum: d3fac25d9f679746229c0d64841921d1
-    - path: "test_weights.summary.kegg_pathways.tsv"
+    - path: "test_weights_pathways.with_weights.tsv"
       md5sum: 819e085fb724a99519c4577286113b45
 
-- name: give_pathways using pathway with graphs and images in output
+- name: give_completeness using pathway with graphs and images in output
   tags:
-    - give_pathways
-  command: python -m kegg_pathways_completeness.bin.give_pathways --outname test_plots --plot-pathways --input tests/fixtures/give_pathways/test_pathway.txt --graphs kegg_pathways_completeness/graphs/graphs.pkl --pathways kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+    - give_completeness
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_plots --plot-pathways --input tests/fixtures/give_completeness/test_pathway.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
   files:
-    - path: "test_plots.summary.kegg_contigs.tsv"
-      md5sum: c03c602508e2c51bc74e7d47e952e7b3
-    - path: "test_plots.summary.kegg_pathways.tsv"
+    - path: "test_plots_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
     - path: "pathways_plots/M00001"
     - path: "pathways_plots/M00001.png"

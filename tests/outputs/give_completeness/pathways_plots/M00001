@@ -1,0 +1,139 @@
+// (K00844,K12407,K00845,K25026,K00886,K08074,K00918) (K01810,K06859,K13810,K15916) (K00850,K16370,K21071,K24182,K00918) (K01623,K01624,K11645,K16305,K16306) K01803 ((K00134,K00150) K00927,K11389) (K01834,K15633,K15634,K15635) (K01689,K27394) (K00873,K12406)
+digraph M00001 {
+	0
+	2
+	0 -> 2 [label="K00844 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K12407 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K00845 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K25026 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K00886 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K08074 
+ [1/9]" color=black]
+	0
+	2
+	0 -> 2 [label="K00918 
+ [1/9]" color=black]
+	2
+	3
+	2 -> 3 [label="K01810 
+ [1/9]" color=black]
+	2
+	3
+	2 -> 3 [label="K06859 
+ [1/9]" color=black]
+	2
+	3
+	2 -> 3 [label="K13810 
+ [1/9]" color=black]
+	2
+	3
+	2 -> 3 [label="K15916 
+ [1/9]" color=black]
+	3
+	4
+	3 -> 4 [label="K00850 
+ [1/9]" color=black]
+	3
+	4
+	3 -> 4 [label="K16370 
+ [1/9]" color=black]
+	3
+	4
+	3 -> 4 [label="K21071 
+ [1/9]" color=black]
+	3
+	4
+	3 -> 4 [label="K24182 
+ [1/9]" color=black]
+	3
+	4
+	3 -> 4 [label="K00918 
+ [1/9]" color=black]
+	4
+	5
+	4 -> 5 [label="K01623 
+ [1/9]" color=black]
+	4
+	5
+	4 -> 5 [label="K01624 
+ [1/9]" color=black]
+	4
+	5
+	4 -> 5 [label="K11645 
+ [1/9]" color=black]
+	4
+	5
+	4 -> 5 [label="K16305 
+ [1/9]" color=black]
+	4
+	5
+	4 -> 5 [label="K16306 
+ [1/9]" color=black]
+	5
+	6
+	5 -> 6 [label="K01803 
+ [1/9]" color=black]
+	6
+	8
+	6 -> 8 [label="K00134 
+ [1/18]" color=black]
+	6
+	8
+	6 -> 8 [label="K00150 
+ [1/18]" color=black]
+	6
+	7
+	6 -> 7 [label="K11389 
+ [1/9]" color=black]
+	7
+	9
+	7 -> 9 [label="K01834 
+ [1/9]" color=black]
+	7
+	9
+	7 -> 9 [label="K15633 
+ [1/9]" color=black]
+	7
+	9
+	7 -> 9 [label="K15634 
+ [1/9]" color=black]
+	7
+	9
+	7 -> 9 [label="K15635 
+ [1/9]" color=black]
+	8
+	7
+	8 -> 7 [label="K00927 
+ [1/18]" color=black]
+	9
+	10
+	9 -> 10 [label="K01689 
+ [1/9]" color=black]
+	9
+	10
+	9 -> 10 [label="K27394 
+ [1/9]" color=black]
+	10
+	1
+	10 -> 1 [label="K00873 
+ [1/9]" color=red]
+	10
+	1
+	10 -> 1 [label="K12406 
+ [1/9]" color=black]
+}

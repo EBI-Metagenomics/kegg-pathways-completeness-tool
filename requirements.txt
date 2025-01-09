@@ -1,3 +1,0 @@
-biopython==1.83
-networkx==3.3
-graphviz==0.20.3

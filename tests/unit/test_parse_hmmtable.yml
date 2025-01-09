@@ -1,0 +1,16 @@
+- name: make_hmmscan_table_tab_separated
+  tags:
+    - make_hmmscan_table_tab_separated
+  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.make_hmmscan_table_tab_separated --input tests/fixtures/parse_hmmtable/hmmscan_output.txt --output hmmscan_output_tab_sep.tsv
+  files:
+    - path: hmmscan_output_tab_sep.tsv
+      md5sum: ff5598e938b611450da852dd769256d3
+
+- name: parse_hmmscan_tab_separated_table
+  tags:
+    - parse_hmmscan_tab_separated_table
+  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmscan_tab_separated_table --input tests/outputs/parse_hmmtable/hmmscan_output.tsv -o hmm --fasta tests/fixtures/parse_hmmtable/test.fasta
+  files:
+    - path: hmm/hmmscan_output.tsv_parsed
+      md5sum: 35ffc70eccbdca0e2efc18cd4f90b761
+

@@ -93,8 +93,8 @@ M00097:beta-Carotene biosynthesis, GGAP => beta-carotene
 M00098:Acylglycerol degradation
 M00099:Sphingosine biosynthesis
 M00100:Sphingosine degradation
-M00101:Cholesterol biosynthesis, squalene 2,3-epoxide => cholesterol
-M00102:Ergocalciferol biosynthesis, squalene 2,3-epoxide => ergosterol/ergocalciferol
+M00101:Cholesterol biosynthesis, FPP => cholesterol
+M00102:Ergocalciferol biosynthesis, FPP => ergosterol/ergocalciferol
 M00103:Cholecalciferol biosynthesis
 M00104:Bile acid biosynthesis, cholesterol => cholate/chenodeoxycholate
 M00106:Conjugated bile acid biosynthesis, cholate => taurocholate/glycocholate
@@ -241,7 +241,7 @@ M00576:ETEC pathogenicity signature, heat-labile and heat-stable enterotoxins
 M00577:Biotin biosynthesis, BioW pathway, pimelate => pimeloyl-CoA => biotin
 M00579:Phosphate acetyltransferase-acetate kinase pathway, acetyl-CoA => acetate
 M00580:Pentose phosphate pathway, archaea, fructose 6P => ribose 5P
-M00595:Thiosulfate oxidation by SOX complex, thiosulfate => sulfate
+M00595:Sulfur oxidation, SOX system, thiosulfate => sulfate
 M00596:Dissimilatory sulfate reduction, sulfate => H2S
 M00597:Anoxygenic photosystem II
 M00598:Anoxygenic photosystem I
@@ -395,6 +395,10 @@ M00881:Lipoic acid biosynthesis, plants and bacteria, octanoyl-ACP => dihydrolip
 M00882:Lipoic acid biosynthesis, eukaryotes, octanoyl-ACP => dihydrolipoyl-H
 M00883:Lipoic acid biosynthesis, animals and bacteria, octanoyl-ACP => dihydrolipoyl-H => dihydrolipoyl-E2
 M00884:Lipoic acid biosynthesis, octanoyl-CoA => dihydrolipoyl-E2
+M00885:Meromycolic acid biosynthesis, initiation and elongation FAS II (KasA)
+M00886:Meromycolic acid biosynthesis, initiation and elongation FAS II (KasA and KasB)
+M00887:Mycolic acid biosynthesis, meromycolic acid + alpha-carboxyacyl-CoA + trehalose => TMM => TDM/mAGP/GMM
+M00888:Galactofuranan biosynthesis, decaprenyl phosphate + UDP-GlcNAc (+ dTDP-Rha/UDP-Galf) => GL-5
 M00889:Puromycin biosynthesis, ATP => puromycin
 M00890:Roseoflavin biosynthesis, FMN => roseoflavin
 M00891:Ditryptophenaline biosynthesis, tryptophan + phenylalanine => ditryptophenaline
@@ -466,7 +470,7 @@ M00961:Betacyanin biosynthesis, L-tyrosine => amaranthin
 M00962:Psilocybin biosynthesis, tryptophan => psilocybin
 M00963:Chanoclavine aldehyde biosynthesis, tryptophan => chanoclavine-I aldehyde
 M00964:Fumigaclavine biosynthesis, chanoclavine-I aldehyde => fumigaclavine C
-M00965:Vindoline biosynthesis, tabersonine => vindoline
+M00965:Vinblastine biosynthesis, geissoschizine => vinblastine
 M00966:Equol biosynthesis, daidzein => equol
 M00967:Flavone degradation, luteolin/apigenin => DHCA/phloretate
 M00968:Pentose bisphosphate pathway (nucleoside degradation), archaea, nucleoside/NMP => 3-PGA/glycerone phosphate
@@ -480,3 +484,12 @@ M00975:Betaine degradation, bacteria, betaine => pyruvate
 M00976:C19-Steroid hormone biosynthesis, pregnenolone => testosterone => dihydrotestosterone
 M00977:C19-Steroid hormone biosynthesis (androgen backdoor pathway), pregnenolone => androsterone => dihydrotestosterone
 M00978:Ornithine-ammonia cycle
+M00979:Ajmaline biosynthesis, geissoschizine => ajmaline
+M00980:Strychnine biosynthesis, geissoschizine => strychnine
+M00981:Geissoschizine biosynthesis, tryptophan => geissoschizine
+M00982:Methylcitrate cycle
+M00983:GPI-anchor remodeling
+M00984:Sulfur oxidation, tetrathionate intermediate (S4I) pathway, thiosulfate => sulfur + sulfate + thiosulfate
+M00985:Sulfide oxidation, sulfide => sulfur
+M00986:Sulfur reduction, sulfur => sulfide
+M00987:Assimilatory sulfate reduction, plants, sulfate => H2S
