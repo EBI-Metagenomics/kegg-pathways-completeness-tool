@@ -1,0 +1,19 @@
+digraph G {
+name=M00050;
+comment="K00088 K01951 K00942 (K00940,K18533)";
+0;
+2;
+0 -> 2 [label="K00088 \n [1/4]", color=black];
+2;
+3;
+2 -> 3 [label="K01951 \n [1/4]", color=red];
+3;
+4;
+3 -> 4 [label="K00942 \n [1/4]", color=red];
+4;
+1;
+4 -> 1 [label="K00940 \n [1/4]", color=black];
+4;
+1;
+4 -> 1 [label="K18533 \n [1/4]", color=black];
+}

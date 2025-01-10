@@ -21,6 +21,8 @@ import networkx as nx
 import logging
 import os
 import graphviz
+import pydot
+import csv
 
 from .utils import parse_modules_list_input, parse_graphs_input
 
@@ -43,6 +45,8 @@ def parse_args(argv):
                         default="pathways_data/all_pathways.txt")
     parser.add_argument("-o", "--outdir", dest="outdir", help="Path to output directory", required=False,
                         default="pathways_plots")
+    parser.add_argument("--use-pydot", dest="use_pydot", help="Use pydot instead of graphviz", required=False,
+                        action='store_true')
     return parser.parse_args(argv)
 
 
@@ -54,6 +58,7 @@ class PlotModuleCompletenessGraph():
             modules_definitions: dict,
             outdir: str,
             modules_list: list = [],
+            use_pydot: bool = False
     ):
         """
         Class generates a plots with colored edges depending on presence/absence.
@@ -67,8 +72,63 @@ class PlotModuleCompletenessGraph():
         self.modules_completeness = modules_completeness
         self.graphs = graphs
         self.modules_definitions = modules_definitions
-        self.outdir = outdir
         self.modules_list = modules_list
+        # flags
+        self.use_pydot = use_pydot
+        # output directories
+        self.outdir = outdir
+        if not os.path.exists(self.outdir):
+            os.mkdir(self.outdir)
+        self.outdir_dot = os.path.join(self.outdir, 'dot')
+        if not os.path.exists(self.outdir_dot):
+            os.mkdir(self.outdir_dot)
+        self.outdir_png = os.path.join(self.outdir, 'png')
+        if not os.path.exists(self.outdir_png):
+            os.mkdir(self.outdir_png)
+
+    def create_graph_dot(self, name, presented, graph, pathways_schema):
+        # Create a pydot graph
+        dot = pydot.Dot(name=name, graph_type='digraph', comment=pathways_schema)
+
+        edges = graph[0].edges
+        max_weight = 0
+
+        for edge, count in zip(edges, range(len(edges))):
+            from_node = edge[0]
+            to_node = edge[1]
+            number = edge[2]
+
+            # Add nodes to the graph
+            dot.add_node(pydot.Node(str(from_node)))
+            dot.add_node(pydot.Node(str(to_node)))
+
+            # Extract edge attributes
+            label = edges._adjdict[from_node][to_node][number]['label']
+            weight = edges._adjdict[from_node][to_node][number]['weight']
+
+            if weight > 0:
+                if 1 / weight > max_weight:
+                    max_weight = int(1 / weight)
+
+            # Format weight string
+            if weight == 1 or weight == 0:
+                weight_str = str(weight)
+            else:
+                weight_str = '1/' + str(int(1 / weight))
+
+            # Set edge color
+            color = 'red' if label in presented else 'black'
+
+            # Add edge to the graph
+            dot.add_edge(
+                pydot.Edge(
+                    str(from_node),
+                    str(to_node),
+                    label=f"{label} \n [{weight_str}]",
+                    color=color
+                )
+            )
+        return dot
 
     def create_graph(self, name, presented, graph, pathways_schema):
         dot = graphviz.Digraph(name, comment=pathways_schema)
@@ -105,17 +165,39 @@ class PlotModuleCompletenessGraph():
                 graph = self.graphs[name]
                 logging.info(f'Plotting {name}')
                 presented_ko = self.modules_completeness[name].split(',')
-                dot = self.create_graph(name, presented=presented_ko, graph=graph,
+                if self.use_pydot:
+                    logging.info('Using pydot')
+                    dot = self.create_graph_dot(name, presented=presented_ko, graph=graph,
                                         pathways_schema=self.modules_definitions[name])
-                dot.render(directory=self.outdir, filename=name, format='png')
+                    # create .dot file
+                    with open(os.path.join(self.outdir_dot, f"{name}.dot"), "w") as f:
+                        f.write(dot.to_string())
+                    # create .png file
+                    dot.write_png(os.path.join(self.outdir_png, f'{name}.png'))
+                else:
+                    logging.info('Using graphviz')
+                    dot = self.create_graph(name, presented=presented_ko, graph=graph,
+                                            pathways_schema=self.modules_definitions[name])
+                    dot.render(directory=self.outdir, filename=name, format='png')
         else:
             logging.info("Plotting modules from specified list without completeness information")
             for name in self.modules_list:
                 graph = self.graphs[name]
                 logging.info(f'Plotting {name}')
-                dot = self.create_graph(name, presented=[], graph=graph,
-                                        pathways_schema=self.modules_definitions[name])
-                dot.render(directory=self.outdir, filename=name, format='png')
+                if self.use_pydot:
+                    logging.info('Using pydot')
+                    dot = self.create_graph_dot(name, presented=[], graph=graph,
+                                                pathways_schema=self.modules_definitions[name])
+                    # create .dot file
+                    with open(os.path.join(self.outdir_dot, f"{name}.dot"), "w") as f:
+                        f.write(dot.to_string())
+                    # create .png file
+                    dot.write_png(os.path.join(self.outdir_png, f'{name}.png'))
+                else:
+                    logging.info('Using graphviz')
+                    dot = self.create_graph(name, presented=[], graph=graph,
+                                            pathways_schema=self.modules_definitions[name])
+                    dot.render(directory=self.outdir, filename=name, format='png')
 
 
 def parse_completeness_input(filepath):
@@ -139,17 +221,17 @@ def parse_completeness_input(filepath):
     return pathways
 
 
-def parse_input_modules(input_modules_list=None, input_modules_file=None):
+def parse_input_modules(input_modules_list=None, input_modules_file=None, list_separator='\n'):
     if input_modules_list:
         logging.info("Using specified list of modules")
         return input_modules_list
     elif input_modules_file:
         logging.info(f"Using modules from {input_modules_file}")
         modules_list = []
-        with open(input_modules_file, 'r') as file_in:
-            for line in file_in:
-                modules_list.append(line.strip())
-                # TODO add separator
+        with open(input_modules_file, 'r') as f:
+            reader = csv.reader(f, delimiter=list_separator)
+            for row in reader:
+                modules_list.extend(row)
         return modules_list
     else:
         logging.info('No modules specified in input')
@@ -166,7 +248,8 @@ def main():
         graphs=parse_graphs_input(args.graphs),
         modules_definitions=parse_modules_list_input(args.pathways),
         outdir=args.outdir,
-        modules_list=parse_input_modules(args.input_modules_list, args.input_modules_file),
+        modules_list=parse_input_modules(args.input_modules_list, args.input_modules_file, args.list_separator),
+        use_pydot=args.use_pydot
     )
     plot_completeness_generator.generate_plot_for_completeness()
 
