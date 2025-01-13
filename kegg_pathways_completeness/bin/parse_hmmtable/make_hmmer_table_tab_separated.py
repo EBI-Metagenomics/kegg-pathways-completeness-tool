@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-    Script to convert hmmscan table to tab-separated
+    Script to convert hmm-table to tab-separated
 """
 
 import sys
@@ -21,21 +21,21 @@ import argparse
 
 
 def parse_args(argv):
-    parser = argparse.ArgumentParser(description="Convert hmmscan table to tab-separated")
+    parser = argparse.ArgumentParser(description="Convert hmm-table to tab-separated")
     parser.add_argument("-i", "--input", dest="input", help="Input file", required=True)
     parser.add_argument("-o", "--output", dest="output", help="Output file", required=True)
     return parser.parse_args(argv)
 
 
-class HMMScanTableModifier:
+class HmmerTableModifier:
     def __init__(
         self,
         input_file: str,
         output_file: str,
     ):
         """
-        Output of hmmscan has columns separated with different number of spaces (to keep humanreadable format)
-        :param input_file: output of hmmscan
+        Output of hmm-table has columns separated with different number of spaces (to keep humanreadable format)
+        :param input_file: output of hmm-table
         :param output_file: name of tab-separated table
         """
         self.input_file = input_file
@@ -53,11 +53,11 @@ class HMMScanTableModifier:
 
 def main():
     args = parse_args(sys.argv[1:])
-    hmmscan_table_modifier = HMMScanTableModifier(
+    hmmtable_table_modifier = HmmerTableModifier(
         input_file=args.input,
         output_file=args.output,
     )
-    hmmscan_table_modifier.modify_table()
+    hmmtable_table_modifier.modify_table()
 
 
 if __name__ == "__main__":

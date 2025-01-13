@@ -22,35 +22,40 @@ from Bio import SeqIO
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Generates file with KEGG orthologs for each contig")
-    parser.add_argument("-i", "--input", dest="input_file", help="Tab deliminated file with hmmscan results",
+    parser.add_argument("-i", "--input", dest="input_file", help="Tab deliminated file with hmm-table results",
                         required=True)
     parser.add_argument("-f", "--fasta", dest="fasta_file", help="Filtered fasta file with initial names of contigs",
                         required=True)
     parser.add_argument("-o", "--outdir", dest="outdir", default=".",
                         help="Relative path to directory where you want the output file to be stored (default: cwd)")
+    parser.add_argument("-t", "--tool", dest="hmm_tool", help="hmmer main command name",
+                        choices=['hmmscan', 'hmmsearch'], required=True)
     return parser.parse_args(argv)
 
 
-class HMMScanTableParser:
+class HmmerTableParser:
     def __init__(
         self,
         input_table: str,
         input_fasta: str,
         output_dir: str,
+        hmmtool: str,
     ):
         """
-        Script parses hmmscan tab-separated file. It generates a list of KOs per each contig.
-        Contig names in hmmscan output can be different from initial fasta file.
+        Script parses hmmer tab-separated file. It generates a list of KOs per each contig.
+        Contig names in hmmer output can be different from initial fasta file.
         In order to keep contig names consistent, it is required to parse initial fasta file too.
-        :param input_table: hmmscan tab-separated table
-        :param input_fasta: fasta file that was used in hmmscan command
+        :param input_table: hmmer tab-separated table
+        :param input_fasta: fasta file that was used in hmmer command
         :param output_dir: name of output directory
+        :param hmmtool: hmmscan / hmmsearch
         """
         self.input_table = input_table
         self.input_fasta = input_fasta
         self.output_dir = output_dir
         if not os.path.exists(self.output_dir):
             os.mkdir(self.output_dir)
+        self.hmmtool = hmmtool
 
     def get_dir_contigs(self):
         dict_contigs = {}
@@ -61,13 +66,21 @@ class HMMScanTableParser:
         print(len(dict_contigs))
         return dict_contigs
 
+    def choose_columns(self, line):
+        # return contig, KO
+        if self.hmmtool == 'hmmsearch':
+            return line[0], line[3]
+        elif self.hmmtool == 'hmmscan':
+            return line[3], line[0]
+        else:
+            print('Incorrect hmm tool')
+
     def parsing(self, dict_contigs):
         # reading all annotations
         with open(self.input_table, 'r') as file_in:
             for line in file_in:
                 line = line.strip().split('\t')
-                contig = line[0]  #line[3] - hmmscan
-                kegg_annotation = line[3]  # line[0] - hmmscan
+                contig, kegg_annotation = self.choose_columns(line)
                 contig_in_fasta = [name for name in dict_contigs if name in contig]
                 if len(contig_in_fasta) == 0:
                     print(contig)
@@ -87,13 +100,14 @@ class HMMScanTableParser:
 
 def main():
     args = parse_args(sys.argv[1:])
-    hmmscan_table_parser = HMMScanTableParser(
+    hmmer_table_parser = HmmerTableParser(
         input_table=args.input_file,
         input_fasta=args.fasta_file,
-        output_dir=args.outdir
+        output_dir=args.outdir,
+        hmmtool=args.hmm_tool
     )
-    contigs = hmmscan_table_parser.get_dir_contigs()
-    hmmscan_table_parser.parsing(contigs)
+    contigs = hmmer_table_parser.get_dir_contigs()
+    hmmer_table_parser.parsing(contigs)
 
 
 if __name__ == "__main__":
