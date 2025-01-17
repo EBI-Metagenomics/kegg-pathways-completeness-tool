@@ -73,7 +73,7 @@ class HmmerTableParser:
         elif self.hmmtool == 'hmmscan':
             return line[3], line[0]
         else:
-            print('Incorrect hmm tool')
+            raise ValueError(f"Incorrect HMM tool specified: {self.hmmtool}")
 
     def parsing(self, dict_contigs):
         # reading all annotations
