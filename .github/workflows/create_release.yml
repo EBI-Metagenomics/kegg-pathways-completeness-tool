@@ -17,10 +17,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
+          cache: 'pip' # caching pip dependencies
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           pip install .
 
       - name: Install graphviz
@@ -32,13 +32,13 @@ jobs:
           python -m kegg_pathways_completeness.bin.plot_modules_graphs --modules-file list_modules.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt -o plots --use-pydot
           rm list_modules.txt
 
-      - name: Compress Folder into ZIP
+      - name: Compress Folder into GZIP
         run: |
-          zip -r plots.zip ./plots
+          tar -czf plots.tar.gz ./plots
 
       - name: Create GitHub Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           release_name: "Release ${{ github.ref_name }}"
@@ -50,10 +50,10 @@ jobs:
 
       - name: Upload Archive to Release
         uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./plots.zip
-          asset_name: plots.zip
-          asset_content_type: application/zip
+          asset_path: ./plots.tar.gz
+          asset_name: plots.tar.gz
+          asset_content_type: application/gzip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

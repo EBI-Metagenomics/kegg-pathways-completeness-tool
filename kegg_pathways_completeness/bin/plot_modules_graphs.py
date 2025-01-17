@@ -86,45 +86,34 @@ class PlotModuleCompletenessGraph():
         if not os.path.exists(self.outdir_png):
             os.mkdir(self.outdir_png)
 
+    def format_weight(self, weight):
+        if weight in (0, 1):
+            return str(weight)
+        return f"1/{int(1 / weight)}"
+
     def create_graph_dot(self, name, presented, graph, pathways_schema):
         # Create a pydot graph
         dot = pydot.Dot(name=name, graph_type='digraph', comment=pathways_schema)
-
         edges = graph[0].edges
-        max_weight = 0
 
         for edge, count in zip(edges, range(len(edges))):
             from_node = edge[0]
             to_node = edge[1]
             number = edge[2]
-
             # Add nodes to the graph
             dot.add_node(pydot.Node(str(from_node)))
             dot.add_node(pydot.Node(str(to_node)))
-
             # Extract edge attributes
             label = edges._adjdict[from_node][to_node][number]['label']
             weight = edges._adjdict[from_node][to_node][number]['weight']
-
-            if weight > 0:
-                if 1 / weight > max_weight:
-                    max_weight = int(1 / weight)
-
-            # Format weight string
-            if weight == 1 or weight == 0:
-                weight_str = str(weight)
-            else:
-                weight_str = '1/' + str(int(1 / weight))
-
             # Set edge color
             color = 'red' if label in presented else 'black'
-
             # Add edge to the graph
             dot.add_edge(
                 pydot.Edge(
                     str(from_node),
                     str(to_node),
-                    label=f"{label} \n [{weight_str}]",
+                    label=f"{label} \n [{self.format_weight(weight)}]",
                     color=color
                 )
             )
@@ -133,7 +122,6 @@ class PlotModuleCompletenessGraph():
     def create_graph(self, name, presented, graph, pathways_schema):
         dot = graphviz.Digraph(name, comment=pathways_schema)
         edges = graph[0].edges
-        max_weight = 0
         for edge, count in zip(edges, range(len(edges))):
             from_node = edge[0]
             to_node = edge[1]
@@ -143,61 +131,61 @@ class PlotModuleCompletenessGraph():
 
             label = edges._adjdict[from_node][to_node][number]['label']
             weight = edges._adjdict[from_node][to_node][number]['weight']
-            if weight > 0:
-                if 1 / weight > max_weight:
-                    max_weight = int(1 / weight)
-            if weight == 1 or weight == 0:
-                weight_str = str(weight)
-            else:
-                weight_str = '1/' + str(int(1 / weight))
+
             color = 'red' if label in presented else 'black'
-            dot.edge(str(from_node), str(to_node), label=label + ' \n [' + weight_str + ']', color=color)
+            dot.edge(str(from_node), str(to_node), label=label + ' \n [' + self.format_weight(weight) + ']', color=color)
         return dot
 
+    def generate_graph_using_pydot(self, name, presented_ko, graph, pathways_schema):
+        logging.info('Using pydot')
+        dot = self.create_graph_dot(name, presented=presented_ko, graph=graph,
+                                    pathways_schema=pathways_schema)
+        # create .dot file
+        with open(os.path.join(self.outdir_dot, f"{name}.dot"), "w") as f:
+            f.write(dot.to_string())
+        # create .png file
+        dot.write_png(os.path.join(self.outdir_png, f'{name}.png'))
+
+    def generate_graph_using_graphviz(self, name, presented_ko, graph, pathways_schema):
+        logging.info('Using graphviz')
+        dot = self.create_graph(name, presented=presented_ko, graph=graph,
+                                pathways_schema=pathways_schema)
+        dot.render(directory=self.outdir, filename=name, format='png')
+
     def generate_plot_for_completeness(self):
-        if self.modules_completeness:
-            logging.info('Using completeness file')
-            for name in self.modules_completeness:
-                if len(self.modules_list):
-                    if name not in self.modules_list:
-                        logging.debug(f'Skipping {name} because it is not in specified modules list')
-                        continue
-                graph = self.graphs[name]
-                logging.info(f'Plotting {name}')
-                presented_ko = self.modules_completeness[name].split(',')
-                if self.use_pydot:
-                    logging.info('Using pydot')
-                    dot = self.create_graph_dot(name, presented=presented_ko, graph=graph,
-                                        pathways_schema=self.modules_definitions[name])
-                    # create .dot file
-                    with open(os.path.join(self.outdir_dot, f"{name}.dot"), "w") as f:
-                        f.write(dot.to_string())
-                    # create .png file
-                    dot.write_png(os.path.join(self.outdir_png, f'{name}.png'))
-                else:
-                    logging.info('Using graphviz')
-                    dot = self.create_graph(name, presented=presented_ko, graph=graph,
-                                            pathways_schema=self.modules_definitions[name])
-                    dot.render(directory=self.outdir, filename=name, format='png')
-        else:
-            logging.info("Plotting modules from specified list without completeness information")
-            for name in self.modules_list:
-                graph = self.graphs[name]
-                logging.info(f'Plotting {name}')
-                if self.use_pydot:
-                    logging.info('Using pydot')
-                    dot = self.create_graph_dot(name, presented=[], graph=graph,
+        logging.info('Using completeness file')
+        for name in self.modules_completeness:
+            if len(self.modules_list):
+                if name not in self.modules_list:
+                    logging.debug(f'Skipping {name} because it is not in specified modules list')
+                    continue
+            graph = self.graphs[name]
+            logging.info(f'Plotting {name}')
+            presented_ko = self.modules_completeness[name].split(',')
+            if self.use_pydot:
+                self.generate_graph_using_pydot(name=name, presented_ko=presented_ko, graph=graph,
                                                 pathways_schema=self.modules_definitions[name])
-                    # create .dot file
-                    with open(os.path.join(self.outdir_dot, f"{name}.dot"), "w") as f:
-                        f.write(dot.to_string())
-                    # create .png file
-                    dot.write_png(os.path.join(self.outdir_png, f'{name}.png'))
-                else:
-                    logging.info('Using graphviz')
-                    dot = self.create_graph(name, presented=[], graph=graph,
-                                            pathways_schema=self.modules_definitions[name])
-                    dot.render(directory=self.outdir, filename=name, format='png')
+            else:
+                self.generate_graph_using_graphviz(name=name, presented_ko=presented_ko, graph=graph,
+                                                   pathways_schema=self.modules_definitions[name])
+
+    def generate_plot_without_completeness(self):
+        logging.info("Plotting modules from specified list without completeness information")
+        for name in self.modules_list:
+            graph = self.graphs[name]
+            logging.info(f'Plotting {name}')
+            if self.use_pydot:
+                self.generate_graph_using_pydot(name=name, presented_ko=[], graph=graph,
+                                                pathways_schema=self.modules_definitions[name])
+            else:
+                self.generate_graph_using_graphviz(name=name, presented_ko=[], graph=graph,
+                                                   pathways_schema=self.modules_definitions[name])
+
+    def generate_plot(self):
+        if self.modules_completeness:
+            self.generate_plot_for_completeness()
+        else:
+            self.generate_plot_without_completeness()
 
 
 def parse_completeness_input(filepath):
@@ -251,7 +239,7 @@ def main():
         modules_list=parse_input_modules(args.input_modules_list, args.input_modules_file, args.list_separator),
         use_pydot=args.use_pydot
     )
-    plot_completeness_generator.generate_plot_for_completeness()
+    plot_completeness_generator.generate_plot()
 
 
 if __name__ == "__main__":
