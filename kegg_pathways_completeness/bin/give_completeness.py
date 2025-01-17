@@ -89,7 +89,7 @@ class CompletenessCalculator():
         # outputs
         self.outdir = outdir
         if not os.path.exists(self.outdir):
-            os.path.makedirs(self.outdir)
+            os.makedirs(self.outdir)
         self.outprefix = outprefix
         self.name_output = os.path.join(self.outdir, self.outprefix)
         self.name_output_pathways_plots = os.path.join(self.outdir, 'pathways_plots')
