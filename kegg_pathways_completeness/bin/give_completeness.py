@@ -349,7 +349,7 @@ class CompletenessCalculator():
                 modules_definitions=self.modules_definitions,
                 outdir=self.name_output_pathways_plots
             )
-            plot_completeness_generator.generate_plot_for_completeness()
+            plot_completeness_generator.generate_plot()
             logger.info('...Done. Results are in pathways_plots folder')
 
         # generate summary per-contig
