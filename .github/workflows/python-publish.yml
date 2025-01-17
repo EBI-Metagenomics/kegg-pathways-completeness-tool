@@ -2,6 +2,9 @@ name: Upload Python Package
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - fix-publish-package
   release:
     types: [published]
 
