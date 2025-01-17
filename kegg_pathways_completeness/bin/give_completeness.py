@@ -24,9 +24,10 @@ import os
 from importlib.resources import files
 
 from .plot_modules_graphs import PlotModuleCompletenessGraph
-from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection
+from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection, get_version
 
-__version__ = "1.1.0"
+
+__version__ = get_version()
 
 
 def parse_args(argv):

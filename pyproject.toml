@@ -19,7 +19,7 @@ dependencies = [
     "biopython>=1.83",
     "networkx>=3.3",
     "graphviz>=0.20.3",
-    "pydot>=3.0.4"
+    "pydot>=3.0.4",
 ]
 
 [build-system]

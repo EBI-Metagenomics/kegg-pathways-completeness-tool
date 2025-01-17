@@ -17,6 +17,9 @@ import os
 import subprocess
 import sys
 import re
+from .utils import get_version
+
+__version__ = get_version()
 
 LIST_MODULES = 'list_pathways.txt'
 LIST_CLASSES = "all_pathways_class.txt"
@@ -33,6 +36,7 @@ def parse_args(argv):
         description="Script fetches KEGG API for list of modules with NAME, DEFINITION and CLASS.")
     parser.add_argument("-o", "--output-dir", dest="output", help="Output directory", default="pathways",
                         required=False)
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     return parser.parse_args(argv)
 
 

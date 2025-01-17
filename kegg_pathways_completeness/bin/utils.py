@@ -15,11 +15,20 @@
 # limitations under the License.
 #
 import argparse
-import sys
 import logging
-import pickle
 import networkx as nx
 import os
+from pathlib import Path
+import pickle
+import sys
+import tomli
+
+
+def get_version():
+    toml_file = Path(__file__).parent.parent.parent / "pyproject.toml"
+    with toml_file.open("rb") as f:
+        pyproject_data = tomli.load(f)
+    return pyproject_data["project"]["version"]
 
 
 def setup_logging(verbose):

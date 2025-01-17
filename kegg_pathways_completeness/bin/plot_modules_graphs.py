@@ -24,12 +24,15 @@ import graphviz
 import pydot
 import csv
 
-from .utils import parse_modules_list_input, parse_graphs_input
+from .utils import parse_modules_list_input, parse_graphs_input, get_version
+
+__version__ = get_version()
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Script generates plots for each contig")
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     parser.add_argument("-i", "--input-completeness", dest="input_completeness",
                         help="Output table from give_completeness.py", required=False)
     group = parser.add_mutually_exclusive_group(required=False)
