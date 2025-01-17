@@ -9,6 +9,12 @@ on:
 jobs:
   create-release:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write  # Required for creating and uploading release assets
+      actions: write   # Needed for writing actions (like creating releases)
+      id-token: write   # Required for publishing or creating release assets
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
