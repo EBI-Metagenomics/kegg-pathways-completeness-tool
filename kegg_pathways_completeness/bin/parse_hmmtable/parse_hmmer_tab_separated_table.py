@@ -18,7 +18,7 @@ import os
 import argparse
 import sys
 from Bio import SeqIO
-from .utils import get_version
+from ..utils import get_version
 
 __version__ = get_version()
 

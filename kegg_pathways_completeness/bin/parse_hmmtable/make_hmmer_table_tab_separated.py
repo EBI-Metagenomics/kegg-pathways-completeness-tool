@@ -18,7 +18,7 @@
 
 import sys
 import argparse
-from .utils import get_version
+from ..utils import get_version
 
 __version__ = get_version()
 
