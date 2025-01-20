@@ -23,8 +23,9 @@ import pdb
 import pickle
 import networkx as nx
 import time
-from .utils import intersection, setup_logging
+from .utils import intersection, setup_logging, get_version
 
+__version__ = get_version()
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Generates Graphs and saves graphs.pkl for each module")
@@ -34,6 +35,7 @@ def parse_args(argv):
                         default="outdir")
     parser.add_argument("-v", "--verbose", dest="verbose", help="Print more logging", required=False,
                         action='store_true')
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     return parser.parse_args(argv)
 
 
@@ -159,7 +161,7 @@ class GraphsGenerator:
             if pathway[i] == '(' and pathway[L - i - 1] == ')' and levels_brackets[i] == levels_brackets[L - i - 1]:
                 expression_without_brackets = pathway[i + 1:L - i - 1]
             else:
-                continue
+                return expression_without_brackets
         return expression_without_brackets
 
     def recursive_parsing(self, G, dict_edges, unnecessary_nodes, expression, start_node, end_node, weight):

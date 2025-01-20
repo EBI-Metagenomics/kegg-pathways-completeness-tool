@@ -4,4 +4,4 @@
   command: python -m kegg_pathways_completeness.bin.make_graphs -i tests/fixtures/make_graphs/test.txt -o test_graphs
   files:
     - path: "test_graphs/graphs.pkl"
-      md5sum: 0979eeab90cf60b5cdb5e5e7c7e6fffd
+      md5sum: d90c006fdcf0d0cb8b14698b9c5fa604

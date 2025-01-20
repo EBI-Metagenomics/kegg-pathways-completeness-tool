@@ -18,12 +18,15 @@
 
 import sys
 import argparse
+from ..utils import get_version
 
+__version__ = get_version()
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Convert hmm-table to tab-separated")
     parser.add_argument("-i", "--input", dest="input", help="Input file", required=True)
     parser.add_argument("-o", "--output", dest="output", help="Output file", required=True)
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     return parser.parse_args(argv)
 
 

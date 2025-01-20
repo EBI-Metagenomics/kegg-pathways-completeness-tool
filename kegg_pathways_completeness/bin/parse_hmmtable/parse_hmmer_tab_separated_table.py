@@ -18,7 +18,9 @@ import os
 import argparse
 import sys
 from Bio import SeqIO
+from ..utils import get_version
 
+__version__ = get_version()
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Generates file with KEGG orthologs for each contig")
@@ -30,6 +32,7 @@ def parse_args(argv):
                         help="Relative path to directory where you want the output file to be stored (default: cwd)")
     parser.add_argument("-t", "--tool", dest="hmm_tool", help="hmmer main command name",
                         choices=['hmmscan', 'hmmsearch'], required=True)
+    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     return parser.parse_args(argv)
 
 
