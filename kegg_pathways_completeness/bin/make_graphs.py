@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2024 EMBL - European Bioinformatics Institute
+# Copyright 2025 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,9 +23,7 @@ import pdb
 import pickle
 import networkx as nx
 import time
-from .utils import intersection, setup_logging, get_version
-
-__version__ = get_version()
+from .utils import intersection, setup_logging, __version__
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Generates Graphs and saves graphs.pkl for each module")

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2024 EMBL - European Bioinformatics Institute
+# Copyright 2025 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@ import os
 import subprocess
 import sys
 import re
-from .utils import get_version
+from .utils import __version__
 
-__version__ = get_version()
 
 LIST_MODULES = 'list_pathways.txt'
 LIST_CLASSES = "all_pathways_class.txt"

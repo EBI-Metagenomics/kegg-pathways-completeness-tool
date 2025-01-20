@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2024 EMBL - European Bioinformatics Institute
+# Copyright 2025 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 import argparse
 import logging
 import networkx as nx
@@ -23,13 +23,7 @@ import pickle
 import sys
 import tomli
 
-
-def get_version():
-    toml_file = Path(__file__).parent.parent.parent / "pyproject.toml"
-    with toml_file.open("rb") as f:
-        pyproject_data = tomli.load(f)
-    return pyproject_data["project"]["version"]
-
+__version__ = "1.2.1"
 
 def setup_logging(verbose):
     # Configure logging

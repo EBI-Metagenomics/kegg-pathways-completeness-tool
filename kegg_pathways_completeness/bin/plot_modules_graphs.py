@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2024 EMBL - European Bioinformatics Institute
+# Copyright 2025 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,9 +24,8 @@ import graphviz
 import pydot
 import csv
 
-from .utils import parse_modules_list_input, parse_graphs_input, get_version
+from .utils import parse_modules_list_input, parse_graphs_input, __version__
 
-__version__ = get_version()
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 

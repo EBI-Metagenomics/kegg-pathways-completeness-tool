@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright 2024 EMBL - European Bioinformatics Institute
+# Copyright 2025 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -24,10 +24,7 @@ import os
 from importlib.resources import files
 
 from .plot_modules_graphs import PlotModuleCompletenessGraph
-from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection, get_version
-
-
-__version__ = get_version()
+from .utils import parse_modules_list_input, parse_graphs_input, setup_logging, intersection, __version__
 
 
 def parse_args(argv):
