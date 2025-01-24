@@ -23,7 +23,7 @@ import pickle
 import sys
 import tomli
 
-__version__ = "1.2.1"
+__version__ = "1.3.0"
 
 def setup_logging(verbose):
     # Configure logging

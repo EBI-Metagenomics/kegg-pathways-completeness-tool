@@ -1,6 +1,6 @@
 [project]
 name = "kegg-pathways-completeness"
-version = "1.2.1"
+version = "1.3.0"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [

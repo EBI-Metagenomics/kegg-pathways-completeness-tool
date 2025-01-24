@@ -105,7 +105,7 @@ class CompletenessCalculator():
 
         self.edges = self.get_edges_list()
         # !!!! careful - it was used a deepcopy
-        self.weights_of_KOs = self.get_weights_for_KOs(self.graphs)
+        self.weights_of_KOs = self.get_weights_for_KOs(copy.deepcopy(self.graphs))
 
     def get_edges_list(self):
         items = []
@@ -219,7 +219,7 @@ class CompletenessCalculator():
             percentage = None
         return percentage, len(indexes_min), list(matching_set), list(missing_set_necessary)
 
-    def sort_out_pathways(self, contig_name, file_out_summary, edges):
+    def sort_out_pathways(self, contig_name, file_out_summary, edges, graphs):
         """
         Function sorts out all pathways and prints info about pathway that percentage of intersection more than 0
         :param
@@ -228,8 +228,8 @@ class CompletenessCalculator():
         :return: -
         """
         dict_sort_by_percentage, module_matching_kos = {}, {}
-        for name_pathway in self.graphs:
-            graph = self.graphs[name_pathway]
+        for name_pathway in graphs:
+            graph = graphs[name_pathway]
             if intersection(graph[1], edges) == []:
                 continue
             else:
@@ -316,10 +316,11 @@ class CompletenessCalculator():
         # COMMON INFO
         logger = logging.getLogger(__name__)
         logger.info('Generating completeness for whole list of KOs...')
-        #using_graphs = copy.deepcopy(graphs)
+        using_graphs = copy.deepcopy(self.graphs)
         with open(self.name_common_output_summary, "wt") as file_out_summary:
             self.set_headers(file_out_summary, contig=False)
-            module_matching_kos = self.sort_out_pathways(contig_name='', file_out_summary=file_out_summary, edges=self.edges)
+            module_matching_kos = self.sort_out_pathways(contig_name='', file_out_summary=file_out_summary,
+                                                         edges=self.edges, graphs=using_graphs)
         logger.info('...Done')
         return module_matching_kos
 
@@ -329,9 +330,10 @@ class CompletenessCalculator():
         with open(self.name_contigs_output_summary, "wt") as file_out_summary:
             self.set_headers(file_out_summary, contig=True)
             for contig in self.dict_KO_by_contigs:
-                #using_graphs = copy.deepcopy(graphs)
+                using_graphs = copy.deepcopy(self.graphs)
                 edges = self.dict_KO_by_contigs[contig]
-                self.sort_out_pathways(contig_name=contig, file_out_summary=file_out_summary, edges=edges)
+                self.sort_out_pathways(contig_name=contig, file_out_summary=file_out_summary,
+                                       edges=edges, graphs=using_graphs)
         logger.info('...Done')
 
     def process(self):

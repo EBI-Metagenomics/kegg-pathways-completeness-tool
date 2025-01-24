@@ -1,0 +1,27 @@
+contig	module_accession	completeness	pathway_name	pathway_class	matching_ko	missing_ko
+contig1	M00001	94.44	Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00850,K00873,K00927,K01624,K01689,K01803,K01810,K15633,K25026	K00134
+contig1	M00002	90.0	Glycolysis, core module involving three-carbon compounds	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00873,K00927,K01689,K01803,K15633	K00134
+contig1	M00345	66.67	Formaldehyde assimilation, ribulose monophosphate pathway	Pathway modules; Energy metabolism; Methane metabolism	K00850,K01624	K08093,K08094
+contig1	M00003	64.29	Gluconeogenesis, oxaloacetate => fructose-6P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00927,K01624,K01689,K01803,K15633	K00134,K01596,K03841
+contig1	M00909	40.0	UDP-N-acetyl-D-glucosamine biosynthesis, prokaryotes, glucose => UDP-GlcNAc	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K01810,K25026	K00820,K03431,K04042
+contig1	M00549	33.33	Nucleotide sugar biosynthesis, glucose => UDP-glucose	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K25026	K00963,K01835
+contig1	M00165	27.27	Reductive pentose phosphate cycle (Calvin cycle)	Pathway modules; Energy metabolism; Carbon fixation	K00927,K01624,K01803	K00615,K00855,K01100,K01601,K01783,K01807,K03841,K05298
+contig1	M00344	25.0	Formaldehyde assimilation, xylulose monophosphate pathway	Pathway modules; Energy metabolism; Methane metabolism	K01624	K00863,K03841,K17100
+contig1	M00552	20.0	D-galactonate degradation, De Ley-Doudoroff pathway, D-galactonate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K00927	K00134,K00883,K01631,K01684
+contig1	M00892	16.67	UDP-N-acetyl-D-glucosamine biosynthesis, eukaryotes, glucose => UDP-GlcNAc	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K01810	K00621,K00820,K00844,K00972,K01836
+contig1	M00308	12.5	Semi-phosphorylative Entner-Doudoroff pathway, gluconate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00927	K00134,K00874,K01625,K05308
+contig1	M00346	11.11	Formaldehyde assimilation, serine pathway	Pathway modules; Energy metabolism; Methane metabolism	K01689	K00018,K00024,K00600,K00830,K01595,K08691,K08692,K11529,K14067
+contig1	M00004	8.33	Pentose phosphate pathway (Pentose phosphate cycle)	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K01810	K00033,K00615,K00616,K01783,K01807,K13937
+contig2	M00001	100.0	Glycolysis (Embden-Meyerhof pathway), glucose => pyruvate	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00134,K00844,K00850,K00873,K00927,K01624,K01689,K01803,K01810,K01834	
+contig2	M00002	100.0	Glycolysis, core module involving three-carbon compounds	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00134,K00873,K00927,K01689,K01803,K01834	
+contig2	M00003	78.57	Gluconeogenesis, oxaloacetate => fructose-6P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00134,K00927,K01624,K01689,K01803,K01834	K01596,K03841
+contig2	M00345	66.67	Formaldehyde assimilation, ribulose monophosphate pathway	Pathway modules; Energy metabolism; Methane metabolism	K00850,K01624	K08093,K08094
+contig2	M00552	40.0	D-galactonate degradation, De Ley-Doudoroff pathway, D-galactonate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K00134,K00927	K00883,K01631,K01684
+contig2	M00165	36.36	Reductive pentose phosphate cycle (Calvin cycle)	Pathway modules; Energy metabolism; Carbon fixation	K00134,K00927,K01624,K01803	K00615,K00855,K01100,K01601,K01783,K01807,K03841
+contig2	M00549	33.33	Nucleotide sugar biosynthesis, glucose => UDP-glucose	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K00844	K00963,K01835
+contig2	M00892	33.33	UDP-N-acetyl-D-glucosamine biosynthesis, eukaryotes, glucose => UDP-GlcNAc	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K00844,K01810	K00621,K00820,K00972,K01836
+contig2	M00308	25.0	Semi-phosphorylative Entner-Doudoroff pathway, gluconate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K00134,K00927	K00874,K01625,K05308
+contig2	M00344	25.0	Formaldehyde assimilation, xylulose monophosphate pathway	Pathway modules; Energy metabolism; Methane metabolism	K01624	K00863,K03841,K17100
+contig2	M00909	20.0	UDP-N-acetyl-D-glucosamine biosynthesis, prokaryotes, glucose => UDP-GlcNAc	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism	K01810	K00820,K00845,K03431,K04042
+contig2	M00346	11.11	Formaldehyde assimilation, serine pathway	Pathway modules; Energy metabolism; Methane metabolism	K01689	K00018,K00024,K00600,K00830,K01595,K08691,K08692,K11529,K14067
+contig2	M00004	8.33	Pentose phosphate pathway (Pentose phosphate cycle)	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism	K01810	K00033,K00615,K00616,K01783,K01807,K13937
