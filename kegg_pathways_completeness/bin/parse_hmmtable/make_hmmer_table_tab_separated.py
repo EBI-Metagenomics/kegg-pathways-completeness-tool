@@ -24,8 +24,12 @@ from ..utils import __version__
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Convert hmm-table to tab-separated")
     parser.add_argument("-i", "--input", dest="input", help="Input file", required=True)
-    parser.add_argument("-o", "--output", dest="output", help="Output file", required=True)
-    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
+    parser.add_argument(
+        "-o", "--output", dest="output", help="Output file", required=True
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     return parser.parse_args(argv)
 
 
@@ -44,13 +48,15 @@ class HmmerTableModifier:
         self.output_file = output_file
 
     def modify_table(self):
-        with open(self.input_file, 'r') as file_in, open(self.output_file, 'w') as file_out:
+        with open(self.input_file, "r") as file_in, open(
+            self.output_file, "w"
+        ) as file_out:
             for line in file_in:
-                if line.startswith('#'):
+                if line.startswith("#"):
                     continue
-                line = list(filter(None, line.strip().split(' ')))
-                modified_line = '\t'.join(line[:22] + [' '.join(line[22:])])
-                file_out.write(modified_line + '\n')
+                line = list(filter(None, line.strip().split(" ")))
+                modified_line = "\t".join(line[:22] + [" ".join(line[22:])])
+                file_out.write(modified_line + "\n")
 
 
 def main():

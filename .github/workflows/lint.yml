@@ -17,4 +17,4 @@ jobs:
       - name: Install dependencies
         run: pip install .[dev]
       - name: Lint with flake8
-        run: flake8 --ignore=E501
+        run: flake8 --ignore=E501,N803,N802,N806

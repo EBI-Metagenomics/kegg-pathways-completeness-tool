@@ -25,7 +25,7 @@ def setup_logging(verbose):
     # Configure logging
     logging.basicConfig(
         level=logging.DEBUG if verbose else logging.INFO,
-        format='%(asctime)s %(levelname)s - %(message)s'
+        format="%(asctime)s %(levelname)s - %(message)s",
     )
 
 
@@ -48,13 +48,13 @@ def parse_modules_list_input(filepath):
     """
     pathways_schema = {}
     if os.path.exists(filepath):
-        with open(filepath, 'r') as pathways_file:
+        with open(filepath, "r") as pathways_file:
             for line in pathways_file:
-                fields = line.strip().split(':')
+                fields = line.strip().split(":")
                 pathways_schema[fields[0]] = fields[1]
         return pathways_schema
     else:
-        logging.error(f'No file {filepath} found')
+        logging.error(f"No file {filepath} found")
 
 
 def parse_graphs_input(filename):
@@ -64,8 +64,8 @@ def parse_graphs_input(filename):
     :return: Graph
     """
     if os.path.exists(filename):
-        with open(filename, 'rb') as file_graph:
+        with open(filename, "rb") as file_graph:
             graphs = pickle.load(file_graph)
         return graphs
     else:
-        logging.error(f'No graphs {filename} file found')
+        logging.error(f"No graphs {filename} file found")
