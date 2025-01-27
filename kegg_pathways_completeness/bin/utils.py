@@ -21,7 +21,6 @@ import os
 from pathlib import Path
 import pickle
 import sys
-import tomli
 
 __version__ = "1.3.0"
 
