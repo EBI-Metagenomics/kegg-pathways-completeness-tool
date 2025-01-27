@@ -19,11 +19,11 @@ import numpy as np
 import argparse
 import logging
 import sys
-import pdb
 import pickle
 import networkx as nx
 import time
-from .utils import intersection, setup_logging, __version__
+from .utils import setup_logging, __version__
+
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Generates Graphs and saves graphs.pkl for each module")
@@ -139,7 +139,8 @@ class GraphsGenerator:
                 if index < L:
                     while pathway[index] not in [' ', ',', '(', ')', '-', '+']:
                         index += 1
-                        if index >= L: break
+                        if index >= L:
+                            break
                     index -= 1
             index += 1
         return dict_levels
@@ -222,13 +223,16 @@ class GraphsGenerator:
 
                 subexpression = expression[cur_sep:separator]
 
-                G, dict_edges, unnecessary_nodes = self.recursive_parsing(G=G,
-                                                                     dict_edges=dict_edges,
-                                                                     unnecessary_nodes=unnecessary_nodes,
-                                                                     expression=subexpression,
-                                                                     start_node=cur_start_node,
-                                                                     end_node=cur_end_node,
-                                                                     weight=cur_weight)
+                G, dict_edges, unnecessary_nodes = \
+                    self.recursive_parsing(
+                        G=G,
+                        dict_edges=dict_edges,
+                        unnecessary_nodes=unnecessary_nodes,
+                        expression=subexpression,
+                        start_node=cur_start_node,
+                        end_node=cur_end_node,
+                        weight=cur_weight
+                    )
                 cur_sep = separator + 1
                 if symbol == ' ' or symbol == '+' or symbol == '-':
                     cur_start_node = cur_end_node
@@ -240,13 +244,16 @@ class GraphsGenerator:
             if symbol == '-' and num > 0:  # weight
                 cur_weight = 0
 
-            G, dict_edges, unnecessary_nodes = self.recursive_parsing(G=G,
-                                                                 dict_edges=dict_edges,
-                                                                 unnecessary_nodes=unnecessary_nodes,
-                                                                 expression=expression[cur_sep:len(expression)],
-                                                                 start_node=cur_start_node,
-                                                                 end_node=cur_end_node,
-                                                                 weight=cur_weight)
+            G, dict_edges, unnecessary_nodes = \
+                self.recursive_parsing(
+                    G=G,
+                    dict_edges=dict_edges,
+                    unnecessary_nodes=unnecessary_nodes,
+                    expression=expression[cur_sep:len(expression)],
+                    start_node=cur_start_node,
+                    end_node=cur_end_node,
+                    weight=cur_weight
+                )
             return G, dict_edges, unnecessary_nodes
         else:
             # print('MAKE EDGE: ' + expression, start_node, end_node)

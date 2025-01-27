@@ -16,7 +16,6 @@
 
 import argparse
 import sys
-import pickle
 import networkx as nx
 import logging
 import copy
@@ -141,10 +140,8 @@ class CompletenessCalculator():
                 number_of_pred_ancestors = len(dict_of_paths_labels[pred])
 
                 for ancestor in preds[pred]:
-                    """ 
-                        for multi edge pred---A---->node
-                                         \____B____/ 
-                    """
+                    # for multi edge pred---A---->node
+                    #                      \____B____/
                     for num in range(number_of_pred_ancestors):
                         cur_labels = dict_of_paths_labels[pred][num]
                         dict_of_paths_labels[node][number_of_records] = \
@@ -155,13 +152,13 @@ class CompletenessCalculator():
                             dict_of_new_weights[pred][num] + preds[pred][ancestor]['weight_new']
                         number_of_records += 1
                     for cur_path in dict_nodes_paths[pred]:
-                        new_path = cur_path+[node]
+                        new_path = cur_path + [node]
                         dict_nodes_paths[node].append(new_path)
         paths_nodes, paths_labels = [dict_nodes_paths[1], dict_of_paths_labels[1]]
         weights, new_weights = [dict_of_weights[1], dict_of_new_weights[1]]
         metrics = []
         for num in range(len(weights)):
-            metrics.append(1. * new_weights[num]/weights[num])
+            metrics.append(1. * new_weights[num] / weights[num])
         indexes_min = [index for index in range(len(metrics)) if metrics[index] == min(metrics)]
         return paths_nodes, paths_labels, metrics, indexes_min
 
@@ -236,14 +233,14 @@ class CompletenessCalculator():
                 percentage, number_paths, matching_labels, missing_labels = \
                     self.calculate_percentage(graph=graph[0], dict_edges=graph[1], unnecessary_nodes=graph[2],
                                               edges=edges)
-                if percentage != None:
+                if percentage is not None:
                     if percentage not in dict_sort_by_percentage:
                         dict_sort_by_percentage[percentage] = {}
                     dict_sort_by_percentage[percentage][name_pathway] = [number_paths, matching_labels, missing_labels]
 
         # output Summary
         for percentage in sorted(list(dict_sort_by_percentage.keys()), reverse=True):
-            #file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
+            # file_out_summary.write('**********************************************\nPercentage = ' + str(percentage) + '\n')
             for name_pathway in dict_sort_by_percentage[percentage]:
                 matching_list = sorted(dict_sort_by_percentage[percentage][name_pathway][1])
                 missing_list = sorted(dict_sort_by_percentage[percentage][name_pathway][2])
@@ -285,8 +282,16 @@ class CompletenessCalculator():
         :param contig: flag true (running for every contig) or false (running in general mode)
         :return: -
         """
-        summary_header = '\t'.join(['module_accession', 'completeness', 'pathway_name',
-                                              'pathway_class', 'matching_ko', 'missing_ko'])
+        summary_header = '\t'.join(
+            [
+                'module_accession',
+                'completeness',
+                'pathway_name',
+                'pathway_class',
+                'matching_ko',
+                'missing_ko'
+            ]
+        )
         if contig:
             summary_header = 'contig\t' + summary_header
         file_summary.write(summary_header + '\n')

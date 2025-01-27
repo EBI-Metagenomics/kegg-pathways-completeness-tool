@@ -16,7 +16,6 @@
 
 import argparse
 import sys
-import pickle
 import networkx as nx
 import logging
 import os
@@ -28,6 +27,7 @@ from .utils import parse_modules_list_input, parse_graphs_input, __version__
 
 
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Script generates plots for each contig")
@@ -246,4 +246,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

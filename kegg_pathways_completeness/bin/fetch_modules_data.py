@@ -32,9 +32,10 @@ KEGG_API_GET = "http://rest.kegg.jp/get"
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
-        description="Script fetches KEGG API for list of modules with NAME, DEFINITION and CLASS.")
-    parser.add_argument("-o", "--output-dir", dest="output", help="Output directory", default="pathways",
-                        required=False)
+        description="Script fetches KEGG API for list of modules "
+                    "with NAME, DEFINITION and CLASS.")
+    parser.add_argument("-o", "--output-dir", dest="output", help="Output directory",
+                        default="pathways", required=False)
     parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
     return parser.parse_args(argv)
 

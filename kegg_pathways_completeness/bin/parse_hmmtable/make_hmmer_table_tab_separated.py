@@ -20,6 +20,7 @@ import sys
 import argparse
 from ..utils import __version__
 
+
 def parse_args(argv):
     parser = argparse.ArgumentParser(description="Convert hmm-table to tab-separated")
     parser.add_argument("-i", "--input", dest="input", help="Input file", required=True)

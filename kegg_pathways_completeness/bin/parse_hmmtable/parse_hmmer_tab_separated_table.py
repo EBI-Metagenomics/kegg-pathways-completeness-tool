@@ -93,11 +93,11 @@ class HmmerTableParser:
                     print('strange contig')
 
         # leave unique records and save
-        path_output = os.path.join(self.output_dir, os.path.basename(self.input_table)+'_parsed')
+        path_output = os.path.join(self.output_dir, os.path.basename(self.input_table) + '_parsed')
         with open(path_output, 'w+') as file_out:
             for key in dict_contigs:
                 if len(dict_contigs[key]) != 0:
-                    file_out.write('\t'.join([key]+list(dict_contigs[key]))+'\n')
+                    file_out.write('\t'.join([key] + list(dict_contigs[key])) + '\n')
 
 
 def main():
