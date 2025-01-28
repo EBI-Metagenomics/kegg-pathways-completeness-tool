@@ -39,3 +39,13 @@
     - path: "pathways_plots/M00002.png"
     - path: "pathways_plots/M00050"
     - path: "pathways_plots/M00050.png"
+
+- name: give_completeness for multiple contigs
+  tags:
+    - give_completeness
+  command: python -m kegg_pathways_completeness.bin.give_completeness --outprefix test_combined -m --input tests/fixtures/give_completeness/ko.combined.tsv --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt --names kegg_pathways_completeness/pathways_data/all_pathways_names.txt --classes kegg_pathways_completeness/pathways_data/all_pathways_class.txt
+  files:
+    - path: "test_combined_pathways.tsv"
+      md5sum: d2b7ae94681250bf9ca86ad9e28bf857
+    - path: "test_combined_contigs.tsv"
+      md5sum: 94f5346ea60c78c2d1209e7f329d5dfb

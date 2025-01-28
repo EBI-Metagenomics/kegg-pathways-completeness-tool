@@ -20,7 +20,7 @@ import re
 from .utils import __version__
 
 
-LIST_MODULES = 'list_pathways.txt'
+LIST_MODULES = "list_pathways.txt"
 LIST_CLASSES = "all_pathways_class.txt"
 LIST_NAMES = "all_pathways_names.txt"
 LIST_PATHS = "all_pathways.txt"
@@ -32,17 +32,27 @@ KEGG_API_GET = "http://rest.kegg.jp/get"
 
 def parse_args(argv):
     parser = argparse.ArgumentParser(
-        description="Script fetches KEGG API for list of modules with NAME, DEFINITION and CLASS.")
-    parser.add_argument("-o", "--output-dir", dest="output", help="Output directory", default="pathways",
-                        required=False)
-    parser.add_argument('--version', action='version', version=f'%(prog)s {__version__}')
+        description="Script fetches KEGG API for list of modules "
+        "with NAME, DEFINITION and CLASS."
+    )
+    parser.add_argument(
+        "-o",
+        "--output-dir",
+        dest="output",
+        help="Output directory",
+        default="pathways",
+        required=False,
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     return parser.parse_args(argv)
 
 
-class ModulesDataFetchTool():
+class ModulesDataFetchTool:
     def __init__(
-            self,
-            outdir: str,
+        self,
+        outdir: str,
     ):
         """
         This script uses subprocess to get list of KEGG modules via KEGG API.
@@ -64,44 +74,50 @@ class ModulesDataFetchTool():
         output_file = os.path.join(self.outdir, LIST_MODULES)
 
         try:
-            print(f'Fetching modules from {KEGG_API_LIST_MODULES}')
+            print(f"Fetching modules from {KEGG_API_LIST_MODULES}")
             # Fetch the data from the KEGG API using wget
-            wget_command = f'wget -qO- {KEGG_API_LIST_MODULES}'
-            wget_result = subprocess.run(wget_command, shell=True, capture_output=True, text=True)
+            wget_command = f"wget -qO- {KEGG_API_LIST_MODULES}"
+            wget_result = subprocess.run(
+                wget_command, shell=True, capture_output=True, text=True
+            )
             wget_output = wget_result.stdout
 
             # Process the output to extract the module codes
-            module_codes = [line.split('\t')[0] for line in wget_output.splitlines()]
+            module_codes = [line.split("\t")[0] for line in wget_output.splitlines()]
             # Write the results to the output file
-            with open(output_file, 'w') as f:
+            with open(output_file, "w") as f:
                 for code in module_codes:
-                    f.write(code + '\n')
+                    f.write(code + "\n")
 
-            print(f'Successfully saved KEGG module codes to {output_file}')
+            print(f"Successfully saved KEGG module codes to {output_file}")
             return module_codes
         except subprocess.CalledProcessError as e:
-            print(f'An error occurred: {e}')
+            print(f"An error occurred: {e}")
             exit(1)
 
     def fetch_module_info(self, module):
         try:
-            line_separator_in_kegg_names = ' '  # space=AND, comma=OR
-            print(f'Fetching modules from {KEGG_API_GET}/{module}')
+            line_separator_in_kegg_names = " "  # space=AND, comma=OR
+            print(f"Fetching modules from {KEGG_API_GET}/{module}")
             # Fetch the data from the KEGG API using wget
-            wget_command = f'wget -qO- {KEGG_API_GET}/{module}'
-            wget_result = subprocess.run(wget_command, shell=True, capture_output=True, text=True)
+            wget_command = f"wget -qO- {KEGG_API_GET}/{module}"
+            wget_result = subprocess.run(
+                wget_command, shell=True, capture_output=True, text=True
+            )
             wget_output = wget_result.stdout
-            lines = wget_output.split('\n')
+            lines = wget_output.split("\n")
             definition_lines = []
             capture_definition = False
             for line in lines:
-                if 'NAME' in line:
-                    name = re.search(r'^NAME\s+(.*)', line).group(1)
-                elif 'CLASS' in line:
-                    class_module = re.search(r'^CLASS\s+(.*)', line).group(1)
-                elif 'DEFINITION' in line:
+                if "NAME" in line:
+                    name = re.search(r"^NAME\s+(.*)", line).group(1)
+                elif "CLASS" in line:
+                    class_module = re.search(r"^CLASS\s+(.*)", line).group(1)
+                elif "DEFINITION" in line:
                     # can be in multiple lines
-                    definition_lines.append(re.search(r'^DEFINITION\s+(.*)', line).group(1))
+                    definition_lines.append(
+                        re.search(r"^DEFINITION\s+(.*)", line).group(1)
+                    )
                     capture_definition = True
                 elif capture_definition and line.startswith(" "):
                     definition_lines.append(line.strip())
@@ -113,26 +129,26 @@ class ModulesDataFetchTool():
                         # not a single KOXXXX
                         definition_lines[i] = f"({definition_lines[i]})"
             def_module = line_separator_in_kegg_names.join(definition_lines)
-            with open(os.path.join(self.outdir, LIST_PATHS), 'a') as file_out:
-                file_out.write(f'{module}:{def_module}' + '\n')
-            with open(os.path.join(self.outdir, LIST_CLASSES), 'a') as file_out:
-                file_out.write(f'{module}:{class_module}' + '\n')
-            with open(os.path.join(self.outdir, LIST_NAMES), 'a') as file_out:
-                file_out.write(f'{module}:{name}' + '\n')
+            with open(os.path.join(self.outdir, LIST_PATHS), "a") as file_out:
+                file_out.write(f"{module}:{def_module}" + "\n")
+            with open(os.path.join(self.outdir, LIST_CLASSES), "a") as file_out:
+                file_out.write(f"{module}:{class_module}" + "\n")
+            with open(os.path.join(self.outdir, LIST_NAMES), "a") as file_out:
+                file_out.write(f"{module}:{name}" + "\n")
             if len(definition_lines) > 1:
-                with open(os.path.join(self.outdir, LIST_SEPARATED_IN_DEFINITION), 'a') as file_out:
-                    file_out.write(f'{module}:{def_module}' + '\n')
+                with open(
+                    os.path.join(self.outdir, LIST_SEPARATED_IN_DEFINITION), "a"
+                ) as file_out:
+                    file_out.write(f"{module}:{def_module}" + "\n")
 
         except subprocess.CalledProcessError as e:
-            print(f'An error occurred: {e}')
+            print(f"An error occurred: {e}")
             exit(1)
 
 
 def main():
     args = parse_args(sys.argv[1:])
-    module_fetch_tool = ModulesDataFetchTool(
-        outdir=args.output
-    )
+    module_fetch_tool = ModulesDataFetchTool(outdir=args.output)
     # get a list of all modules available in KEGG API
     modules_all = module_fetch_tool.fetch_and_save_kegg_modules_list()
     # get info for each module
