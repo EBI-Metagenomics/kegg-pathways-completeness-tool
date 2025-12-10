@@ -1,0 +1,211 @@
+name: Update KEGG Database
+
+on:
+  schedule:
+    # Run every 3 months on the 1st at midnight UTC
+    - cron: '0 0 1 */3 *'
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  update-kegg-database:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Get current date
+      id: date
+      run: |
+        echo "BRANCH_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        echo "UPDATE_DATE=$(date +'%B %d, %Y')" >> $GITHUB_ENV
+
+    - name: Install package with dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Extract old format files from modules_table.tsv
+      run: |
+        if [ -f "kegg_pathways_completeness/pathways_data/modules_table.tsv" ]; then
+          echo "Extracting old format files from modules_table.tsv for change detection..."
+          mkdir -p old_format
+
+          # Extract definitions (module:definition)
+          tail -n +2 kegg_pathways_completeness/pathways_data/modules_table.tsv | \
+            awk -F'\t' '{print $1":"$2}' > old_format/all_pathways.txt
+
+          # Extract names (module:name)
+          tail -n +2 kegg_pathways_completeness/pathways_data/modules_table.tsv | \
+            awk -F'\t' '{print $1":"$3}' > old_format/all_pathways_names.txt
+
+          # Extract classes (module:class)
+          tail -n +2 kegg_pathways_completeness/pathways_data/modules_table.tsv | \
+            awk -F'\t' '{print $1":"$4}' > old_format/all_pathways_class.txt
+
+          echo "Extracted old format files for comparison"
+        else
+          echo "No existing modules_table.tsv found. First-time setup."
+        fi
+
+    - name: Fetch latest KEGG modules data
+      id: fetch
+      run: |
+        echo "Fetching latest KEGG modules data..."
+
+        # Use extracted old files if they exist, otherwise fetch will do full generation
+        if [ -d "old_format" ]; then
+          fetch_modules_data \
+            -o fetched_data \
+            --old-definitions old_format/all_pathways.txt \
+            --old-names old_format/all_pathways_names.txt \
+            --old-classes old_format/all_pathways_class.txt \
+            --max-workers 5 \
+            --delay 0.5 \
+            --max-retries 5
+        else
+          fetch_modules_data \
+            -o fetched_data \
+            --max-workers 5 \
+            --delay 0.5 \
+            --max-retries 5
+        fi
+
+        # Check if changed.tsv was generated
+        if [ -f "fetched_data/changed.tsv" ]; then
+          CHANGED_COUNT=$(tail -n +2 fetched_data/changed.tsv | wc -l)
+          echo "has_changes=true" >> $GITHUB_ENV
+          echo "changed_count=$CHANGED_COUNT" >> $GITHUB_ENV
+          echo "Found $CHANGED_COUNT changed modules"
+        else
+          echo "has_changes=false" >> $GITHUB_ENV
+          echo "changed_count=0" >> $GITHUB_ENV
+          echo "No changes detected"
+        fi
+
+        # Count total modules
+        TOTAL_MODULES=$(tail -n +2 fetched_data/modules_table.tsv | wc -l)
+        echo "total_modules=$TOTAL_MODULES" >> $GITHUB_ENV
+        echo "Total modules: $TOTAL_MODULES"
+
+    - name: Update graphs (incremental)
+      if: env.has_changes == 'true'
+      run: |
+        echo "Performing incremental graph update for ${{ env.changed_count }} changed modules..."
+        make_graphs \
+          -i fetched_data/modules_table.tsv \
+          -o graphs_output \
+          -e kegg_pathways_completeness/pathways_data/graphs.pkl \
+          -c fetched_data/changed.tsv \
+          -v
+
+    - name: Update graphs (full regeneration)
+      if: env.has_changes == 'false'
+      run: |
+        echo "No changes detected, but verifying graphs are up to date..."
+        # Still run make_graphs to ensure consistency
+        # It will reuse all existing graphs if input matches
+        make_graphs \
+          -i fetched_data/modules_table.tsv \
+          -o graphs_output \
+          -e kegg_pathways_completeness/pathways_data/graphs.pkl \
+          -v
+
+    - name: Update package data files
+      run: |
+        echo "Updating package data files..."
+
+        # Update TSV format (primary and only format)
+        cp fetched_data/modules_table.tsv kegg_pathways_completeness/pathways_data/
+
+        # Update graphs
+        cp graphs_output/graphs.pkl kegg_pathways_completeness/pathways_data/
+
+        echo "Updated modules_table.tsv and graphs.pkl"
+
+    - name: Update README with module count
+      run: |
+        # Update the module count and date in README
+        sed -i "s/The current version of this tool has [0-9]* KEGG modules (updated .*)\./The current version of this tool has ${{ env.total_modules }} KEGG modules (updated ${{ env.UPDATE_DATE }})./" README.md || true
+
+    - name: Generate change summary
+      if: env.has_changes == 'true'
+      run: |
+        echo "# KEGG Database Update Summary" > update_summary.md
+        echo "" >> update_summary.md
+        echo "**Update Date**: ${{ env.UPDATE_DATE }}" >> update_summary.md
+        echo "**Total Modules**: ${{ env.total_modules }}" >> update_summary.md
+        echo "**Changed Modules**: ${{ env.changed_count }}" >> update_summary.md
+        echo "" >> update_summary.md
+        echo "## Changed Modules" >> update_summary.md
+        echo "" >> update_summary.md
+        echo "| Module | Definition | Name | Class |" >> update_summary.md
+        echo "|--------|------------|------|-------|" >> update_summary.md
+        tail -n +2 fetched_data/changed.tsv | head -20 | \
+          awk -F'\t' '{print "| " $1 " | " $2 " | " $3 " | " $4 " |"}' >> update_summary.md
+
+        if [ ${{ env.changed_count }} -gt 20 ]; then
+          echo "" >> update_summary.md
+          echo "*... and $(({{ env.changed_count }} - 20)) more*" >> update_summary.md
+        fi
+
+        echo "" >> update_summary.md
+        echo "## Update Method" >> update_summary.md
+        echo "" >> update_summary.md
+        echo "- Used incremental update (only regenerated changed modules)" >> update_summary.md
+        echo "- Reused existing graphs for unchanged modules" >> update_summary.md
+        echo "- Source of truth: \`modules_table.tsv\`" >> update_summary.md
+
+    - name: Check for file changes
+      id: check_changes
+      run: |
+        git diff --quiet kegg_pathways_completeness/pathways_data/ || echo "files_changed=true" >> $GITHUB_ENV
+        git diff --quiet README.md || echo "readme_changed=true" >> $GITHUB_ENV
+
+    - name: Create Pull Request
+      if: env.files_changed == 'true' || env.readme_changed == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: |
+          Update KEGG database - ${{ env.UPDATE_DATE }}
+
+          - Total modules: ${{ env.total_modules }}
+          - Changed modules: ${{ env.changed_count }}
+          - Update method: ${{ env.has_changes == 'true' && 'Incremental' || 'Verification' }}
+        branch: update-kegg-db-${{ env.BRANCH_DATE }}
+        delete-branch: true
+        title: "Update KEGG Database - ${{ env.UPDATE_DATE }}"
+        body-path: update_summary.md
+        labels: |
+          automated
+          database-update
+        assignees: ${{ github.repository_owner }}
+
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kegg-update-${{ env.BRANCH_DATE }}
+        path: |
+          fetched_data/
+          graphs_output/
+          update_summary.md
+          old_format/
+        retention-days: 30
+
+    - name: Notify on failure
+      if: failure()
+      run: |
+        echo "::error::KEGG database update failed. Please check the logs."
+        echo "This could be due to:"
+        echo "  - KEGG API rate limiting (403 errors)"
+        echo "  - Network issues"
+        echo "  - Changes in KEGG API format"
+        echo ""
+        echo "To retry with more conservative settings, run the workflow manually."

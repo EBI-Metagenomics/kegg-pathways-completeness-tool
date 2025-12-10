@@ -110,7 +110,7 @@ Latest release has a **plots** archive with images and graphviz-files for all mo
 
 **In order to run a tool there is no need to re-generate those files.** 
 
-All module data generation commands and graphs creation instructions are also [available](kegg_pathways_completeness/pathways_data/README.md) for updates and understanding a process.
+All module data generation commands and graphs creation instructions are also [available](docs/update_database.md) for updates and understanding a process.
 
 ### Pathways visualization 
 
