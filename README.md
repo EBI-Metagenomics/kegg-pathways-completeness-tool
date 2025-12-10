@@ -1,11 +1,11 @@
 # kegg-pathways-completeness tool
 
-This tool computes the completeness of each [KEGG pathway module](https://www.genome.jp/kegg/module.html) for given set of [KEGG orthologues (KOs)](https://www.genome.jp/kegg/ko.html) based on their presence/absence. The current version of this tool has **495** KEGG modules (updated 06/12/2024). 
+This tool computes the completeness of each [KEGG pathway module](https://www.genome.jp/kegg/module.html) for given set of [KEGG orthologues (KOs)](https://www.genome.jp/kegg/ko.html) based on their presence/absence. The current version of this tool has **557** KEGG modules (updated 10/12/2025). 
 
 Please, read the **Theory** section at the bottom of this README for a detailed explanation. 
 
 #### Input example:
-- [per contig annotation](tests/fixtures/give_completeness/test_pathway.txt) with KOs (ideally given from hmmscan annotation (see [instructions](kegg_pathways_completeness/bin/parse_hmmtable/README.md)));  
+- [per contig annotation](tests/fixtures/give_completeness/test_pathway.txt) with KOs (ideally given from hmmscan annotation (see [instructions](docs/parse_hmmer_table.md)));  
 
 **OR** 
 
@@ -79,7 +79,7 @@ give_completeness -i {INPUT_FILE}
 _input file:_
 
 An input file is required under either of the following commands:
-- input table (`-i`/`--input`): hmmsearch table ([example](tests/fixtures/give_completeness/test_pathway.txt)) that was run on KEGG profiles DB with annotated sequences (preferable). If you don't have this table, follow [instructions](kegg_pathways_completeness/bin/parse_hmmtable/README.md) to generate it.
+- input table (`-i`/`--input`): hmmsearch table ([example](tests/fixtures/give_completeness/test_pathway.txt)) that was run on KEGG profiles DB with annotated sequences (preferable). If you don't have this table, follow [instructions](docs/parse_hmmer_table.md) to generate it.
 - file with KOs list (`-l`/`--input-list`): file with list of KOs ([example](tests/fixtures/give_completeness/test_kos.txt)).
 
 **Optional arguments:**

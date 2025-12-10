@@ -48,9 +48,10 @@ class HmmerTableModifier:
         self.output_file = output_file
 
     def modify_table(self):
-        with open(self.input_file, "r") as file_in, open(
-            self.output_file, "w"
-        ) as file_out:
+        with (
+            open(self.input_file, "r") as file_in,
+            open(self.output_file, "w") as file_out,
+        ):
             for line in file_in:
                 if line.startswith("#"):
                     continue

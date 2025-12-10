@@ -184,7 +184,8 @@ class CompletenessCalculator:
                             dict_of_weights[pred][num] + preds[pred][ancestor]["weight"]
                         )
                         dict_of_new_weights[node][number_of_records] = (
-                            dict_of_new_weights[pred][num] + preds[pred][ancestor]["weight_new"]
+                            dict_of_new_weights[pred][num]
+                            + preds[pred][ancestor]["weight_new"]
                         )
                         number_of_records += 1
                     for cur_path in dict_nodes_paths[pred]:

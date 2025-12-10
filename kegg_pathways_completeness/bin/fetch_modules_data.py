@@ -80,7 +80,14 @@ class ModulesDataFetchTool:
         retry_strategy = Retry(
             total=self.max_retries,
             backoff_factor=2,  # Wait 2s, 4s, 8s between retries
-            status_forcelist=[403, 429, 500, 502, 503, 504],  # Retry on these HTTP status codes
+            status_forcelist=[
+                403,
+                429,
+                500,
+                502,
+                503,
+                504,
+            ],  # Retry on these HTTP status codes
             allowed_methods=["GET"],  # Only retry GET requests
             raise_on_status=False,  # Don't raise exception on retry
         )
@@ -111,7 +118,9 @@ class ModulesDataFetchTool:
                 for code in module_codes:
                     f.write(code + "\n")
 
-            print(f"Successfully saved {len(module_codes)} KEGG module codes to {output_file}")
+            print(
+                f"Successfully saved {len(module_codes)} KEGG module codes to {output_file}"
+            )
             return module_codes
         except requests.RequestException as e:
             print(f"An error occurred while fetching modules list: {e}")
@@ -166,20 +175,24 @@ class ModulesDataFetchTool:
                 def_module = line_separator_in_kegg_names.join(definition_lines)
 
                 return {
-                    'module': module,
-                    'definition': def_module,
-                    'name': name,
-                    'class': class_module
+                    "module": module,
+                    "definition": def_module,
+                    "name": name,
+                    "class": class_module,
                 }
 
             except requests.RequestException as e:
                 self.failed_modules.append(module)
-                print(f"\nError fetching module {module} after {self.max_retries} retries: {e}")
+                print(
+                    f"\nError fetching module {module} after {self.max_retries} retries: {e}"
+                )
                 return None
 
     def fetch_all_modules_parallel(self, modules):
         """Fetch all modules in parallel with progress bar"""
-        print(f"Fetching {len(modules)} modules with {self.max_workers} concurrent workers...")
+        print(
+            f"Fetching {len(modules)} modules with {self.max_workers} concurrent workers..."
+        )
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submit all tasks
@@ -189,7 +202,9 @@ class ModulesDataFetchTool:
             }
 
             # Process results as they complete with progress bar
-            with tqdm(total=len(modules), desc="Fetching modules", unit="module") as pbar:
+            with tqdm(
+                total=len(modules), desc="Fetching modules", unit="module"
+            ) as pbar:
                 for future in as_completed(future_to_module):
                     result = future.result()
                     if result:
@@ -207,7 +222,9 @@ class ModulesDataFetchTool:
                 f.write("module\tdefinition\tname\tclass\n")
                 # Write data rows
                 for module_data in self.modules_data:
-                    f.write(f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n")
+                    f.write(
+                        f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n"
+                    )
             print(f"Successfully saved modules table to {output_file}")
         except Exception as e:
             print(f"An error occurred while writing table: {e}")
@@ -249,13 +266,13 @@ class ModulesDataFetchTool:
         changed_modules = []
 
         for module_data in self.modules_data:
-            module = module_data['module']
+            module = module_data["module"]
             is_changed = False
 
             # Check if definition changed
             if old_definitions is not None:
                 if module in old_definitions:
-                    if old_definitions[module] != module_data['definition']:
+                    if old_definitions[module] != module_data["definition"]:
                         is_changed = True
                 else:
                     # New module not in old data
@@ -264,7 +281,7 @@ class ModulesDataFetchTool:
             # Check if name changed
             if old_names is not None:
                 if module in old_names:
-                    if old_names[module] != module_data['name']:
+                    if old_names[module] != module_data["name"]:
                         is_changed = True
                 else:
                     # New module not in old data
@@ -273,7 +290,7 @@ class ModulesDataFetchTool:
             # Check if class changed
             if old_classes is not None:
                 if module in old_classes:
-                    if old_classes[module] != module_data['class']:
+                    if old_classes[module] != module_data["class"]:
                         is_changed = True
                 else:
                     # New module not in old data
@@ -293,7 +310,9 @@ class ModulesDataFetchTool:
                 f.write("module\tdefinition\tname\tclass\n")
                 # Write data rows
                 for module_data in changed_modules:
-                    f.write(f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n")
+                    f.write(
+                        f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n"
+                    )
             print(f"Successfully saved changed modules table to {output_file}")
             print(f"Total changed modules: {len(changed_modules)}")
         except Exception as e:
@@ -351,7 +370,16 @@ class ModulesDataFetchTool:
     show_default=True,
 )
 @click.version_option(version=get_version(), prog_name="fetch_modules_data")
-def main(output_dir, list_modules, old_definitions, old_names, old_classes, max_workers, max_retries, delay):
+def main(
+    output_dir,
+    list_modules,
+    old_definitions,
+    old_names,
+    old_classes,
+    max_workers,
+    max_retries,
+    delay,
+):
     """
     Script fetches KEGG API for list of modules with NAME, DEFINITION and CLASS.
 
@@ -365,7 +393,7 @@ def main(output_dir, list_modules, old_definitions, old_names, old_classes, max_
         outdir=output_dir,
         max_workers=max_workers,
         max_retries=max_retries,
-        delay_between_requests=delay
+        delay_between_requests=delay,
     )
 
     # get a list of all modules - either from file or API
@@ -405,12 +433,16 @@ def main(output_dir, list_modules, old_definitions, old_names, old_classes, max_
         old_classes_data = module_fetch_tool.parse_old_file(old_classes)
 
     # If any old data was provided, detect changes
-    if old_definitions_data is not None or old_names_data is not None or old_classes_data is not None:
+    if (
+        old_definitions_data is not None
+        or old_names_data is not None
+        or old_classes_data is not None
+    ):
         print("Detecting changes...")
         changed_modules = module_fetch_tool.detect_changes(
             old_definitions=old_definitions_data,
             old_names=old_names_data,
-            old_classes=old_classes_data
+            old_classes=old_classes_data,
         )
         if changed_modules:
             module_fetch_tool.write_changed_table(changed_modules)

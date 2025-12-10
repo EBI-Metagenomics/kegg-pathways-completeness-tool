@@ -46,7 +46,9 @@ def temp_dir():
 @pytest.fixture
 def mock_session():
     """Create a mock session with predefined responses"""
-    with patch('kegg_pathways_completeness.bin.fetch_modules_data.requests.Session') as mock:
+    with patch(
+        "kegg_pathways_completeness.bin.fetch_modules_data.requests.Session"
+    ) as mock:
         session = MagicMock()
         mock.return_value = session
 
@@ -77,10 +79,7 @@ class TestModulesDataFetchTool:
     def test_init(self, temp_dir):
         """Test tool initialization"""
         tool = ModulesDataFetchTool(
-            outdir=temp_dir,
-            max_workers=5,
-            max_retries=3,
-            delay_between_requests=0.1
+            outdir=temp_dir, max_workers=5, max_retries=3, delay_between_requests=0.1
         )
         assert tool.outdir == temp_dir
         assert tool.max_workers == 5
@@ -104,53 +103,57 @@ class TestModulesDataFetchTool:
         list_file = os.path.join(temp_dir, "modules_list.txt")
         assert os.path.exists(list_file)
 
-        with open(list_file, 'r') as f:
+        with open(list_file, "r") as f:
             content = f.read()
             assert "md:M00001" in content
             assert "md:M00002" in content
 
-    @patch('kegg_pathways_completeness.bin.fetch_modules_data.time.sleep')
+    @patch("kegg_pathways_completeness.bin.fetch_modules_data.time.sleep")
     def test_fetch_module_info(self, mock_sleep, temp_dir, mock_session):
         """Test fetching single module information"""
         tool = ModulesDataFetchTool(outdir=temp_dir, delay_between_requests=0.1)
         result = tool.fetch_module_info("M00001")
 
         assert result is not None
-        assert result['module'] == "M00001"
-        assert "Glycolysis" in result['name']
-        assert "K00844" in result['definition']
-        assert "Carbohydrate metabolism" in result['class']
+        assert result["module"] == "M00001"
+        assert "Glycolysis" in result["name"]
+        assert "K00844" in result["definition"]
+        assert "Carbohydrate metabolism" in result["class"]
 
         # Verify sleep was called for rate limiting
         mock_sleep.assert_called_with(0.1)
 
-    @patch('kegg_pathways_completeness.bin.fetch_modules_data.time.sleep')
+    @patch("kegg_pathways_completeness.bin.fetch_modules_data.time.sleep")
     def test_fetch_all_modules_parallel(self, mock_sleep, temp_dir, mock_session):
         """Test parallel fetching of multiple modules"""
-        tool = ModulesDataFetchTool(outdir=temp_dir, max_workers=2, delay_between_requests=0.0)
+        tool = ModulesDataFetchTool(
+            outdir=temp_dir, max_workers=2, delay_between_requests=0.0
+        )
         modules = ["M00001", "M00002", "M00003"]
 
         tool.fetch_all_modules_parallel(modules)
 
         assert len(tool.modules_data) == 3
-        assert all(m['module'] in ["M00001", "M00002", "M00003"] for m in tool.modules_data)
+        assert all(
+            m["module"] in ["M00001", "M00002", "M00003"] for m in tool.modules_data
+        )
 
     def test_write_modules_table(self, temp_dir):
         """Test writing modules table to TSV file"""
         tool = ModulesDataFetchTool(outdir=temp_dir)
         tool.modules_data = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407',
-                'name': 'Glycolysis',
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407",
+                "name": "Glycolysis",
+                "class": "Carbohydrate metabolism",
             },
             {
-                'module': 'M00002',
-                'definition': 'K01647 K01681',
-                'name': 'TCA cycle',
-                'class': 'Carbohydrate metabolism'
-            }
+                "module": "M00002",
+                "definition": "K01647 K01681",
+                "name": "TCA cycle",
+                "class": "Carbohydrate metabolism",
+            },
         ]
 
         tool.write_modules_table()
@@ -158,7 +161,7 @@ class TestModulesDataFetchTool:
         table_file = os.path.join(temp_dir, "modules_table.tsv")
         assert os.path.exists(table_file)
 
-        with open(table_file, 'r') as f:
+        with open(table_file, "r") as f:
             lines = f.readlines()
             assert len(lines) == 3  # header + 2 data rows
             assert lines[0].strip() == "module\tdefinition\tname\tclass"
@@ -168,7 +171,7 @@ class TestModulesDataFetchTool:
     def test_parse_old_file(self, temp_dir):
         """Test parsing old format files"""
         old_file = os.path.join(temp_dir, "old_definitions.txt")
-        with open(old_file, 'w') as f:
+        with open(old_file, "w") as f:
             f.write("M00001:K00844 K12407\n")
             f.write("M00002:K01647 K01681\n")
 
@@ -183,17 +186,17 @@ class TestModulesDataFetchTool:
         tool = ModulesDataFetchTool(outdir=temp_dir)
         tool.modules_data = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407',
-                'name': 'Glycolysis',
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407",
+                "name": "Glycolysis",
+                "class": "Carbohydrate metabolism",
             },
             {
-                'module': 'M00003',  # New module
-                'definition': 'K01596 K01610',
-                'name': 'Gluconeogenesis',
-                'class': 'Carbohydrate metabolism'
-            }
+                "module": "M00003",  # New module
+                "definition": "K01596 K01610",
+                "name": "Gluconeogenesis",
+                "class": "Carbohydrate metabolism",
+            },
         ]
 
         old_definitions = {
@@ -204,59 +207,55 @@ class TestModulesDataFetchTool:
         changed = tool.detect_changes(old_definitions=old_definitions)
 
         assert len(changed) == 1
-        assert changed[0]['module'] == 'M00003'
+        assert changed[0]["module"] == "M00003"
 
     def test_detect_changes_modified_definition(self, temp_dir):
         """Test detecting modified definitions"""
         tool = ModulesDataFetchTool(outdir=temp_dir)
         tool.modules_data = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407 K00845',  # Modified
-                'name': 'Glycolysis',
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407 K00845",  # Modified
+                "name": "Glycolysis",
+                "class": "Carbohydrate metabolism",
             }
         ]
 
-        old_definitions = {
-            "M00001": "K00844 K12407"  # Old definition
-        }
+        old_definitions = {"M00001": "K00844 K12407"}  # Old definition
 
         changed = tool.detect_changes(old_definitions=old_definitions)
 
         assert len(changed) == 1
-        assert changed[0]['module'] == 'M00001'
+        assert changed[0]["module"] == "M00001"
 
     def test_detect_changes_modified_name(self, temp_dir):
         """Test detecting modified names"""
         tool = ModulesDataFetchTool(outdir=temp_dir)
         tool.modules_data = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407',
-                'name': 'Glycolysis (updated)',  # Modified name
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407",
+                "name": "Glycolysis (updated)",  # Modified name
+                "class": "Carbohydrate metabolism",
             }
         ]
 
-        old_names = {
-            "M00001": "Glycolysis"
-        }
+        old_names = {"M00001": "Glycolysis"}
 
         changed = tool.detect_changes(old_names=old_names)
 
         assert len(changed) == 1
-        assert changed[0]['module'] == 'M00001'
+        assert changed[0]["module"] == "M00001"
 
     def test_detect_no_changes(self, temp_dir):
         """Test when there are no changes"""
         tool = ModulesDataFetchTool(outdir=temp_dir)
         tool.modules_data = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407',
-                'name': 'Glycolysis',
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407",
+                "name": "Glycolysis",
+                "class": "Carbohydrate metabolism",
             }
         ]
 
@@ -267,7 +266,7 @@ class TestModulesDataFetchTool:
         changed = tool.detect_changes(
             old_definitions=old_definitions,
             old_names=old_names,
-            old_classes=old_classes
+            old_classes=old_classes,
         )
 
         assert len(changed) == 0
@@ -277,10 +276,10 @@ class TestModulesDataFetchTool:
         tool = ModulesDataFetchTool(outdir=temp_dir)
         changed_modules = [
             {
-                'module': 'M00001',
-                'definition': 'K00844 K12407 K00845',
-                'name': 'Glycolysis (updated)',
-                'class': 'Carbohydrate metabolism'
+                "module": "M00001",
+                "definition": "K00844 K12407 K00845",
+                "name": "Glycolysis (updated)",
+                "class": "Carbohydrate metabolism",
             }
         ]
 
@@ -289,7 +288,7 @@ class TestModulesDataFetchTool:
         changed_file = os.path.join(temp_dir, "changed.tsv")
         assert os.path.exists(changed_file)
 
-        with open(changed_file, 'r') as f:
+        with open(changed_file, "r") as f:
             lines = f.readlines()
             assert len(lines) == 2  # header + 1 data row
             assert "M00001" in lines[1]
@@ -306,7 +305,7 @@ class TestModulesDataFetchTool:
 class TestRetryMechanism:
     """Test suite for retry and rate limiting features"""
 
-    @patch('kegg_pathways_completeness.bin.fetch_modules_data.time.sleep')
+    @patch("kegg_pathways_completeness.bin.fetch_modules_data.time.sleep")
     def test_rate_limiting_delay(self, mock_sleep, temp_dir, mock_session):
         """Test that delay is applied between requests"""
         tool = ModulesDataFetchTool(outdir=temp_dir, delay_between_requests=0.5)
@@ -318,7 +317,7 @@ class TestRetryMechanism:
         """Test tracking of failed module fetches"""
         tool = ModulesDataFetchTool(outdir=temp_dir)
 
-        with patch.object(tool.session, 'get') as mock_get:
+        with patch.object(tool.session, "get") as mock_get:
             mock_get.side_effect = Exception("Network error")
             result = tool.fetch_module_info("M00999")
 

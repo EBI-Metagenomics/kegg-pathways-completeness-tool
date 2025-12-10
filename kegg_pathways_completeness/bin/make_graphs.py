@@ -173,9 +173,11 @@ class GraphsGenerator:
         for i in range(L):
             # check brackets
             if (
-                pathway[i] == "(" and pathway[L - i - 1] == ")" and levels_brackets[i] == levels_brackets[L - i - 1]
+                pathway[i] == "("
+                and pathway[L - i - 1] == ")"
+                and levels_brackets[i] == levels_brackets[L - i - 1]
             ):
-                expression_without_brackets = pathway[i + 1: L - i - 1]
+                expression_without_brackets = pathway[i + 1 : L - i - 1]
             else:
                 return expression_without_brackets
         return expression_without_brackets
@@ -286,7 +288,7 @@ class GraphsGenerator:
                 G=G,
                 dict_edges=dict_edges,
                 unnecessary_nodes=unnecessary_nodes,
-                expression=expression[cur_sep: len(expression)],
+                expression=expression[cur_sep : len(expression)],
                 start_node=cur_start_node,
                 end_node=cur_end_node,
                 weight=cur_weight,
@@ -323,7 +325,11 @@ class GraphsGenerator:
         with open(self.input_file, "r") as f:
             first_line = f.readline().strip()
             # Check if first line is a TSV header
-            if first_line.startswith("module\t") or "\t" in first_line and ":" not in first_line:
+            if (
+                first_line.startswith("module\t")
+                or "\t" in first_line
+                and ":" not in first_line
+            ):
                 return True
             return False
 
@@ -370,13 +376,17 @@ class GraphsGenerator:
             return {}
 
         if not os.path.exists(self.existing_graphs_file):
-            logging.warning(f"Existing graphs file not found: {self.existing_graphs_file}")
+            logging.warning(
+                f"Existing graphs file not found: {self.existing_graphs_file}"
+            )
             return {}
 
         try:
             with open(self.existing_graphs_file, "rb") as f:
                 graphs = pickle.load(f)
-            logging.info(f"Loaded {len(graphs)} existing graphs from {self.existing_graphs_file}")
+            logging.info(
+                f"Loaded {len(graphs)} existing graphs from {self.existing_graphs_file}"
+            )
             return graphs
         except Exception as e:
             logging.error(f"Error loading existing graphs: {e}")
@@ -395,14 +405,16 @@ class GraphsGenerator:
         try:
             with open(self.changed_file, "r") as f:
                 # Skip header
-                header = f.readline()
+                f.readline()
                 # Read module IDs from first column
                 for line in f:
                     if line.strip():
                         fields = line.strip().split("\t")
                         if fields:
                             changed_modules.add(fields[0])
-            logging.info(f"Found {len(changed_modules)} changed modules in {self.changed_file}")
+            logging.info(
+                f"Found {len(changed_modules)} changed modules in {self.changed_file}"
+            )
             return changed_modules
         except Exception as e:
             logging.error(f"Error reading changed modules: {e}")
@@ -443,7 +455,7 @@ class GraphsGenerator:
             modules_to_generate = changed_modules & set(modules_dict.keys())
             modules_to_reuse = set(modules_dict.keys()) - changed_modules
 
-            logger.info(f"Incremental update mode:")
+            logger.info("Incremental update mode:")
             logger.info(f"  - Modules to regenerate: {len(modules_to_generate)}")
             logger.info(f"  - Modules to reuse from existing: {len(modules_to_reuse)}")
 
@@ -459,7 +471,9 @@ class GraphsGenerator:
             logger.info(f"Reused {reused_count} existing graphs")
 
             # Generate graphs only for changed modules
-            modules_to_process = [(name, modules_dict[name]) for name in modules_to_generate]
+            modules_to_process = [
+                (name, modules_dict[name]) for name in modules_to_generate
+            ]
         else:
             # Full regeneration mode
             logger.info("Full regeneration mode (no incremental update)")
@@ -494,7 +508,9 @@ class GraphsGenerator:
         if existing_graphs:
             removed = set(existing_graphs.keys()) - set(graphs.keys())
             if removed:
-                logger.info(f"Removed {len(removed)} graphs (no longer in input): {sorted(list(removed))[:10]}...")
+                logger.info(
+                    f"Removed {len(removed)} graphs (no longer in input): {sorted(list(removed))[:10]}..."
+                )
 
         # Save graphs
         logger.info("Done. Saving graphs...")
@@ -571,9 +587,13 @@ def main(input_file, outdir, existing_graphs, changed, verbose):
 
     # Validate incremental update options
     if existing_graphs and not changed:
-        logging.warning("--existing-graphs provided without --changed. Will perform full regeneration.")
+        logging.warning(
+            "--existing-graphs provided without --changed. Will perform full regeneration."
+        )
     if changed and not existing_graphs:
-        logging.warning("--changed provided without --existing-graphs. Will regenerate all modules in changed file.")
+        logging.warning(
+            "--changed provided without --existing-graphs. Will regenerate all modules in changed file."
+        )
 
     graphs_generator = GraphsGenerator(
         input_file=input_file,

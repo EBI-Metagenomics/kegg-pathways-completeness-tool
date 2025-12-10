@@ -129,7 +129,7 @@ fetch_modules_data \
 ### Quick Start
 
 ```bash
-# Generate graphs from TSV format
+# Generate graphs from TSV format (full regeneration)
 make_graphs \
   -i fetched_data/modules_table.tsv \
   -o graphs_output
@@ -150,19 +150,31 @@ Usage: make_graphs [OPTIONS]
 
   The script automatically detects the input format.
 
+  Incremental Updates:
+  Use --existing-graphs and --changed together for incremental updates:
+  - Loads existing graphs from --existing-graphs
+  - Only regenerates graphs for modules in --changed file
+  - Reuses graphs for unchanged modules
+  - Removes graphs for modules no longer in input file
+
 Options:
-  -i, --input PATH      Input file: TSV format (modules_table.tsv) or old
-                        format (module:definition per line)  [required]
-  -o, --outdir TEXT     Output directory where graphs.pkl will be stored
-                        [default: outdir]
-  -v, --verbose         Enable verbose logging
-  --version             Show the version and exit.
-  --help                Show this message and exit.
+  -i, --input PATH            Input file: TSV format (modules_table.tsv) or
+                              old format (module:definition per line)
+                              [required]
+  -o, --outdir TEXT           Output directory where graphs.pkl will be
+                              stored  [default: outdir]
+  -e, --existing-graphs PATH  Existing graphs.pkl file to reuse unchanged
+                              graphs (for incremental updates)
+  -c, --changed PATH          Changed modules file (changed.tsv) - only
+                              regenerate graphs for these modules
+  -v, --verbose               Enable verbose logging
+  --version                   Show the version and exit.
+  --help                      Show this message and exit.
 ```
 
 ### Usage Examples
 
-#### With New TSV Format (Recommended)
+#### Full Regeneration (Recommended for First Run)
 
 ```bash
 make_graphs \
@@ -170,6 +182,31 @@ make_graphs \
   -o graphs_output \
   -v
 ```
+
+#### Incremental Update (Fast)
+
+When you have existing graphs and only want to update changed modules:
+
+```bash
+make_graphs \
+  -i fetched_data/modules_table.tsv \
+  -o graphs_output \
+  -e kegg_pathways_completeness/pathways_data/graphs.pkl \
+  -c fetched_data/changed.tsv \
+  -v
+```
+
+**Performance**: Incremental updates are significantly faster, typically ~30 seconds vs ~10 minutes for full regeneration.
+
+**When to use incremental updates**:
+- You have an existing `graphs.pkl` file
+- You have a `changed.tsv` file from `fetch_modules_data` showing which modules changed
+- You want to minimize processing time
+
+**When to use full regeneration**:
+- First time generating graphs
+- No existing graphs.pkl available
+- You want to ensure all graphs are completely regenerated
 
 #### With Old Format (Backward Compatible)
 
