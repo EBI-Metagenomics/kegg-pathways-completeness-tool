@@ -25,7 +25,6 @@ from importlib.metadata import version, PackageNotFoundError
 
 from .plot_modules_graphs import PlotModuleCompletenessGraph
 from .utils import (
-    parse_modules_list_input,
     parse_graphs_input,
     setup_logging,
     intersection,
@@ -515,25 +514,8 @@ def get_kos_dict(input_table, input_list, list_separator):
     "-t",
     "--modules-table",
     type=click.Path(exists=True),
+    required=True,
     help="Modules table in TSV format (modules_table.tsv) with columns: module, definition, name, class",
-)
-@click.option(
-    "-a",
-    "--definitions",
-    type=click.Path(exists=True),
-    help="All modules definitions file (old format: module:definition)",
-)
-@click.option(
-    "-n",
-    "--names",
-    type=click.Path(exists=True),
-    help="Modules names file (old format: module:name)",
-)
-@click.option(
-    "-c",
-    "--classes",
-    type=click.Path(exists=True),
-    help="Modules classes file (old format: module:class)",
 )
 @click.option(
     "-o",
@@ -581,9 +563,6 @@ def main(
     list_separator,
     graphs,
     modules_table,
-    definitions,
-    names,
-    classes,
     outdir,
     outprefix,
     include_weights,
@@ -594,17 +573,14 @@ def main(
     """
     Calculate KEGG pathway completeness for a given set of KOs.
 
-    Supports both new TSV format (--modules-table) and old format (--definitions, --names, --classes).
-
     Input options (mutually exclusive):
     \b
     - Use -i/--input for a file with contigs and KOs
     - Use -l/--input-list for a simple list of KOs
 
-    Module data options:
+    Module data:
     \b
-    - Use -t/--modules-table for new TSV format (recommended)
-    - Use -a/-n/-c for old format (backward compatibility)
+    - Use -t/--modules-table for modules data in TSV format (required)
     """
     setup_logging(verbose)
     logger = logging.getLogger(__name__)
@@ -629,40 +605,11 @@ def main(
         else files("kegg_pathways_completeness.pathways_data").joinpath("graphs.pkl")
     )
 
-    # Get modules information - support both new TSV and old format
-    if modules_table:
-        logger.info(f"Loading modules data from TSV: {modules_table}")
-        modules_definitions, modules_names, modules_classes = parse_modules_table_tsv(
-            modules_table
-        )
-    else:
-        # Use old format or defaults
-        modules_definitions_filename = (
-            definitions
-            if definitions
-            else files("kegg_pathways_completeness.pathways_data").joinpath(
-                "all_pathways.txt"
-            )
-        )
-        modules_classes_filename = (
-            classes
-            if classes
-            else files("kegg_pathways_completeness.pathways_data").joinpath(
-                "all_pathways_class.txt"
-            )
-        )
-        modules_names_filename = (
-            names
-            if names
-            else files("kegg_pathways_completeness.pathways_data").joinpath(
-                "all_pathways_names.txt"
-            )
-        )
-
-        logger.info("Loading modules data from separate files (old format)")
-        modules_definitions = parse_modules_list_input(modules_definitions_filename)
-        modules_names = parse_modules_list_input(modules_names_filename)
-        modules_classes = parse_modules_list_input(modules_classes_filename)
+    # Load modules information from TSV
+    logger.info(f"Loading modules data from TSV: {modules_table}")
+    modules_definitions, modules_names, modules_classes = parse_modules_table_tsv(
+        modules_table
+    )
 
     completeness_calculator = CompletenessCalculator(
         input_KOs=dict_KO_by_contigs,

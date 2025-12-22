@@ -3,6 +3,7 @@
 import os
 import pytest
 import tempfile
+import requests
 import shutil
 from unittest.mock import Mock, patch, MagicMock
 from kegg_pathways_completeness.bin.fetch_modules_data import (
@@ -318,7 +319,7 @@ class TestRetryMechanism:
         tool = ModulesDataFetchTool(outdir=temp_dir)
 
         with patch.object(tool.session, "get") as mock_get:
-            mock_get.side_effect = Exception("Network error")
+            mock_get.side_effect = requests.RequestException("Network error")
             result = tool.fetch_module_info("M00999")
 
             assert result is None

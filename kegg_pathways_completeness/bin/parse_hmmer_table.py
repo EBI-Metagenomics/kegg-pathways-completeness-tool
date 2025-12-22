@@ -223,7 +223,7 @@ def main(input_file, fasta_file, hmm_tool, output_file, intermediate_file):
         if intermediate_file:
             click.echo(f"Tab-separated table saved to: {temp_tsv}")
         else:
-            click.echo(f"Tab-separated table created (temporary)")
+            click.echo("Tab-separated table created (temporary)")
 
         # Step 2: Parse the tab-separated table
         click.echo("\nStep 2: Parsing tab-separated table to extract KOs per contig...")
@@ -261,7 +261,7 @@ def main(input_file, fasta_file, hmm_tool, output_file, intermediate_file):
                 if len(contigs[key]) != 0:
                     file_out.write("\t".join([key] + list(contigs[key])) + "\n")
 
-        click.echo(f"\nProcessing complete!")
+        click.echo("\nProcessing complete!")
         click.echo(f"Final output: {output_file}")
     finally:
         # Clean up temporary file only if user didn't request to save it

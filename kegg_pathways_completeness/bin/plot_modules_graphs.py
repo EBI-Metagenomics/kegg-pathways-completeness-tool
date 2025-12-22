@@ -23,7 +23,7 @@ import csv
 import click
 from importlib.metadata import version, PackageNotFoundError
 
-from .utils import parse_modules_list_input, parse_graphs_input
+from .utils import parse_graphs_input
 
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
@@ -158,19 +158,20 @@ class PlotModuleCompletenessGraph:
             graph = self.graphs[name]
             logging.info(f"Plotting {name}")
             presented_ko = self.modules_completeness[name].split(",")
+            pathways_schema = self.modules_definitions[name] if self.modules_definitions else name
             if self.use_pydot:
                 self.generate_graph_using_pydot(
                     name=name,
                     presented_ko=presented_ko,
                     graph=graph,
-                    pathways_schema=self.modules_definitions[name],
+                    pathways_schema=pathways_schema,
                 )
             else:
                 self.generate_graph_using_graphviz(
                     name=name,
                     presented_ko=presented_ko,
                     graph=graph,
-                    pathways_schema=self.modules_definitions[name],
+                    pathways_schema=pathways_schema,
                 )
 
     def generate_plot_without_completeness(self):
@@ -180,19 +181,20 @@ class PlotModuleCompletenessGraph:
         for name in self.modules_list:
             graph = self.graphs[name]
             logging.info(f"Plotting {name}")
+            pathways_schema = self.modules_definitions[name] if self.modules_definitions else name
             if self.use_pydot:
                 self.generate_graph_using_pydot(
                     name=name,
                     presented_ko=[],
                     graph=graph,
-                    pathways_schema=self.modules_definitions[name],
+                    pathways_schema=pathways_schema,
                 )
             else:
                 self.generate_graph_using_graphviz(
                     name=name,
                     presented_ko=[],
                     graph=graph,
-                    pathways_schema=self.modules_definitions[name],
+                    pathways_schema=pathways_schema,
                 )
 
     def generate_plot(self):
@@ -278,14 +280,6 @@ def parse_input_modules(
     show_default=True,
 )
 @click.option(
-    "-d",
-    "--definitions",
-    type=click.Path(exists=True),
-    default="pathways_data/all_pathways.txt",
-    help="Pathways definitions file",
-    show_default=True,
-)
-@click.option(
     "-o",
     "--outdir",
     default="pathways_plots",
@@ -304,7 +298,6 @@ def main(
     modules_file,
     file_separator,
     graphs,
-    definitions,
     outdir,
     use_pydot,
 ):
@@ -317,15 +310,15 @@ def main(
     Examples:
     \b
     # Plot with completeness data
-    plot_modules_graphs -i completeness.tsv -g graphs.pkl -d definitions.txt
+    plot_modules_graphs -i completeness.tsv -g graphs.pkl
 
     \b
     # Plot specific modules
-    plot_modules_graphs -m M00001 -m M00002 -g graphs.pkl -d definitions.txt
+    plot_modules_graphs -m M00001 -m M00002 -g graphs.pkl
 
     \b
     # Plot modules from file
-    plot_modules_graphs -l modules.txt -g graphs.pkl -d definitions.txt
+    plot_modules_graphs -l modules.txt -g graphs.pkl
     """
     if not input_completeness and not input_modules_list and not modules_file:
         raise click.UsageError(
@@ -339,7 +332,7 @@ def main(
     plot_completeness_generator = PlotModuleCompletenessGraph(
         modules_completeness=parse_completeness_input(input_completeness),
         graphs=parse_graphs_input(graphs),
-        modules_definitions=parse_modules_list_input(definitions),
+        modules_definitions=None,
         outdir=outdir,
         modules_list=parse_input_modules(
             list(input_modules_list) if input_modules_list else None,

@@ -37,24 +37,6 @@ def intersection(lst1, lst2):
     return list(set(lst1) & set(lst2))
 
 
-def parse_modules_list_input(filepath):
-    """
-    Function parses input file with modules definitions to generate dictionary in format:
-    [module]:KOs schema
-    :param filepath: all_pathways.txt
-    :return: dictionary [module]:KOs schema
-    """
-    pathways_schema = {}
-    if os.path.exists(filepath):
-        with open(filepath, "r") as pathways_file:
-            for line in pathways_file:
-                fields = line.strip().split(":")
-                pathways_schema[fields[0]] = fields[1]
-        return pathways_schema
-    else:
-        logging.error(f"No file {filepath} found")
-
-
 def parse_graphs_input(filename):
     """
     Function loads graphs of modules in networkx format pre-saved into pkl format.

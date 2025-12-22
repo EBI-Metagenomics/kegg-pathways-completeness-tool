@@ -1,7 +1,7 @@
 - name: plot_graphs using modules list
   tags:
     - plot_modules_graphs
-  command: python -m kegg_pathways_completeness.bin.plot_modules_graphs --modules-file tests/fixtures/plot_modules_graphs/modules_list.txt --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt
+  command: plot_modules_graphs -l tests/fixtures/plot_modules_graphs/modules_list.txt -g kegg_pathways_completeness/pathways_data/graphs.pkl
   files:
     - path: "pathways_plots/M00014"
     - path: "pathways_plots/M00014.png"
@@ -13,7 +13,7 @@
 - name: plot_graphs using completeness output
   tags:
     - plot_modules_graphs
-  command: python -m kegg_pathways_completeness.bin.plot_modules_graphs --input-completeness tests/outputs/give_completeness/test_kos_pathways.tsv --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt -o completeness_graphs
+  command: plot_modules_graphs -i tests/outputs/give_completeness/test_kos_pathways.tsv -g kegg_pathways_completeness/pathways_data/graphs.pkl -o completeness_graphs
   files:
     - path: "completeness_graphs/M00001"
     - path: "completeness_graphs/M00001.png"
@@ -25,7 +25,7 @@
 - name: plot_graphs using completeness output using pydot
   tags:
     - plot_modules_graphs_pydot
-  command: python -m kegg_pathways_completeness.bin.plot_modules_graphs --use-pydot --input-completeness tests/outputs/give_completeness/test_kos_pathways.tsv --graphs kegg_pathways_completeness/pathways_data/graphs.pkl --definitions kegg_pathways_completeness/pathways_data/all_pathways.txt -o completeness_graphs_pydot
+  command: plot_modules_graphs --use-pydot -i tests/outputs/give_completeness/test_kos_pathways.tsv -g kegg_pathways_completeness/pathways_data/graphs.pkl -o completeness_graphs_pydot
   files:
     - path: "completeness_graphs_pydot/dot/M00001.dot"
     - path: "completeness_graphs_pydot/png/M00001.png"
