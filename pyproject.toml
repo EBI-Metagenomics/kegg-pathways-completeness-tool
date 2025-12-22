@@ -32,8 +32,7 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 packages = [
     "kegg_pathways_completeness",
-    "kegg_pathways_completeness.bin", 
-    "kegg_pathways_completeness.bin.parse_hmmtable",
+    "kegg_pathways_completeness.bin",
     "kegg_pathways_completeness.pathways_data"
 ]
 
@@ -45,8 +44,7 @@ give_completeness = "kegg_pathways_completeness.bin.give_completeness:main"
 plot_modules_graphs = "kegg_pathways_completeness.bin.plot_modules_graphs:main"
 make_graphs = "kegg_pathways_completeness.bin.make_graphs:main"
 fetch_modules_data = "kegg_pathways_completeness.bin.fetch_modules_data:main"
-make_hmmer_table_tab_separated = "kegg_pathways_completeness.bin.parse_hmmtable.make_hmmer_table_tab_separated:main"
-parse_hmmer_tab_separated_table = "kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmer_tab_separated_table:main"
+parse_hmmer_table = "kegg_pathways_completeness.bin.parse_hmmer_table:main"
 
 [project.optional-dependencies]
 test = [

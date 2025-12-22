@@ -28,6 +28,7 @@ from tqdm import tqdm
 LIST_MODULES = "modules_list.txt"
 MODULES_TABLE = "modules_table.tsv"
 CHANGED_TABLE = "changed.tsv"
+LIST_SEPARATED_IN_DEFINITION = "mediators_list.txt"
 
 KEGG_API_LIST_MODULES = "http://rest.kegg.jp/list/module"
 KEGG_API_GET = "http://rest.kegg.jp/get"
@@ -126,7 +127,7 @@ class ModulesDataFetchTool:
             print(f"An error occurred while fetching modules list: {e}")
             exit(1)
 
-    def fetch_module_info(self, module):
+    def fetch_module_info(self, module, output_dir):
         """Fetch information for a single module"""
         with self.rate_limiter:
             try:
@@ -171,6 +172,8 @@ class ModulesDataFetchTool:
                         if len(definition_lines[i]) > 6:
                             # not a single KOXXXX
                             definition_lines[i] = f"({definition_lines[i]})"
+                    with open(os.path.join(output_dir, LIST_SEPARATED_IN_DEFINITION), 'a') as file_out:
+                        file_out.write(f'{module}:{line_separator_in_kegg_names.join(definition_lines)}' + '\n')
 
                 def_module = line_separator_in_kegg_names.join(definition_lines)
 
@@ -188,7 +191,7 @@ class ModulesDataFetchTool:
                 )
                 return None
 
-    def fetch_all_modules_parallel(self, modules):
+    def fetch_all_modules_parallel(self, modules, outdir):
         """Fetch all modules in parallel with progress bar"""
         print(
             f"Fetching {len(modules)} modules with {self.max_workers} concurrent workers..."
@@ -197,7 +200,7 @@ class ModulesDataFetchTool:
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             # Submit all tasks
             future_to_module = {
-                executor.submit(self.fetch_module_info, module): module
+                executor.submit(self.fetch_module_info, module, outdir): module
                 for module in modules
             }
 
@@ -410,7 +413,7 @@ def main(
         modules_all = module_fetch_tool.fetch_and_save_kegg_modules_list()
 
     # get info for each module in parallel
-    module_fetch_tool.fetch_all_modules_parallel(modules_all)
+    module_fetch_tool.fetch_all_modules_parallel(modules_all, output_dir)
 
     # write the tab-separated table
     module_fetch_tool.write_modules_table()
