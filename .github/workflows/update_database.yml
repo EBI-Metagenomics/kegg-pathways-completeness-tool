@@ -187,6 +187,10 @@ jobs:
           automated
           database-update
         assignees: ${{ github.repository_owner }}
+        add: |
+          kegg_pathways_completeness/pathways_data
+          update_summary.md
+          README.md
 
     - name: Upload artifacts
       if: always()
