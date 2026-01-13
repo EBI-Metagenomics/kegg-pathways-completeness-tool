@@ -168,6 +168,23 @@ jobs:
         git diff --quiet kegg_pathways_completeness/pathways_data/ || echo "files_changed=true" >> $GITHUB_ENV
         git diff --quiet README.md || echo "readme_changed=true" >> $GITHUB_ENV
 
+    - name: Upload artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: kegg-update-${{ env.BRANCH_DATE }}
+        path: |
+          fetched_data/
+          graphs_output/
+          update_summary.md
+          old_format/
+        retention-days: 30
+
+    - name: Clean up temporary directories
+      run: |
+        echo "Removing temporary directories that should not be committed..."
+        rm -rf fetched_data/ graphs_output/ old_format/
+
     - name: Create Pull Request
       if: env.files_changed == 'true' || env.readme_changed == 'true'
       uses: peter-evans/create-pull-request@v6
@@ -191,18 +208,6 @@ jobs:
           kegg_pathways_completeness/pathways_data
           update_summary.md
           README.md
-
-    - name: Upload artifacts
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: kegg-update-${{ env.BRANCH_DATE }}
-        path: |
-          fetched_data/
-          graphs_output/
-          update_summary.md
-          old_format/
-        retention-days: 30
 
     - name: Notify on failure
       if: failure()
