@@ -514,8 +514,7 @@ def get_kos_dict(input_table, input_list, list_separator):
     "-t",
     "--modules-table",
     type=click.Path(exists=True),
-    required=True,
-    help="Modules table in TSV format (modules_table.tsv) with columns: module, definition, name, class",
+    help="Modules table in TSV format (default: uses packaged modules_table.tsv)",
 )
 @click.option(
     "-o",
@@ -605,10 +604,17 @@ def main(
         else files("kegg_pathways_completeness.pathways_data").joinpath("graphs.pkl")
     )
 
-    # Load modules information from TSV
-    logger.info(f"Loading modules data from TSV: {modules_table}")
-    modules_definitions, modules_names, modules_classes = parse_modules_table_tsv(
+    # Get modules table file
+    modules_table_filename = (
         modules_table
+        if modules_table
+        else files("kegg_pathways_completeness.pathways_data").joinpath("modules_table.tsv")
+    )
+
+    # Load modules information from TSV
+    logger.info(f"Loading modules data from TSV: {modules_table_filename}")
+    modules_definitions, modules_names, modules_classes = parse_modules_table_tsv(
+        modules_table_filename
     )
 
     completeness_calculator = CompletenessCalculator(

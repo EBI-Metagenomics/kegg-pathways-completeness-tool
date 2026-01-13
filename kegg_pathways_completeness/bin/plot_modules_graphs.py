@@ -22,6 +22,7 @@ import pydot
 import csv
 import click
 from importlib.metadata import version, PackageNotFoundError
+from importlib.resources import files
 
 from .utils import parse_graphs_input
 
@@ -275,9 +276,7 @@ def parse_input_modules(
     "-g",
     "--graphs",
     type=click.Path(exists=True),
-    default="pathways_data/graphs.pkl",
-    help="Graphs in pickle format",
-    show_default=True,
+    help="Graphs in pickle format (default: uses packaged graphs.pkl)",
 )
 @click.option(
     "-o",
@@ -329,9 +328,16 @@ def main(
     if input_modules_list and modules_file:
         raise click.UsageError("Cannot use both --modules and --modules-file")
 
+    # Get graphs file
+    graphs_filename = (
+        graphs
+        if graphs
+        else files("kegg_pathways_completeness.pathways_data").joinpath("graphs.pkl")
+    )
+
     plot_completeness_generator = PlotModuleCompletenessGraph(
         modules_completeness=parse_completeness_input(input_completeness),
-        graphs=parse_graphs_input(graphs),
+        graphs=parse_graphs_input(graphs_filename),
         modules_definitions=None,
         outdir=outdir,
         modules_list=parse_input_modules(
