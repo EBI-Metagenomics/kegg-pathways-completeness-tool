@@ -166,9 +166,11 @@ class GraphsGenerator:
         L = len(pathway)
         for i in range(L):
             # check brackets
-            if (pathway[i] == "(" and
-                    pathway[L - i - 1] == ")" and
-                    levels_brackets[i] == levels_brackets[L - i - 1]):
+            if (
+                pathway[i] == "("
+                and pathway[L - i - 1] == ")"
+                and levels_brackets[i] == levels_brackets[L - i - 1]
+            ):
                 expression_without_brackets = pathway[i + 1: L - i - 1]
             else:
                 return expression_without_brackets
@@ -317,8 +319,11 @@ class GraphsGenerator:
         with open(self.input_file, "r") as f:
             first_line = f.readline().strip()
             # Check if first line is a TSV header
-            return (first_line.startswith("module\t") or
-                    "\t" in first_line and ":" not in first_line)
+            return (
+                first_line.startswith("module\t")
+                or "\t" in first_line
+                and ":" not in first_line
+            )
 
     def _read_modules_from_tsv(self):
         """Read modules from new TSV format file"""

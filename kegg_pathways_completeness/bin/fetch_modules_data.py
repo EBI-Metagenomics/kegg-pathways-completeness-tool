@@ -223,8 +223,9 @@ class ModulesDataFetchTool:
             with open(output_file, "w") as f:
                 # Write header
                 f.write("module\tdefinition\tname\tclass\n")
-                # Write data rows
-                for module_data in self.modules_data:
+                # Sort modules by module ID and write data rows
+                sorted_modules = sorted(self.modules_data, key=lambda x: x['module'])
+                for module_data in sorted_modules:
                     f.write(
                         f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n"
                     )
@@ -311,8 +312,9 @@ class ModulesDataFetchTool:
             with open(output_file, "w") as f:
                 # Write header
                 f.write("module\tdefinition\tname\tclass\n")
-                # Write data rows
-                for module_data in changed_modules:
+                # Sort modules by module ID and write data rows
+                sorted_modules = sorted(changed_modules, key=lambda x: x['module'])
+                for module_data in sorted_modules:
                     f.write(
                         f"{module_data['module']}\t{module_data['definition']}\t{module_data['name']}\t{module_data['class']}\n"
                     )
@@ -436,9 +438,11 @@ def main(
         old_classes_data = module_fetch_tool.parse_old_file(old_classes)
 
     # If any old data was provided, detect changes
-    if (old_definitions_data is not None or
-            old_names_data is not None or
-            old_classes_data is not None):
+    if (
+        old_definitions_data is not None
+        or old_names_data is not None
+        or old_classes_data is not None
+    ):
         print("Detecting changes...")
         changed_modules = module_fetch_tool.detect_changes(
             old_definitions=old_definitions_data,

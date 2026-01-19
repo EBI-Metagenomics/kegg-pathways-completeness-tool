@@ -116,7 +116,8 @@ fi
 info "Step 4: Updating package data files..."
 cp fetched_data/modules_table.tsv kegg_pathways_completeness/pathways_data/
 cp graphs_output/graphs.pkl kegg_pathways_completeness/pathways_data/
-info "Updated modules_table.tsv and graphs.pkl"
+cp fetched_data/mediators_list.txt kegg_pathways_completeness/pathways_data/
+info "Updated modules_table.tsv, graphs.pkl and mediators_list.txt"
 
 # Step 5: Update README with module count
 info "Step 5: Updating README with module count..."
