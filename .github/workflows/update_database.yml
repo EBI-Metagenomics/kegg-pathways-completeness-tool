@@ -1,6 +1,7 @@
 name: Update KEGG Database
 
 on:
+  push:
   schedule:
     # Run every 3 months on the 1st at midnight UTC
     - cron: '0 0 1 */3 *'

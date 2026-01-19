@@ -172,8 +172,7 @@ class ModulesDataFetchTool:
                         os.path.join(self.outdir, LIST_SEPARATED_IN_DEFINITION), "a"
                     ) as file_out:
                         file_out.write(
-                            f"{module}:{line_separator_in_kegg_names.join(definition_lines)}"
-                            + "\n"
+                            f"{module}:{line_separator_in_kegg_names.join(definition_lines)}\n"
                         )
 
                 def_module = line_separator_in_kegg_names.join(definition_lines)
@@ -437,11 +436,9 @@ def main(
         old_classes_data = module_fetch_tool.parse_old_file(old_classes)
 
     # If any old data was provided, detect changes
-    if (
-        old_definitions_data is not None
-        or old_names_data is not None
-        or old_classes_data is not None
-    ):
+    if (old_definitions_data is not None or
+            old_names_data is not None or
+            old_classes_data is not None):
         print("Detecting changes...")
         changed_modules = module_fetch_tool.detect_changes(
             old_definitions=old_definitions_data,

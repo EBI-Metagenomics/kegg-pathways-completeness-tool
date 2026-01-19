@@ -55,7 +55,7 @@ pip install -e .
 
 - **Python**: 3.8 or higher
 - **graphviz**: Required for pathway visualization (install via system package manager)
-- **[HMMER](https://www.ebi.ac.uk/Tools/hmmer/home)** (optional): For annotating protein sequences with KOs
+- **[HMMER](http://hmmer.org/)** (optional): For annotating protein sequences with KOs
 
 ## Quick Start
 Tool uses pre-generated files `modules_table.tsv` and `graphs.pkl` described in [Module Data Files](#module-data-files).
@@ -102,7 +102,7 @@ Calculate KEGG pathway module completeness from KO annotations.
 **Module data**:
 - `-t, --modules-table <FILE>`: Module information in TSV format (columns: module, definition, name, class)
   - Default: Uses packaged `kegg_pathways_completeness/pathways_data/modules_table.tsv`
-- `-g, --graphs <FILE>`: Custom graphs file (default: uses packaged graphs.pkl)
+- `-g, --graphs <FILE>`: Custom graphs file (default: uses packaged `kegg_pathways_completeness/pathways_data/graphs.pkl`)
 
 #### Optional Arguments
 
