@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 
 import os
-import pytest
-import tempfile
-import requests
 import shutil
-from unittest.mock import Mock, patch, MagicMock
+import tempfile
+from unittest.mock import MagicMock, Mock, patch
+
+import pytest
+import requests
+
 from kegg_pathways_completeness.bin.fetch_modules_data import (
     ModulesDataFetchTool,
     get_version,
 )
-
 
 # Mock KEGG API responses
 MOCK_MODULE_LIST_RESPONSE = """md:M00001\tGlycolysis

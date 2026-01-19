@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,29 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import sys
-import networkx as nx
-import logging
+
 import copy
+import logging
 import os
-import click
+import sys
 from importlib.resources import files
-from importlib.metadata import version, PackageNotFoundError
+
+import click
+import networkx as nx
 
 from .plot_modules_graphs import PlotModuleCompletenessGraph
-from .utils import (
-    parse_graphs_input,
-    setup_logging,
-    intersection,
-)
-
-
-def get_version():
-    """Get package version from installed metadata"""
-    try:
-        return version("kegg-pathways-completeness")
-    except PackageNotFoundError:
-        return "unknown"
+from .utils import get_version, intersection, parse_graphs_input, setup_logging
 
 
 def parse_modules_table_tsv(tsv_file):
@@ -608,7 +597,9 @@ def main(
     modules_table_filename = (
         modules_table
         if modules_table
-        else files("kegg_pathways_completeness.pathways_data").joinpath("modules_table.tsv")
+        else files("kegg_pathways_completeness.pathways_data").joinpath(
+            "modules_table.tsv"
+        )
     )
 
     # Load modules information from TSV

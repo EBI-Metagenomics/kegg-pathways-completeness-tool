@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# -*- coding: utf-8 -*-
+
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import os
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Semaphore
+
 import click
 import requests
 from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
-from importlib.metadata import version, PackageNotFoundError
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from threading import Semaphore
 from tqdm import tqdm
+from urllib3.util.retry import Retry
 
+from .utils import get_version
 
 LIST_MODULES = "modules_list.txt"
 MODULES_TABLE = "modules_table.tsv"
@@ -32,14 +36,6 @@ LIST_SEPARATED_IN_DEFINITION = "mediators_list.txt"
 
 KEGG_API_LIST_MODULES = "http://rest.kegg.jp/list/module"
 KEGG_API_GET = "http://rest.kegg.jp/get"
-
-
-def get_version():
-    """Get package version from installed metadata"""
-    try:
-        return version("kegg-pathways-completeness")
-    except PackageNotFoundError:
-        return "unknown"
 
 
 class ModulesDataFetchTool:
@@ -172,8 +168,13 @@ class ModulesDataFetchTool:
                         if len(definition_lines[i]) > 6:
                             # not a single KOXXXX
                             definition_lines[i] = f"({definition_lines[i]})"
-                    with open(os.path.join(self.outdir, LIST_SEPARATED_IN_DEFINITION), 'a') as file_out:
-                        file_out.write(f'{module}:{line_separator_in_kegg_names.join(definition_lines)}' + '\n')
+                    with open(
+                        os.path.join(self.outdir, LIST_SEPARATED_IN_DEFINITION), "a"
+                    ) as file_out:
+                        file_out.write(
+                            f"{module}:{line_separator_in_kegg_names.join(definition_lines)}"
+                            + "\n"
+                        )
 
                 def_module = line_separator_in_kegg_names.join(definition_lines)
 

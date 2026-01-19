@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import logging
 import os
 import pickle
+from importlib.metadata import PackageNotFoundError, version
+
+
+def get_version():
+    """Get package version from installed metadata"""
+    try:
+        return version("kegg-pathways-completeness")
+    except PackageNotFoundError:
+        return "unknown"
 
 
 def setup_logging(verbose):

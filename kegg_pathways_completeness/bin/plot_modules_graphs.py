@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,28 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import networkx as nx
+
+import csv
 import logging
 import os
-import graphviz
-import pydot
-import csv
-import click
-from importlib.metadata import version, PackageNotFoundError
 from importlib.resources import files
 
-from .utils import parse_graphs_input
+import click
+import graphviz
+import networkx as nx
+import pydot
 
+from .utils import get_version, parse_graphs_input
 
 logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
-
-
-def get_version():
-    """Get package version from installed metadata"""
-    try:
-        return version("kegg-pathways-completeness")
-    except PackageNotFoundError:
-        return "unknown"
 
 
 class PlotModuleCompletenessGraph:
@@ -159,7 +151,9 @@ class PlotModuleCompletenessGraph:
             graph = self.graphs[name]
             logging.info(f"Plotting {name}")
             presented_ko = self.modules_completeness[name].split(",")
-            pathways_schema = self.modules_definitions[name] if self.modules_definitions else name
+            pathways_schema = (
+                self.modules_definitions[name] if self.modules_definitions else name
+            )
             if self.use_pydot:
                 self.generate_graph_using_pydot(
                     name=name,
@@ -182,7 +176,9 @@ class PlotModuleCompletenessGraph:
         for name in self.modules_list:
             graph = self.graphs[name]
             logging.info(f"Plotting {name}")
-            pathways_schema = self.modules_definitions[name] if self.modules_definitions else name
+            pathways_schema = (
+                self.modules_definitions[name] if self.modules_definitions else name
+            )
             if self.use_pydot:
                 self.generate_graph_using_pydot(
                     name=name,

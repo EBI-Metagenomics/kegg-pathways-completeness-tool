@@ -13,6 +13,14 @@ Additional notes:
 - Troubleshooting
 - Migration from Old Format
 
+> [!NOTE]
+> **Main change from release 1.4.0**
+> 
+> Modules information now saved into new TSV format: `modules_table.tsv` with columns (module, definition, name, class).
+> 
+> Old format with files `all_pathways.txt`, `all_pathways_class.txt`, `all_pathways_names.txt` **is no longer supported for database generation**. 
+> But main `give_completeness` script still works with old files.
+
 ## Step 1: Fetch KEGG Modules Data
 
 ### Quick Start
@@ -25,7 +33,7 @@ fetch_modules_data \
   --delay 0.5
 ```
 
-This creates `fetched_data/modules_table.tsv` with all current KEGG modules information (ID, name, class, definition).  Typical runtime ~3-5 minutes for ~500 modules with default settings
+This creates `fetched_data/modules_table.tsv` with all current KEGG modules information (ID, name, class, definition).  Typical runtime ~3-5 minutes for ~500 modules with default settings (tested on MacBook Air M2, 2022). 
 
 ### Command Help
 
@@ -322,11 +330,15 @@ pathways_plots/
 
 ### 403 Forbidden Errors
 
+> [!NOTE]
+> 
+> Be nice with the KEGG ftp -- don't bombard it with many requests.
+
 If you encounter `403 Forbidden` errors from KEGG API:
 
 1. **Reduce concurrent workers**: `--max-workers 3`
 2. **Increase delay**: `--delay 1.0`
-3. **Add more retries**: `--max-retries 5`
+3. **Try more retries**: `--max-retries 5`
 
 ## Migration from Old Format
 

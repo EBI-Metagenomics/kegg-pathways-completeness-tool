@@ -9,11 +9,8 @@ This guide explains how to generate and process HMMER output to extract KEGG Ort
 
 ### Input 
 1. **Protein sequences** (FASTA format) - protein sequences from your contigs
-2. **KEGG KOfam HMM database** - can be downloaded from MGnify FTP:
-   ```bash
-   wget https://ftp.ebi.ac.uk/pub/databases/metagenomics/pipeline-5.0/ref-dbs/db_kofam.hmm.gz
-   gunzip db_kofam.hmm.gz
-   ```
+2. **KEGG KOfam HMM database** - can be downloaded from [KEGG KOfam](https://www.genome.jp/tools/kofamkoala/) or generated with [MGnify database generation pipeline](https://github.com/EBI-Metagenomics/reference-databases-preprocessing-pipeline) using `--generate_kofam_db`:
+
 
 ### Output 
 Tab-separated file with one contig per line:
@@ -29,7 +26,7 @@ contig_3    K00001
 
 ## Step 1: Run HMMER search
 
-You can use either `hmmscan` or `hmmsearch`. Both will produce similar results, but the column order in the output differs.
+You can use either `hmmscan` or `hmmsearch`. Both will produce similar results, but the column order in the output differs (check [explanation](http://cryptogenomicon.org/hmmscan-vs-hmmsearch-speed-the-numerology.html) for more details).
 
 ### Option A: Using hmmscan (recommended)
 
@@ -60,7 +57,7 @@ hmmsearch \
 
 ## Step 2: Process HMMER Output
 
-Use the `parse_hmmer_table.py` tool to extract KO annotations per contig. The tool automatically handles the conversion from HMMER's space-separated format to tab-separated format and then parses it to extract KO annotations.
+Use the `parse_hmmer_table.py` tool to extract KO annotations per contig. The tool automatically handles the conversion from HMMER's space-separated format to tab-separated format and then parses it to extract KO annotations. The parser supports both input formats: hmmsearch and hmmscan (specify with `--tool` argument). 
 
 ### Basic Usage
 

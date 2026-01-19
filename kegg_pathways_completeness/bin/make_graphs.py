@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,23 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import numpy as np
+
 import logging
+import os
 import pickle
-import networkx as nx
 import time
+
 import click
-from importlib.metadata import version, PackageNotFoundError
-from .utils import setup_logging
+import networkx as nx
+import numpy as np
 
-
-def get_version():
-    """Get package version from installed metadata"""
-    try:
-        return version("kegg-pathways-completeness")
-    except PackageNotFoundError:
-        return "unknown"
+from .utils import get_version, setup_logging
 
 
 class GraphsGenerator:
@@ -177,7 +171,7 @@ class GraphsGenerator:
                 and pathway[L - i - 1] == ")"
                 and levels_brackets[i] == levels_brackets[L - i - 1]
             ):
-                expression_without_brackets = pathway[i + 1 : L - i - 1]
+                expression_without_brackets = pathway[i + 1: L - i - 1]
             else:
                 return expression_without_brackets
         return expression_without_brackets
@@ -288,7 +282,7 @@ class GraphsGenerator:
                 G=G,
                 dict_edges=dict_edges,
                 unnecessary_nodes=unnecessary_nodes,
-                expression=expression[cur_sep : len(expression)],
+                expression=expression[cur_sep: len(expression)],
                 start_node=cur_start_node,
                 end_node=cur_end_node,
                 weight=cur_weight,
@@ -325,13 +319,11 @@ class GraphsGenerator:
         with open(self.input_file, "r") as f:
             first_line = f.readline().strip()
             # Check if first line is a TSV header
-            if (
+            return (
                 first_line.startswith("module\t")
                 or "\t" in first_line
                 and ":" not in first_line
-            ):
-                return True
-            return False
+            )
 
     def _read_modules_from_tsv(self):
         """Read modules from new TSV format file"""

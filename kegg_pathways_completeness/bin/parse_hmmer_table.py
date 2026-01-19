@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,23 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Script to process HMMER output tables and extract KO annotations per contig.
-"""
 
 import os
 import tempfile
+
 import click
 from Bio import SeqIO
-from importlib.metadata import version, PackageNotFoundError
 
-
-def get_version():
-    """Get package version from installed metadata"""
-    try:
-        return version("kegg-pathways-completeness")
-    except PackageNotFoundError:
-        return "unknown"
+from .utils import get_version
 
 
 class HmmerTableConverter:
