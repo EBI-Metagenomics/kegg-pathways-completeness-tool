@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,11 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 import logging
 import os
 import pickle
+from importlib.metadata import PackageNotFoundError, version
 
-__version__ = "1.3.0"
+
+def get_version():
+    """Get package version from installed metadata"""
+    try:
+        return version("kegg-pathways-completeness")
+    except PackageNotFoundError:
+        return "unknown"
 
 
 def setup_logging(verbose):
@@ -37,24 +45,6 @@ def intersection(lst1, lst2):
     :return: intersection in list format
     """
     return list(set(lst1) & set(lst2))
-
-
-def parse_modules_list_input(filepath):
-    """
-    Function parses input file with modules definitions to generate dictionary in format:
-    [module]:KOs schema
-    :param filepath: all_pathways.txt
-    :return: dictionary [module]:KOs schema
-    """
-    pathways_schema = {}
-    if os.path.exists(filepath):
-        with open(filepath, "r") as pathways_file:
-            for line in pathways_file:
-                fields = line.strip().split(":")
-                pathways_schema[fields[0]] = fields[1]
-        return pathways_schema
-    else:
-        logging.error(f"No file {filepath} found")
 
 
 def parse_graphs_input(filename):

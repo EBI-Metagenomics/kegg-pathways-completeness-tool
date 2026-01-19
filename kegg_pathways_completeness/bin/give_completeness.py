@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,107 +14,55 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
-import sys
-import networkx as nx
-import logging
+
 import copy
+import logging
 import os
+import sys
 from importlib.resources import files
 
+import click
+import networkx as nx
+
 from .plot_modules_graphs import PlotModuleCompletenessGraph
-from .utils import (
-    parse_modules_list_input,
-    parse_graphs_input,
-    setup_logging,
-    intersection,
-    __version__,
-)
+from .utils import get_version, intersection, parse_graphs_input, setup_logging
 
 
-def parse_args(argv):
-    parser = argparse.ArgumentParser(
-        description="Script generates modules pathways completeness by given set of KOs"
-    )
-    parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}"
-    )
+def parse_modules_table_tsv(tsv_file):
+    """
+    Parse new TSV format file (modules_table.tsv) into separate dictionaries.
+    Returns: (modules_definitions, modules_names, modules_classes)
+    """
+    modules_definitions = {}
+    modules_names = {}
+    modules_classes = {}
 
-    input_args = parser.add_mutually_exclusive_group(required=True)
-    input_args.add_argument(
-        "-i", "--input", dest="input_file", help="Each line = pathway"
-    )
-    input_args.add_argument(
-        "-l", "--input-list", dest="input_list", help="File with KOs comma separated"
-    )
-    input_args.add_argument(
-        "-s",
-        "--list-separator",
-        dest="list_separator",
-        help="Separator for list option (default: comma)",
-        default=",",
-    )
+    with open(tsv_file, "r") as f:
+        # Read header
+        header = f.readline().strip().split("\t")
 
-    parser.add_argument(
-        "-g", "--graphs", dest="graphs", help="graphs in pickle format", required=False
-    )
-    parser.add_argument(
-        "-a",
-        "--definitions",
-        dest="definitions",
-        help="All modules definitions",
-        required=False,
-    )
-    parser.add_argument(
-        "-n", "--names", dest="names", help="Modules names", required=False
-    )
-    parser.add_argument(
-        "-c", "--classes", dest="classes", help="Modules classes", required=False
-    )
+        # Validate header
+        required_cols = ["module", "definition", "name", "class"]
+        for col in required_cols:
+            if col not in header:
+                raise ValueError(f"TSV file must have '{col}' column")
 
-    parser.add_argument(
-        "-o", "--outdir", dest="outdir", help="output directory", default="."
-    )
-    parser.add_argument(
-        "-r",
-        "--outprefix",
-        dest="outprefix",
-        help="prefix for output filename",
-        default="summary.kegg",
-    )
+        module_idx = header.index("module")
+        definition_idx = header.index("definition")
+        name_idx = header.index("name")
+        class_idx = header.index("class")
 
-    parser.add_argument(
-        "-w",
-        "--include-weights",
-        dest="include_weights",
-        help="add weights for each KO in output",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-p",
-        "--plot-pathways",
-        dest="plot_pathways",
-        help="Create images with pathways completeness",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-m",
-        "--add-per-contig",
-        dest="per_contig",
-        help="Creates per-contig summary table "
-        "(makes sense to use if input table has information about contigs). "
-        "Does not work with --input-list option",
-        action="store_true",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="verbose",
-        help="Print more logging",
-        required=False,
-        action="store_true",
-    )
-    return parser.parse_args(argv)
+        # Read data rows
+        for line in f:
+            if line.strip():
+                fields = line.strip().split("\t")
+                if len(fields) > max(module_idx, definition_idx, name_idx, class_idx):
+                    module = fields[module_idx]
+                    modules_definitions[module] = fields[definition_idx]
+                    modules_names[module] = fields[name_idx]
+                    modules_classes[module] = fields[class_idx]
+
+    return modules_definitions, modules_names, modules_classes
 
 
 class CompletenessCalculator:
@@ -224,7 +172,8 @@ class CompletenessCalculator:
                             dict_of_weights[pred][num] + preds[pred][ancestor]["weight"]
                         )
                         dict_of_new_weights[node][number_of_records] = (
-                            dict_of_new_weights[pred][num] + preds[pred][ancestor]["weight_new"]
+                            dict_of_new_weights[pred][num]
+                            + preds[pred][ancestor]["weight_new"]
                         )
                         number_of_records += 1
                     for cur_path in dict_nodes_paths[pred]:
@@ -522,55 +471,154 @@ def get_kos_dict(input_table, input_list, list_separator):
     return dict_KO_by_contigs
 
 
-def main():
-    args = parse_args(sys.argv[1:])
-    setup_logging(args.verbose)
+@click.command()
+@click.option(
+    "-i",
+    "--input",
+    "input_file",
+    type=click.Path(exists=True),
+    help="Input file with KOs (each line = contig_name\\tKO1\\tKO2\\t...)",
+)
+@click.option(
+    "-l",
+    "--input-list",
+    "input_list",
+    type=click.Path(exists=True),
+    help="File with KOs separated by delimiter (see --list-separator)",
+)
+@click.option(
+    "-s",
+    "--list-separator",
+    default=",",
+    help="Separator for --input-list option",
+    show_default=True,
+)
+@click.option(
+    "-g",
+    "--graphs",
+    type=click.Path(exists=True),
+    help="Graphs in pickle format (default: uses packaged graphs.pkl)",
+)
+@click.option(
+    "-t",
+    "--modules-table",
+    type=click.Path(exists=True),
+    help="Modules table in TSV format (default: uses packaged modules_table.tsv)",
+)
+@click.option(
+    "-o",
+    "--outdir",
+    default=".",
+    help="Output directory",
+    show_default=True,
+)
+@click.option(
+    "-r",
+    "--outprefix",
+    default="summary.kegg",
+    help="Prefix for output filename",
+    show_default=True,
+)
+@click.option(
+    "-w",
+    "--include-weights",
+    is_flag=True,
+    help="Add weights for each KO in output",
+)
+@click.option(
+    "-p",
+    "--plot-pathways",
+    is_flag=True,
+    help="Create images with pathways completeness",
+)
+@click.option(
+    "-m",
+    "--add-per-contig",
+    "per_contig",
+    is_flag=True,
+    help="Create per-contig summary table (does not work with --input-list)",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Enable verbose logging",
+)
+@click.version_option(version=get_version(), prog_name="give_completeness")
+def main(
+    input_file,
+    input_list,
+    list_separator,
+    graphs,
+    modules_table,
+    outdir,
+    outprefix,
+    include_weights,
+    plot_pathways,
+    per_contig,
+    verbose,
+):
+    """
+    Calculate KEGG pathway completeness for a given set of KOs.
 
-    # parse input with KOs
+    Input options (mutually exclusive):
+    \b
+    - Use -i/--input for a file with contigs and KOs
+    - Use -l/--input-list for a simple list of KOs
+
+    Module data:
+    \b
+    - Use -t/--modules-table for modules data in TSV format (required)
+    """
+    setup_logging(verbose)
+    logger = logging.getLogger(__name__)
+
+    # Validate mutually exclusive inputs
+    if not input_file and not input_list:
+        raise click.UsageError("Must provide either --input or --input-list")
+    if input_file and input_list:
+        raise click.UsageError("Cannot use both --input and --input-list")
+
+    # Parse input with KOs
     dict_KO_by_contigs = get_kos_dict(
-        input_table=args.input_file,
-        input_list=args.input_list,
-        list_separator=args.list_separator,
+        input_table=input_file,
+        input_list=input_list,
+        list_separator=list_separator,
     )
 
+    # Get graphs file
     graphs_filename = (
-        args.graphs
-        if args.graphs
+        graphs
+        if graphs
         else files("kegg_pathways_completeness.pathways_data").joinpath("graphs.pkl")
     )
-    modules_definitions_filename = (
-        args.definitions
-        if args.definitions
+
+    # Get modules table file
+    modules_table_filename = (
+        modules_table
+        if modules_table
         else files("kegg_pathways_completeness.pathways_data").joinpath(
-            "all_pathways.txt"
+            "modules_table.tsv"
         )
     )
-    modules_classes_filename = (
-        args.classes
-        if args.classes
-        else files("kegg_pathways_completeness.pathways_data").joinpath(
-            "all_pathways_class.txt"
-        )
-    )
-    modules_names_filename = (
-        args.names
-        if args.names
-        else files("kegg_pathways_completeness.pathways_data").joinpath(
-            "all_pathways_names.txt"
-        )
+
+    # Load modules information from TSV
+    logger.info(f"Loading modules data from TSV: {modules_table_filename}")
+    modules_definitions, modules_names, modules_classes = parse_modules_table_tsv(
+        modules_table_filename
     )
 
     completeness_calculator = CompletenessCalculator(
         input_KOs=dict_KO_by_contigs,
-        outdir=args.outdir,
-        outprefix=args.outprefix,
+        outdir=outdir,
+        outprefix=outprefix,
         graphs=parse_graphs_input(graphs_filename),
-        modules_names=parse_modules_list_input(modules_names_filename),
-        modules_classes=parse_modules_list_input(modules_classes_filename),
-        modules_definitions=parse_modules_list_input(modules_definitions_filename),
-        include_weights=args.include_weights,
-        plot_pathways=args.plot_pathways,
-        per_contig=args.per_contig,
+        modules_names=modules_names,
+        modules_classes=modules_classes,
+        modules_definitions=modules_definitions,
+        include_weights=include_weights,
+        plot_pathways=plot_pathways,
+        per_contig=per_contig,
     )
 
     completeness_calculator.process()

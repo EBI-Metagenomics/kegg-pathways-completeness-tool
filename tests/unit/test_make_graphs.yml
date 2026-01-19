@@ -1,7 +1,7 @@
 - name: make_graphs
   tags:
     - make_graphs
-  command: python -m kegg_pathways_completeness.bin.make_graphs -i tests/fixtures/make_graphs/test.txt -o test_graphs
+  command: make_graphs -i tests/fixtures/make_graphs/test.txt -o test_graphs
   files:
     - path: "test_graphs/graphs.pkl"
       md5sum: d90c006fdcf0d0cb8b14698b9c5fa604

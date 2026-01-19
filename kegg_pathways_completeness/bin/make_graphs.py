@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2025 EMBL - European Bioinformatics Institute
+# Copyright 2026 EMBL - European Bioinformatics Institute
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,43 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import numpy as np
-import argparse
+
 import logging
-import sys
+import os
 import pickle
-import networkx as nx
 import time
-from .utils import setup_logging, __version__
 
+import click
+import networkx as nx
+import numpy as np
 
-def parse_args(argv):
-    parser = argparse.ArgumentParser(
-        description="Generates Graphs and saves graphs.pkl for each module"
-    )
-    parser.add_argument(
-        "-i", "--input", dest="input_file", help="Each line = pathway", required=True
-    )
-    parser.add_argument(
-        "-o",
-        "--outdir",
-        dest="outdir",
-        help="Relative path to directory where you want the output file to be stored (default: cwd)",
-        default="outdir",
-    )
-    parser.add_argument(
-        "-v",
-        "--verbose",
-        dest="verbose",
-        help="Print more logging",
-        required=False,
-        action="store_true",
-    )
-    parser.add_argument(
-        "--version", action="version", version=f"%(prog)s {__version__}"
-    )
-    return parser.parse_args(argv)
+from .utils import get_version, setup_logging
 
 
 class GraphsGenerator:
@@ -58,15 +32,25 @@ class GraphsGenerator:
         self,
         input_file: str,
         output_dir: str,
+        existing_graphs_file: str = None,
+        changed_file: str = None,
     ):
         """
         Creates Graphs in network format for each module in input_file.
         Graphs object is saved into graphs.pkl file.
+
+        Can perform incremental updates by reusing existing graphs and only
+        regenerating changed modules.
+
         :param input_file: Line separated file with modules in format module:KOs
         :param output_dir: name of output directory
+        :param existing_graphs_file: Path to existing graphs.pkl to reuse unchanged graphs
+        :param changed_file: Path to changed.tsv with modules that need regeneration
         """
         self.input_file = input_file
         self.output_dir = output_dir
+        self.existing_graphs_file = existing_graphs_file
+        self.changed_file = changed_file
         if not os.path.exists(self.output_dir):
             os.mkdir(self.output_dir)
 
@@ -183,7 +167,9 @@ class GraphsGenerator:
         for i in range(L):
             # check brackets
             if (
-                pathway[i] == "(" and pathway[L - i - 1] == ")" and levels_brackets[i] == levels_brackets[L - i - 1]
+                pathway[i] == "("
+                and pathway[L - i - 1] == ")"
+                and levels_brackets[i] == levels_brackets[L - i - 1]
             ):
                 expression_without_brackets = pathway[i + 1: L - i - 1]
             else:
@@ -328,21 +314,169 @@ class GraphsGenerator:
             dict_edges[expression].append([start_node, end_node])
             return G, dict_edges, unnecessary_nodes
 
+    def _is_tsv_format(self):
+        """Detect if input file is in TSV format (new) or old format"""
+        with open(self.input_file, "r") as f:
+            first_line = f.readline().strip()
+            # Check if first line is a TSV header
+            return (
+                first_line.startswith("module\t")
+                or "\t" in first_line
+                and ":" not in first_line
+            )
+
+    def _read_modules_from_tsv(self):
+        """Read modules from new TSV format file"""
+        modules = []
+        with open(self.input_file, "r") as f:
+            # Skip header
+            header = f.readline().strip().split("\t")
+
+            # Validate header
+            if "module" not in header or "definition" not in header:
+                raise ValueError("TSV file must have 'module' and 'definition' columns")
+
+            module_idx = header.index("module")
+            definition_idx = header.index("definition")
+
+            # Read data rows
+            for line in f:
+                if line.strip():
+                    fields = line.strip().split("\t")
+                    if len(fields) > max(module_idx, definition_idx):
+                        module = fields[module_idx]
+                        definition = fields[definition_idx]
+                        modules.append((module, definition))
+
+        return modules
+
+    def _read_modules_from_old_format(self):
+        """Read modules from old format file (module:definition)"""
+        modules = []
+        with open(self.input_file, "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and ":" in line:
+                    parts = line.split(":", 1)
+                    if len(parts) == 2:
+                        modules.append((parts[0], parts[1]))
+        return modules
+
+    def _load_existing_graphs(self):
+        """Load existing graphs from pickle file"""
+        if not self.existing_graphs_file:
+            return {}
+
+        if not os.path.exists(self.existing_graphs_file):
+            logging.warning(
+                f"Existing graphs file not found: {self.existing_graphs_file}"
+            )
+            return {}
+
+        try:
+            with open(self.existing_graphs_file, "rb") as f:
+                graphs = pickle.load(f)
+            logging.info(
+                f"Loaded {len(graphs)} existing graphs from {self.existing_graphs_file}"
+            )
+            return graphs
+        except Exception as e:
+            logging.error(f"Error loading existing graphs: {e}")
+            return {}
+
+    def _read_changed_modules(self):
+        """Read list of changed modules from changed.tsv file"""
+        if not self.changed_file:
+            return set()
+
+        if not os.path.exists(self.changed_file):
+            logging.warning(f"Changed file not found: {self.changed_file}")
+            return set()
+
+        changed_modules = set()
+        try:
+            with open(self.changed_file, "r") as f:
+                # Skip header
+                f.readline()
+                # Read module IDs from first column
+                for line in f:
+                    if line.strip():
+                        fields = line.strip().split("\t")
+                        if fields:
+                            changed_modules.add(fields[0])
+            logging.info(
+                f"Found {len(changed_modules)} changed modules in {self.changed_file}"
+            )
+            return changed_modules
+        except Exception as e:
+            logging.error(f"Error reading changed modules: {e}")
+            return set()
+
     def pathways_processing(self):
         """
         Main function for processing each pathway.
-        All pathways were written in one file by lines in format: <name>:<pathway>.
+        Supports both old format (module:definition) and new TSV format.
+        Supports incremental updates by reusing existing graphs.
+
         Function creates dictionary key: name; value: (graph, dict_edges)
         """
         logger = logging.getLogger(__name__)
         logger.info("Start graphs generation")
-        graphs = {}  # dict of all graphs and their dict of edges (in tuple format)
-        with open(self.input_file, "r") as file_in:
-            for line in file_in:
-                line = line.strip().split(":")
-                pathway = line[1]
-                name = line[0]
-                logger.debug(f"processing {name}")
+
+        # Detect file format and read modules
+        if self._is_tsv_format():
+            logger.info("Detected TSV format input file")
+            modules = self._read_modules_from_tsv()
+        else:
+            logger.info("Detected old format input file (module:definition)")
+            modules = self._read_modules_from_old_format()
+
+        # Create dictionary for quick lookup
+        modules_dict = {name: pathway for name, pathway in modules}
+        logger.info(f"Total modules in input: {len(modules_dict)}")
+
+        # Load existing graphs if provided
+        existing_graphs = self._load_existing_graphs()
+
+        # Read changed modules if provided
+        changed_modules = self._read_changed_modules()
+
+        # Determine which modules to process
+        if existing_graphs and changed_modules:
+            # Incremental mode: only regenerate changed modules
+            modules_to_generate = changed_modules & set(modules_dict.keys())
+            modules_to_reuse = set(modules_dict.keys()) - changed_modules
+
+            logger.info("Incremental update mode:")
+            logger.info(f"  - Modules to regenerate: {len(modules_to_generate)}")
+            logger.info(f"  - Modules to reuse from existing: {len(modules_to_reuse)}")
+
+            # Start with existing graphs for modules that haven't changed
+            graphs = {}
+            reused_count = 0
+            for module in modules_to_reuse:
+                if module in existing_graphs:
+                    graphs[module] = existing_graphs[module]
+                    reused_count += 1
+                    logger.debug(f"Reusing graph for {module}")
+
+            logger.info(f"Reused {reused_count} existing graphs")
+
+            # Generate graphs only for changed modules
+            modules_to_process = [
+                (name, modules_dict[name]) for name in modules_to_generate
+            ]
+        else:
+            # Full regeneration mode
+            logger.info("Full regeneration mode (no incremental update)")
+            graphs = {}
+            modules_to_process = modules
+
+        # Process modules (either all or just changed ones)
+        if modules_to_process:
+            logger.info(f"Generating {len(modules_to_process)} graphs...")
+            for name, pathway in modules_to_process:
+                logger.debug(f"Processing {name}")
                 # Graph creation:
                 Graph = nx.MultiDiGraph()
                 Graph.add_node(0, color="green")
@@ -360,18 +494,104 @@ class GraphsGenerator:
                 # Saving
                 graphs[name] = tuple([Graph, dict_edges, unnecessary_nodes])
                 time.sleep(1)
-            logger.info("Done.Exit")
+
+        # Final summary
+        logger.info(f"Total graphs in output: {len(graphs)}")
+        if existing_graphs:
+            removed = set(existing_graphs.keys()) - set(graphs.keys())
+            if removed:
+                logger.info(
+                    f"Removed {len(removed)} graphs (no longer in input): {sorted(list(removed))[:10]}..."
+                )
+
+        # Save graphs
+        logger.info("Done. Saving graphs...")
         path_output = os.path.join(self.output_dir, "graphs.pkl")
         with open(path_output, "wb") as f:
             pickle.dump(graphs, f)
+        logger.info(f"Graphs saved to {path_output}")
 
 
-def main():
-    args = parse_args(sys.argv[1:])
-    setup_logging(args.verbose)
+@click.command()
+@click.option(
+    "-i",
+    "--input",
+    "input_file",
+    required=True,
+    type=click.Path(exists=True),
+    help="Input file: TSV format (modules_table.tsv) or old format (module:definition per line)",
+)
+@click.option(
+    "-o",
+    "--outdir",
+    default="outdir",
+    help="Output directory where graphs.pkl will be stored",
+    show_default=True,
+)
+@click.option(
+    "-e",
+    "--existing-graphs",
+    type=click.Path(exists=True),
+    help="Existing graphs.pkl file to reuse unchanged graphs (for incremental updates)",
+)
+@click.option(
+    "-c",
+    "--changed",
+    type=click.Path(exists=True),
+    help="Changed modules file (changed.tsv) - only regenerate graphs for these modules",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="Enable verbose logging",
+)
+@click.version_option(version=get_version(), prog_name="make_graphs")
+def main(input_file, outdir, existing_graphs, changed, verbose):
+    """
+    Generates graph structures for KEGG modules and saves them to graphs.pkl.
+
+    Supports both formats:
+    - New TSV format: modules_table.tsv with columns (module, definition, name, class)
+    - Old format: one module per line as module:definition
+
+    The script automatically detects the input format.
+
+    Incremental Updates:
+    \b
+    Use --existing-graphs and --changed together for incremental updates:
+    - Loads existing graphs from --existing-graphs
+    - Only regenerates graphs for modules in --changed file
+    - Reuses graphs for unchanged modules
+    - Removes graphs for modules not in --input (deleted from KEGG)
+
+    Examples:
+    \b
+    # Full regeneration
+    make_graphs -i modules_table.tsv -o graphs_output
+
+    \b
+    # Incremental update (only changed modules)
+    make_graphs -i modules_table.tsv -o graphs_output \\
+                -e old_graphs.pkl -c changed.tsv
+    """
+    setup_logging(verbose)
+
+    # Validate incremental update options
+    if existing_graphs and not changed:
+        logging.warning(
+            "--existing-graphs provided without --changed. Will perform full regeneration."
+        )
+    if changed and not existing_graphs:
+        logging.warning(
+            "--changed provided without --existing-graphs. Will regenerate all modules in changed file."
+        )
+
     graphs_generator = GraphsGenerator(
-        input_file=args.input_file,
-        output_dir=args.outdir,
+        input_file=input_file,
+        output_dir=outdir,
+        existing_graphs_file=existing_graphs,
+        changed_file=changed,
     )
     graphs_generator.pathways_processing()
 

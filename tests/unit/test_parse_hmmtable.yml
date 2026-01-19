@@ -1,31 +1,48 @@
-- name: make_hmmsearch_table_tab_separated
+- name: parse_hmmsearch_table
   tags:
-    - make_hmmsearch_table_tab_separated
-  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.make_hmmer_table_tab_separated --input tests/fixtures/parse_hmmtable/hmmsearch_output.txt --output hmmsearch_output_tab_sep.tsv
+    - parse_hmmsearch
+    - parse_hmmer_table
+  command: parse_hmmer_table -i tests/fixtures/parse_hmmtable/hmmsearch_output.txt -f tests/fixtures/parse_hmmtable/test.fasta -t hmmsearch -o hmmsearch_result.tsv
   files:
-    - path: hmmsearch_output_tab_sep.tsv
-      md5sum: ff5598e938b611450da852dd769256d3
-
-- name: parse_hmmsearch_tab_separated_table
-  tags:
-    - parse_hmmsearch_tab_separated_table
-  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmer_tab_separated_table -t hmmsearch --input tests/outputs/parse_hmmtable/hmmsearch_output.tsv -o hmm --fasta tests/fixtures/parse_hmmtable/test.fasta
-  files:
-    - path: hmm/hmmsearch_output.tsv_parsed
+    - path: hmmsearch_result.tsv
       md5sum: 35ffc70eccbdca0e2efc18cd4f90b761
 
-- name: make_hmmscan_table_tab_separated
+- name: parse_hmmscan_table
   tags:
-    - make_hmmscan_table_tab_separated
-  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.make_hmmer_table_tab_separated --input tests/fixtures/parse_hmmtable/hmmscan_output.txt --output hmmscan_output_tab_sep.tsv
+    - parse_hmmscan
+    - parse_hmmer_table
+  command: parse_hmmer_table -i tests/fixtures/parse_hmmtable/hmmscan_output.txt -f tests/fixtures/parse_hmmtable/test.fasta -t hmmscan -o hmmscan_result.tsv
   files:
-    - path: hmmscan_output_tab_sep.tsv
+    - path: hmmscan_result.tsv
+      md5sum: a884017a7d863f99c5e763892c1073a8
+
+- name: parse_hmmsearch_with_intermediate
+  tags:
+    - parse_hmmsearch_intermediate
+    - parse_hmmer_table
+  command: parse_hmmer_table -i tests/fixtures/parse_hmmtable/hmmsearch_output.txt -f tests/fixtures/parse_hmmtable/test.fasta -t hmmsearch -o hmmsearch_result_int.tsv --save-intermediate hmmsearch_intermediate.tsv
+  files:
+    - path: hmmsearch_result_int.tsv
+      md5sum: 35ffc70eccbdca0e2efc18cd4f90b761
+    - path: hmmsearch_intermediate.tsv
+      md5sum: ff5598e938b611450da852dd769256d3
+
+- name: parse_hmmscan_with_intermediate
+  tags:
+    - parse_hmmscan_intermediate
+    - parse_hmmer_table
+  command: parse_hmmer_table -i tests/fixtures/parse_hmmtable/hmmscan_output.txt -f tests/fixtures/parse_hmmtable/test.fasta -t hmmscan -o hmmscan_result_int.tsv --save-intermediate hmmscan_intermediate.tsv
+  files:
+    - path: hmmscan_result_int.tsv
+      md5sum: a884017a7d863f99c5e763892c1073a8
+    - path: hmmscan_intermediate.tsv
       md5sum: 8f96fbea3b62eea980ba0323db60a7aa
 
-- name: parse_hmmscan_tab_separated_table
+- name: parse_hmmsearch_with_subdir
   tags:
-    - parse_hmmscan_tab_separated_table
-  command: python -m kegg_pathways_completeness.bin.parse_hmmtable.parse_hmmer_tab_separated_table -t hmmscan --input tests/outputs/parse_hmmtable/hmmscan_output_tab_sep.tsv -o hmm --fasta tests/fixtures/parse_hmmtable/test.fasta
+    - parse_hmmsearch_subdir
+    - parse_hmmer_table
+  command: parse_hmmer_table -i tests/fixtures/parse_hmmtable/hmmsearch_output.txt -f tests/fixtures/parse_hmmtable/test.fasta -t hmmsearch -o output_dir/hmmsearch_result.tsv
   files:
-    - path: hmm/hmmscan_output_tab_sep.tsv_parsed
-      md5sum: a884017a7d863f99c5e763892c1073a8
+    - path: output_dir/hmmsearch_result.tsv
+      md5sum: 35ffc70eccbdca0e2efc18cd4f90b761
