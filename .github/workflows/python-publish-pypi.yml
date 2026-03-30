@@ -1,10 +1,8 @@
 name: Upload Python Package
 
 on:
-  workflow_run:
-    workflows: ["Create Release with Images"]
-    types:
-      - completed
+  release:
+    types: [published]
 
 jobs:
   build:
