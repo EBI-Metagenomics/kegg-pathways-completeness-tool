@@ -2,7 +2,7 @@
 
 This tool computes the completeness of [KEGG pathway modules](https://www.genome.jp/kegg/module.html) for a given set of [KEGG Orthologues (KOs)](https://www.genome.jp/kegg/ko.html) based on their presence/absence. 
 
-The current version includes **570** KEGG modules (updated 19/01/2026).
+The current version includes **570** KEGG modules (updated 01/04/2026).
 
 Please, read the [Theory & Background](#theory--background) section for a detailed explanation.
 
