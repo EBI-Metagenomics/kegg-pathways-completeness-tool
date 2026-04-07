@@ -1,6 +1,6 @@
 [project]
 name = "kegg-pathways-completeness"
-version = "1.4.2"
+version = "1.4.3"
 readme = "README.md"
 license = {text = "Apache Software License 2.0"}
 authors = [
@@ -37,7 +37,7 @@ packages = [
 ]
 
 [tool.setuptools.package-data]
-"*" = ["graphs.pkl", "*.txt"]
+"*" = ["graphs.pkl", "modules_table.tsv", "mediators_list.txt"]
 
 [project.scripts]
 give_completeness = "kegg_pathways_completeness.bin.give_completeness:main"
