@@ -12,7 +12,7 @@ M00010	(K01647,K05942,K01659) (K01681,K27802,K01682) (K00031,K00030)	Citrate cyc
 M00011	(((K00164+K00658,K01616)+K00382),(K00174+K00175-K00177-K00176)) (K01902+K01903,K01899+K01900,K18118) ((K00234+K00235+K00236+(K00237,K25801)),(K00239+K00240+K00241-(K00242,K18859,K18860)),(K00244+K00245+K00246-K00247)) (K01676,K01679,K01677+K01678) (K00026,K00025,K00024,K00116)	Citrate cycle, second carbon oxidation, 2-oxoglutarate => oxaloacetate	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
 M00012	(K01647,K01659) (K01681,K27802,K01682) K01637 (K01638,K19282) (K00026,K00025,K00024)	Glyoxylate cycle	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00013	(K00248,K00232) (K07511,K14729) K05605 K23146 K00140	Malonate semialdehyde pathway, propanoyl-CoA => acetyl-CoA	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
-M00014	K00012 ((K12447 K16190),(K00699 (K01195,K14756))) K00002 K13247 -- K03331 (K05351,K00008) K00854	Glucuronate pathway (uronate pathway)	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00014	K00012 K00699 (K01195,K14756) K00002 K13247 K28954 K03331 K00008 K00854	Glucuronate pathway (uronate pathway)	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00015	((K00931 K00147),K12657) K00286	Proline biosynthesis, glutamate => proline	Pathway modules; Amino acid metabolism; Arginine and proline metabolism
 M00016	(K00928,K12524,K12525,K12526) K00133 K01714 K00215 K00674 (K00821,K14267) K01439 K01778 (K01586,K12526)	Lysine biosynthesis, succinyl-DAP pathway, aspartate => lysine	Pathway modules; Amino acid metabolism; Lysine metabolism
 M00017	(K00928,K12524,K12525) K00133 (K00003,K12524,K12525) (K00651,K00641) K01739 (K01760,K14155) (K00548,K24042,K00549)	Methionine biosynthesis, aspartate => homoserine => methionine	Pathway modules; Amino acid metabolism; Cysteine and methionine metabolism
@@ -57,7 +57,7 @@ M00057	K00771 K00733 K00734 K10158	Glycosaminoglycan biosynthesis, linkage tetra
 M00058	K00746 (K13499,K00747,K03419)	Glycosaminoglycan biosynthesis, chondroitin sulfate backbone	Pathway modules; Glycan metabolism; Glycosaminoglycan metabolism
 M00059	(K02369,K02370) (K02366,K02367) (K02368,K02370) (K02576,K02577,K02578,K02579) K01793	Glycosaminoglycan biosynthesis, heparan sulfate backbone	Pathway modules; Glycan metabolism; Glycosaminoglycan metabolism
 M00060	K00677 K02535 K02536 (K03269,K09949) K00748 K00912 K02527 K02517 K02560	KDO2-lipid A biosynthesis, Raetz pathway, LpxL-LpxM type	Pathway modules; Glycan metabolism; Lipopolysaccharide metabolism
-M00061	K01812 K00040 (K01686,K08323) K00874 (K01625,K17463)	D-Glucuronate degradation, D-glucuronate => pyruvate + D-glyceraldehyde-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00061	K01812 K00040 (K01686,K08323) K00874 (K01625,K17463)	Glucuronate degradation, glucuronate => pyruvate + glyceraldehyde-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00063	K06041 K01627 K03270 K00979	CMP-KDO biosynthesis, ribulose-5P => CMP-KDO	Pathway modules; Glycan metabolism; Nucleotide sugar biosynthesis
 M00064	K03271 (K03272,K21344) K03273 (K03272,K21345) K03274	ADP-LDmanHep biosynthesis, sedoheptulose-7P => ADP-LDmanHep	Pathway modules; Glycan metabolism; Nucleotide sugar biosynthesis
 M00065	(K03857+K03859+K03858+K03861+K03860+(K11001,K11002)-K09658) K03434 K05283 (K05284+K07541) K07542 K05285 K05286 (K05288+K05287) (K05310+K05287)	GPI-anchor biosynthesis, core oligosaccharide	Pathway modules; Glycan metabolism; Glycan biosynthesis
@@ -165,7 +165,7 @@ M00174	((K10944+K10945+K10946),(K16157+K16158+K16159+K16160+K16161+K16162)) ((K1
 M00175	K02588+K02586+K02591-K00531,K22896+K22897+K22898+K22899	Nitrogen fixation, nitrogen => ammonia	Pathway modules; Energy metabolism; Nitrogen metabolism
 M00176	(K00958+K00860,K00955+K00957,K00956+K00957+K00860) K00390 (K00380+K00381,K00392)	Assimilatory sulfate reduction, sulfate => H2S	Pathway modules; Energy metabolism; Sulfur metabolism
 M00307	((K00163,K00161+K00162)+K00627+K00382-K13997),(K00169+K00170+K00171+(K00172,K00189)),K03737,(K28726+K28727+K28729+K28728),K21682	Pyruvate oxidation, pyruvate => acetyl-CoA	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
-M00308	K05308 K00874 K01625 ((K00134 K00927),K00131,K18978)	Semi-phosphorylative Entner-Doudoroff pathway, gluconate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
+M00308	K05308 (K00874,K28886) (K01625,K28887) (K00150,K00134) K00927	Semi-phosphorylative Entner-Doudoroff pathway, gluconate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
 M00309	K05308 (K11395,K18127) (K18020+K18021+K18022,K18128,K03738)	Non-phosphorylative Entner-Doudoroff pathway, gluconate/galactonate => glycerate	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
 M00338	(K01697,K10150) K01758	Cysteine biosynthesis, homocysteine + serine => cysteine	Pathway modules; Amino acid metabolism; Cysteine and methionine metabolism
 M00344	K17100 K00863 K01624 K03841	Formaldehyde assimilation, xylulose monophosphate pathway	Pathway modules; Energy metabolism; Methane metabolism
@@ -193,7 +193,7 @@ M00378	(K11780+K11781) K14941 (K11212 K12234)	F420 biosynthesis, archaea	Pathway
 M00415	(K10247,K10205,K10248,K10249,K10244,K10203,K10250,K15397,K10245,K10246) K10251 K10703 K10258	Fatty acid elongation in endoplasmic reticulum	Pathway modules; Lipid metabolism; Fatty acid metabolism
 M00416	K02827+K02826+K02828+K02829	Cytochrome aa3-600 menaquinol oxidase	Pathway modules; Energy metabolism; ATP synthesis
 M00417	K02297+K02298+K02299+K02300	Cytochrome o ubiquinol oxidase	Pathway modules; Energy metabolism; ATP synthesis
-M00418	K07540 K07543+K07544 K07545 K07546 K07547+K07548 K07549+K07550	Toluene degradation, anaerobic, toluene => benzoyl-CoA	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
+M00418	(K07540+K29040+K29041) (K07543+K07544) K07545 K07546 (K07547+K07548) (K07549+K07550)	Toluene degradation, anaerobic, toluene => benzoyl-CoA	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
 M00419	K10616+K18293 K10617 K10618	Cymene degradation, p-cymene => p-cumate	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
 M00422	K00192+K00195 K00193+K00197+K00194	Acetyl-CoA pathway, CO2 => acetyl-CoA	Pathway modules; Energy metabolism; Methane metabolism
 M00432	K01649 (K01702,(K01703+K01704)) K00052	Leucine biosynthesis, 2-oxoisovalerate => 2-oxoisocaproate	Pathway modules; Amino acid metabolism; Branched-chain amino acid metabolism
@@ -224,7 +224,7 @@ M00548	K16249+K16243+K16244+K16242+K16245+K16246	Benzene degradation, benzene =>
 M00549	(K00844,K00845,K25026,K12407,K00886) (K01835,K15779,K15778) (K00963,K28660,K12447)	UDP-Glc biosynthesis, Glc => UDP-Glc	Pathway modules; Glycan metabolism; Nucleotide sugar biosynthesis
 M00550	K02821+K02822+K03475 K03476 K03078 K03079 K03077	Ascorbate degradation, ascorbate => D-xylulose-5P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00551	K05549+K05550+K05784 K05783	Benzoate degradation, benzoate => catechol / methylbenzoate => methylcatechol	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
-M00552	K01684 K00883 K01631 K00134 K00927	D-galactonate degradation, De Ley-Doudoroff pathway, D-galactonate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00552	K01684 (K00883,K28886) (K01631,K28887) (K00150,K00134) K00927	Galactonate degradation, De Ley-Doudoroff pathway, galactonate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00554	K00849 K00965	UDP-Gal biosynthesis, Gal => UDP-Gal	Pathway modules; Glycan metabolism; Nucleotide sugar biosynthesis
 M00555	(K17755,((K00108,K11440,K00499) (K00130,K14085)))	Betaine biosynthesis, choline => betaine	Pathway modules; Amino acid metabolism; Serine and threonine metabolism
 M00563	K14082 ((K16177-K16176),(K16179-K16178),(K14084-K14083)) (K00399+K00401+K00402) ((K22480+K22481+K22482),(K03388+K03389+K03390),(K08264+K08265),(K03388+K03389+K03390+K14127+((K14126+K14128),(K22516+K00125))))	Methanogenesis, methylamine/dimethylamine/trimethylamine => methane	Pathway modules; Energy metabolism; Methane metabolism
@@ -263,8 +263,8 @@ M00623	K18068+K18069 K18067 K04102	Phthalate degradation, phthalate => protocate
 M00624	K18074+K18075+K18077 K18076	Terephthalate degradation, terephthalate => 3,4-dihydroxybenzoate	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
 M00625	K02547 K02546 K02545	Methicillin resistance	Signature modules; Gene set; Drug resistance
 M00627	K02172 K02171 (K18766,K17836)	beta-Lactam resistance, Bla system	Signature modules; Gene set; Drug resistance
-M00630	(K18106,K19634) K18102 K18103 K18107	D-Galacturonate degradation (fungi), D-galacturonate => glycerol	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
-M00631	K01812 K00041 (K01685,(K16849+K16850)) K00874 (K01625,K17463)	D-Galacturonate degradation (bacteria), D-galacturonate => pyruvate + D-glyceraldehyde-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00630	(K18106,K19634) K18102 K18103 K18107	Galacturonate degradation, fungi, galacturonate => glycerol	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
+M00631	K01812 K00041 (K01685,(K16849+K16850)) K00874 (K01625,K17463)	Galacturonate degradation, bacteria, galacturonate => pyruvate + glyceraldehyde-3P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00632	K01785 K00849 K00965 K01784	Galactose degradation, Leloir pathway, galactose => alpha-D-glucose-1P	Pathway modules; Carbohydrate metabolism; Other carbohydrate metabolism
 M00633	K05308 K18126 K11395 K18978	Semi-phosphorylative Entner-Doudoroff pathway, gluconate/galactonate => glycerate-3P	Pathway modules; Carbohydrate metabolism; Central carbohydrate metabolism
 M00636	K18251+K18252-K18253-K18254 K18255 K18256	Phthalate degradation, phthalate => protocatechuate	Pathway modules; Xenobiotics biodegradation; Aromatics degradation
@@ -569,3 +569,6 @@ M01057	K28702 K28703	Rhizoferrin biosynthesis, ornithine + citrate => rhizoferri
 M01058	K28704 K28705 K23374 K23375	Achromobactin biosynthesis, serine + citrate => achromobactin	Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other bacterial compounds
 M01059	K28704 K28705 K28706 K28707	Vibrioferrin biosynthesis, serine + citrate => vibrioferrin	Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other bacterial compounds
 M01060	(K15652 K24110 K24111) (K24108 K24109 K24112)	Petrobactin biosynthesis, spermidine => petrobactin	Pathway modules; Biosynthesis of other secondary metabolites; Biosynthesis of other bacterial compounds
+M01061	K20246 K20247	Ergothioneine biosynthesis, fungi, histidine => ergothioneine	Pathway modules; Amino acid metabolism; Histidine metabolism
+M01062	(K01919 ) (K18911 K18912 K07008 K18913)	Ergothioneine biosynthesis, bacteria, histidine => ergothioneine	Pathway modules; Amino acid metabolism; Histidine metabolism
+M01063	K18911 K28982	Ergothioneine anaerobic biosynthesis, histidine => ergothioneine	Pathway modules; Amino acid metabolism; Histidine metabolism
