@@ -272,5 +272,6 @@ class TestSanityCheckOnRealFixtures:
         assert "matching_ko K01810 not found in definition of module M00892" in errors_line
         assert len(errors) == 4
 
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
