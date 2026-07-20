@@ -64,3 +64,11 @@
   stderr:
     contains:
       - "Sanity check passed"
+
+- name: give_completeness_for_multiple_contigs_current_database
+  tags:
+    - give_completeness
+  command: give_completeness -i tests/fixtures/give_completeness/ko.combined.tsv -r test_current -m -t kegg_pathways_completeness/pathways_data/modules_table.tsv -g kegg_pathways_completeness/pathways_data/graphs.pkl
+  stderr:
+    contains:
+      - "Sanity check passed"
