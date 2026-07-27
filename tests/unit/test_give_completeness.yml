@@ -1,35 +1,44 @@
 - name: give_completeness_using_pathways_list
   tags:
     - give_completeness
-  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_pathway -m --modules-table kegg_pathways_completeness/pathways_data/modules_table.tsv -g kegg_pathways_completeness/pathways_data/graphs.pkl
+  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_pathway -m --modules-table tests/fixtures/give_completeness/modules_table.tsv -g tests/fixtures/give_completeness/graphs.pkl
   files:
     - path: "test_pathway_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
     - path: "test_pathway_contigs.tsv"
       md5sum: c03c602508e2c51bc74e7d47e952e7b3
+  stderr:
+    contains:
+      - "Sanity check passed"
 
 - name: give_completeness_using_KOs_list
   tags:
     - give_completeness
-  command: give_completeness -l tests/fixtures/give_completeness/test_kos.txt -r test_kos -t kegg_pathways_completeness/pathways_data/modules_table.tsv
+  command: give_completeness -l tests/fixtures/give_completeness/test_kos.txt -r test_kos -t tests/fixtures/give_completeness/modules_table.tsv -g tests/fixtures/give_completeness/graphs.pkl
   files:
     - path: "test_kos_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
+  stderr:
+    contains:
+      - "Sanity check passed"
 
 - name: give_completeness_using_pathway_with_weights_in_output
   tags:
     - give_completeness
-  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_weights -m -w -t kegg_pathways_completeness/pathways_data/modules_table.tsv
+  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_weights -m -w -t tests/fixtures/give_completeness/modules_table.tsv -g tests/fixtures/give_completeness/graphs.pkl
   files:
     - path: "test_weights_contigs.with_weights.tsv"
       md5sum: d3fac25d9f679746229c0d64841921d1
     - path: "test_weights_pathways.with_weights.tsv"
       md5sum: 819e085fb724a99519c4577286113b45
+  stderr:
+    contains:
+      - "Sanity check passed"
 
 - name: give_completeness_using_pathway_with_graphs_and_images_in_output
   tags:
     - give_completeness
-  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_plots -p -t kegg_pathways_completeness/pathways_data/modules_table.tsv
+  command: give_completeness -i tests/fixtures/give_completeness/test_pathway.txt -r test_plots -p -t tests/fixtures/give_completeness/modules_table.tsv -g tests/fixtures/give_completeness/graphs.pkl
   files:
     - path: "test_plots_pathways.tsv"
       md5sum: e6538c3dd00b1ffb015780a90003f81d
@@ -39,13 +48,27 @@
     - path: "pathways_plots/M00002.png"
     - path: "pathways_plots/M00050"
     - path: "pathways_plots/M00050.png"
+  stderr:
+    contains:
+      - "Sanity check passed"
 
 - name: give_completeness_for_multiple_contigs
   tags:
     - give_completeness
-  command: give_completeness -i tests/fixtures/give_completeness/ko.combined.tsv -r test_combined -m -t kegg_pathways_completeness/pathways_data/modules_table.tsv
+  command: give_completeness -i tests/fixtures/give_completeness/ko.combined.tsv -r test_combined -m -t tests/fixtures/give_completeness/modules_table.tsv -g tests/fixtures/give_completeness/graphs.pkl
   files:
     - path: "test_combined_pathways.tsv"
-      md5sum: cdafacad1d59c6bab8d1e81347fee1c7
+      md5sum: bc01a91055e0ba51c4fafa96911c1419
     - path: "test_combined_contigs.tsv"
-      md5sum: b60ace00db56eefc72ba7bafd64032c2
+      md5sum: 683c1cd472168ac75bfe43c1a69aa08f
+  stderr:
+    contains:
+      - "Sanity check passed"
+
+- name: give_completeness_for_multiple_contigs_current_database
+  tags:
+    - give_completeness
+  command: give_completeness -i tests/fixtures/give_completeness/ko.combined.tsv -r test_current -m -t kegg_pathways_completeness/pathways_data/modules_table.tsv -g kegg_pathways_completeness/pathways_data/graphs.pkl
+  stderr:
+    contains:
+      - "Sanity check passed"

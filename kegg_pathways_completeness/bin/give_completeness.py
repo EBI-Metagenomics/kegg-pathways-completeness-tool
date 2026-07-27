@@ -25,7 +25,13 @@ import click
 import networkx as nx
 
 from .plot_modules_graphs import PlotModuleCompletenessGraph
-from .utils import get_version, intersection, parse_graphs_input, setup_logging
+from .utils import (
+    get_version,
+    intersection,
+    parse_graphs_input,
+    sanity_check_give_completeness_output,
+    setup_logging,
+)
 
 
 def parse_modules_table_tsv(tsv_file):
@@ -75,6 +81,7 @@ class CompletenessCalculator:
         plot_pathways: bool,
         per_contig: bool,
         graphs: nx.MultiDiGraph,
+        modules_table_file: str,
         modules_definitions: str = None,
         modules_classes: str = None,
         modules_names: str = None,
@@ -86,6 +93,7 @@ class CompletenessCalculator:
         self.graphs = graphs
 
         # modules info
+        self.modules_table_file = modules_table_file
         self.modules_definitions = modules_definitions
         self.modules_classes = modules_classes
         self.modules_names = modules_names
@@ -428,6 +436,16 @@ class CompletenessCalculator:
         # generate summary per-contig
         if self.per_contig:
             self.generate_per_contig_summary()
+
+        # sanity check: matching_ko/missing_ko must belong to the module's definition
+        sanity_check_give_completeness_output(
+            self.name_common_output_summary, self.modules_table_file
+        )
+        if self.per_contig:
+            sanity_check_give_completeness_output(
+                self.name_contigs_output_summary, self.modules_table_file
+            )
+
         logger.info("Bye!")
 
 
@@ -613,6 +631,7 @@ def main(
         outdir=outdir,
         outprefix=outprefix,
         graphs=parse_graphs_input(graphs_filename),
+        modules_table_file=modules_table_filename,
         modules_names=modules_names,
         modules_classes=modules_classes,
         modules_definitions=modules_definitions,
